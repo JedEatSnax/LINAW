@@ -3,9 +3,13 @@
 ## 0. Learn Shortcuts and Keybinds
 Everyone should practice the keybinds and shortcuts of all the software that you will use within your respective operating systems. This will ensure that everyone will be faster in delivering code as we enter the development stage.
 
-## 1. Using your private GitHub email
-For security purposes, go to `GitHub Profile Picture` --> `Settings` --> `Emails` --> and turn on `Keep my email address private`
+## 1. Git and GitHub Security and Verification
+For security purposes, go to **GitHub Profile Picture** --> **Settings** --> **Emails** --> and turn on **Keep my email address private**
 ![Settings Page](assets/github-private-email.png)
+
+Additionally, follow this setup guide to always verify your commits to the repository.
+- **YouTube Link:** https://youtu.be/zPENYmyx6ug
+- **Article Link:** https://daily-dev-tips.com/posts/how-to-verify-your-commits-on-github/
 
 ## 2. Configure Git
 Copy and paste your private GitHub email that ends with `noreply.github.com` and configure it to your machine
@@ -19,6 +23,7 @@ Go to https://learngitbranching.js.org/ to maintain proper versioning. Additiona
 - Everyone must follow good git branch naming conventions. Learn more from this article [HERE](https://medium.com/@abhay.pixolo/naming-conventions-for-git-branches-a-cheatsheet-8549feca2534)
 - Don't be afraid to make multiple branches and commits. It will be easier to roll back if any of us makes a mistake.
 - After merging your branch or your fork, notify me so I can approve the pull request as soon as possible.
+- Furthermore, if you are branching, I recommend this format `branch-name/username/title`. For example, `feature/JedEatSnax/triple-entry`
 
 ### Git Cheatsheet
 
@@ -40,4 +45,4 @@ The basic Git syntax is `program | action | destination`
 For example,
 - `git add .` is read as `git | add | .`, where the period represents everything in the current directory;
 - `git commit -m "message"` is read as `git | commit -m | "message"` and
-- `git status` is read as `git | status | (no destination)`
+- `git status` is read as `git | status | (no destination)`. I recommend that you use `git status` everytime you perform a git command to see if there are no conflicts. 
