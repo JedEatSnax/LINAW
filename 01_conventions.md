@@ -45,4 +45,10 @@ The basic Git syntax is `program | action | destination`
 For example,
 - `git add .` is read as `git | add | .`, where the period represents everything in the current directory;
 - `git commit -m "message"` is read as `git | commit -m | "message"` and
-- `git status` is read as `git | status | (no destination)`. I recommend that you use `git status` everytime you perform a git command to see if there are no conflicts. 
+- `git status` is read as `git | status | (no destination)`. I recommend that you use `git status` everytime you perform a git command to see if there are no conflicts.
+
+#### Branching Commands
+- `git branch -vv` to see all the branches present.
+- `git push --set-upstream origin [branch-name]` to set one of your branches upstream. I only recommend this for your development branch that you use for testing.
+- `git branch -m [new-name]` to rename the current LOCAL branch.
+- `git branch -m [old-name] [new-name]` to LOCALLY rename a branch while pointed in any branch.
