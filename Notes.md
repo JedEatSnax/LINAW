@@ -144,3 +144,22 @@ more organization lng
 (Umm wait lng sa functional at non functional requirements medj burnt out utak ko di ako makapag isip ng ayos)
 
 (btw yung sa Accounting_Exatraction.md ano lng yan extracted core shits lng yan sa frappe books gusto ko pa matutunan yung accounting system kaso sobrang haba at nakakaligaw yung docs so ganyan ginawa ko. Siguro before mid night nagawa ko na yung functional at non functional requirements at rekta nako nun sa HLD architecture ng backend natin)
+
+Functional Requirements
+These defines what the system must do, Focusing on core flows from source events to blockchain.
+
+- Ingest source events (sale invoices, vendor bills, purchases) Via RESTful api and auto-generate double entry journal entries with matching debit/credits.
+
+- Post validated journals to a general ledger(SQL/NoSQL) and compute on-demand through aggregation such like trial balance, income statements, and period specific totals (Daily/monthly).
+
+- Batch journals exceeding ₱50,000 into merkle root for journal endorsement in hyperledger Fabric, storing proofs for audit cross-referencing.
+
+Non-Functional Requirements
+
+These covers quality attributes like performance and security, tailored to msme's uses.
+
+- Scalability: Handle 1,000+ daily transaction with <2s query response batch blockchain writes to limit gas/space.
+
+- Security: Encrypted Ledger data, use Fabric's permissioned channels for endorsements, ensure tamper-proof audits via merkle root.
+
+- Usability: Web dashboard for msme's owner/staff to view reports/aggregates.
