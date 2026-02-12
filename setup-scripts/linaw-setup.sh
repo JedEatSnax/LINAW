@@ -18,21 +18,20 @@ if [ "$EUID" -eq 0 ]; then
    exit 1
 fi
 
-# Detect OS
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+# Detect Operating System
+case "$(uname -s)" in
+  Linux)
     OS="linux"
-elif [[ "$OSTYPE" == "darwin"* ]]; then
+    ;;
+  Darwin)
     OS="mac"
-elif [[ "$OSTYPE" == "bsd"* ]]; then
-    OS="bsd"
-elif [[ "$OSTYPE" == "msys"* ]]; then
+    ;;
+  WindowsNT)
     OS="windows"
-elif [[ "$OSTYPE" == "cygwin"* ]]; then
-    OS="windows"
-else
-    echo -e "${RED}Unsupported OS: $OSTYPE${NC}"
-    exit 1
-fi
+  *)
+    echo "Unknown Operating System"
+    ;;
+esac
 
 echo -e "${GREEN}Detected OS: $OS${NC}"
 
