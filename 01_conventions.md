@@ -58,5 +58,5 @@ Commands with brief information:
 - `git branch -m [new-name]` to rename the current LOCAL branch.
 - `git branch -m [old-name] [new-name]` to LOCALLY rename a branch while pointed in any branch.
 - `git push origin -u [branch-name]` to set your LOCAL branch upstream. This would create a new branch if you renamed a branch.
-- `git push origin -d` to delete a remote branch.
+- `git push origin -D [branch-name]` to delete a remote branch.
 - If you want to push a specific file from a branch into main, assuming there are no changes into main yet, do `git checkout main` to go into main, then `git checkout [specific-branch] [path/to/file]`, and lastly `git commit -am "..."`.
