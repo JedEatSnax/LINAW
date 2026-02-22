@@ -15,4 +15,10 @@ p{
     font-size: 16px;
     line-height: 1.5;
     margin: 20px;
-}   
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
