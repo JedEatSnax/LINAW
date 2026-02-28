@@ -19,6 +19,14 @@ function Login() {
                         <div>
                             <button className="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
                         </div>
+
+                        <div className="mt-4">
+                            <a href="#" className="text-blue-500">Forgot password?</a>
+                        </div>
+
+                        <div>
+                            <a href="/register" className="text-blue-500">Don't have an account?</a>
+                        </div>
                         
                     </form>
                 </div>
