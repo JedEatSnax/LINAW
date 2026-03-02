@@ -8,3 +8,4 @@
 
 ## Todo
 - Make sidebar component
+- Registration and Login to be made in accordance to new color scheme
