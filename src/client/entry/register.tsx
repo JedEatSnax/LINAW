@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function Register() {
     return (
-            <div className="text-3xl flex items-center justify-center h-screen">
+            <div className="text-3xl flex items-center justify-center h-screen bg-gray-950">
                 <div className="flex flex-col items-center justify-center">
                     <div className="bg-gray-800 font-mono p-4 rounded shadow-md w-80">
                         <form>
@@ -28,7 +28,7 @@ function Register() {
                             </div>
 
                             <div className="mb-2 flex items-center justify-center">
-                                <button className="bg-amber-600 text-white text-lg px-4 py-2 rounded w-full" id="registerButton">Register</button>
+                                <button className="bg-amber-600 hover:bg-amber-700 text-white text-lg px-4 py-2 rounded w-full" id="registerButton">Register</button>
                             </div>
 
                             <div className="flex flex-col items-center justify-center mt-1">

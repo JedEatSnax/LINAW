@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 function Login() {
     return (
-            <div className="text-3xl flex items-center justify-center h-screen">
+            <div className="text-3xl flex items-center justify-center h-screen bg-gray-950">
                 <div className="flex flex-col items-center justify-center">
                     <form className="bg-gray-800 font-mono p-4 rounded shadow-md w-80">
                         <div className="flex items-center justify-center">
@@ -17,7 +17,7 @@ function Login() {
                         </div>
 
                         <div>
-                            <button className="bg-amber-600 text-white text-lg px-4 py-2 rounded w-full" id="loginButton">Login</button>
+                            <button className="bg-amber-600 hover:bg-amber-700 text-white text-lg px-4 py-2 rounded w-full" id="loginButton">Login</button>
                         </div>
 
                         <div className="flex flex-col items-center justify-center mt-1">

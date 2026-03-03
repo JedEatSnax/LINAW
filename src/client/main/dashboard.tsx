@@ -1,9 +1,11 @@
 import { Sidebar } from "../components/sidebar";
 import { Homedash } from "../components/homedash";
+import { Topbar } from "../components/topbar";
 
 function Dashboard() {
     return(
-        <main className="grid gap-4 p-4 grid-cols-[220px,1fr]">
+        <main>
+            <Topbar />
             <Sidebar />
             <Homedash />
         </main>

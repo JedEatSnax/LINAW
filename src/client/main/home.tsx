@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 function Home() {
     return (
-        <div className="flex flex-col items-center justify-center h-screen">
+        <div className="flex flex-col items-center justify-center h-screen bg-gray-950">
             <div className="flex flex-col items-center justify-center">
                 <h1 className="text-4xl font-bold mb-4 text-amber-500">Temporary / page</h1>
             </div>
