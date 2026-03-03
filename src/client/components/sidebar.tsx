@@ -2,8 +2,10 @@ import React from "react";
 
 export const Sidebar = () => {
     return (
-        <div className="overflow-y-auto sticky top-4 h-[calc(100vh-32px-48px)]">
-            sidebar
+        <div className="fixed h-screen translate-y-12 w-64 bg-gray-800 p-4 shadow border-r border-gray-600">
+            <div className="text-amber-500 font-bold">
+                sidebar
+            </div>
         </div>
     );
 }
