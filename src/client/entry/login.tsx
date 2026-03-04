@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 export function Login() {
     return (
-            <div className="text-3xl flex items-center justify-center h-screen bg-gray-950">
+            <div className="text-3xl flex items-center justify-center h-screen bg-zinc-950">
                 <div className="flex flex-col items-center justify-center">
-                    <form className="bg-gray-800 font-mono p-4 rounded shadow-md w-80">
+                    <form className="bg-zinc-900 font-mono p-4 rounded shadow-md w-80">
                         <div className="flex items-center justify-center">
                             <h1 className="text-2xl font-bold mb-4 text-amber-400">Login</h1>
                         </div>
