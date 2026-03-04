@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-function Login() {
+export function Login() {
     return (
             <div className="text-3xl flex items-center justify-center h-screen bg-gray-950">
                 <div className="flex flex-col items-center justify-center">

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 
-function Home() {
+export function Home() {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-950">
             <div className="flex flex-col items-center justify-center">
