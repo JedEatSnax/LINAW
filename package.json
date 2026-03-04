@@ -1,0 +1,67 @@
+{
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-router-dom": "^5.3.3",
+    "autoprefixer": "^10.4.27",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router-dom": "^7.13.1",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "name": "linaw",
+  "version": "1.0.0",
+  "description": "Everyone should practice the keybinds and shortcuts of all the software that you will use within your respective operating systems. This will ensure that everyone will be faster in delivering code as we enter the development stage.",
+  "main": "index.js",
+  "dependencies": {
+    "baseline-browser-mapping": "^2.10.0",
+    "browserslist": "^4.28.1",
+    "caniuse-lite": "^1.0.30001774",
+    "cookie": "^1.1.1",
+    "csstype": "^3.2.3",
+    "detect-libc": "^2.1.2",
+    "electron-to-chromium": "^1.5.302",
+    "enhanced-resolve": "^5.20.0",
+    "esbuild": "^0.27.3",
+    "escalade": "^3.2.0",
+    "fdir": "^6.5.0",
+    "fraction.js": "^5.3.4",
+    "graceful-fs": "^4.2.11",
+    "jiti": "^2.6.1",
+    "lightningcss": "^1.31.1",
+    "lightningcss-win32-x64-msvc": "^1.31.1",
+    "magic-string": "^0.30.21",
+    "nanoid": "^3.3.11",
+    "node-releases": "^2.0.27",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.3",
+    "postcss": "^8.5.6",
+    "postcss-value-parser": "^4.2.0",
+    "react-router": "^7.13.1",
+    "rollup": "^4.59.0",
+    "scheduler": "^0.27.0",
+    "set-cookie-parser": "^2.7.2",
+    "source-map-js": "^1.2.1",
+    "tapable": "^2.3.0",
+    "tinyglobby": "^0.2.15",
+    "update-browserslist-db": "^1.2.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JedEatSnax/LINAW.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/JedEatSnax/LINAW/issues"
+  },
+  "homepage": "https://github.com/JedEatSnax/LINAW#readme"
+}
