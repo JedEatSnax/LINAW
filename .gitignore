@@ -1,13 +1,3 @@
-# Node.js
-node_modules/
-package-lock.json/
-.npm/
-.env*
-logs/
-.cache/
-.next/
-.nuxt/
-.vuepress/dist/
-.yarn/
-.serverless/
-.pnp.*   
+app/server/node_modules/
+vibecoded-app/
+.env
