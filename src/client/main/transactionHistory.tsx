@@ -1,15 +1,14 @@
 import { Sidebar } from "../components/sidebar";
-import { Homedash } from "../components/homedash";
 import { Topbar } from "../components/topbar";
 
-export function Dashboard() {
+export function TransactionHistory() {
     return(
         <main>
             <Topbar />
             <Sidebar />
-            <Homedash />
+            <h1>Transaction History</h1>
         </main>
     );
 }
 
-export default Dashboard;
+export default TransactionHistory;
