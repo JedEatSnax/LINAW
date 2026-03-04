@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 
 export function Register() {
     return (
-            <div className="text-3xl flex items-center justify-center h-screen bg-gray-950">
+            <div className="text-3xl flex items-center justify-center h-screen bg-zinc-950">
                 <div className="flex flex-col items-center justify-center">
-                    <div className="bg-gray-800 font-mono p-4 rounded shadow-md w-80">
+                    <div className="bg-zinc-900 font-mono p-4 rounded shadow-md w-80">
                         <form>
                             <div className="flex items-center justify-center">
                                 <h1 className="text-2xl text-amber-400 font-bold mb-4 p-2">Register</h1>
