@@ -7,3 +7,5 @@ export function SubmitTransaction() {
         </>
     )
 }
+
+export default SubmitTransaction

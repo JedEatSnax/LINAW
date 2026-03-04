@@ -7,3 +7,5 @@ export function Dashboard() {
         </>
     )
 }
+
+export default Dashboard

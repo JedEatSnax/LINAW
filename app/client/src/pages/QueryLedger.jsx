@@ -7,3 +7,5 @@ export function QueryLedger() {
         </>
     )
 }
+
+export default QueryLedger
