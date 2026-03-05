@@ -1,7 +1,7 @@
 export function Login() {
     return(
         <>
-            <h1>
+            <h1 className="panel">
                 This is the Login page.
             </h1>
         </>

@@ -1,0 +1,37 @@
+:root {
+    --bg:          #0a0c0f;
+    --bg-panel:    #0f1318;
+    --bg-input:    #141920;
+    --bg-hover:    #1a2030;
+    --border:      #1e2836;
+    --border-hi:   #2a3a52;
+    --amber:       #f59e0b;
+    --amber-dim:   #b45309;
+    --amber-glow:  rgba(245,158,11,0.12);
+    --green:       #10b981;
+    --green-dim:   rgba(16,185,129,0.15);
+    --red:         #ef4444;
+    --red-dim:     rgba(239,68,68,0.15);
+    --blue:        #3b82f6;
+    --blue-dim:    rgba(59,130,246,0.12);
+    --text:        #c9d4e0;
+    --text-dim:    #5a6a80;
+    --text-bright: #e8f0fa;
+    --mono:        'IBM Plex Mono', monospace;
+    --sans:        'IBM Plex Sans', sans-serif;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+}
+
+.panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    padding: 1rem;
+    border-radius: 8px;
+}
