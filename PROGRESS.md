@@ -21,3 +21,52 @@ docker system prune -f -a
 **After installation:**
 1 hr installation pero gumagana na hahaha, altho i already did ./network.sh prereq before...
 Anyways still reading documentations about Fabric CA and still trying to understand how the network stuff work.
+
+## Mar04
+
+#### simple note :((
+
+Anchor peer:
+every org has 1 or more for high availability, allows anchor peers from different org to know other peer on channel via gossip, created on configtx.yaml (deprecated) or on channel configuration (recommended)
+
+[configtxlator](https://hyperledger-fabric.readthedocs.io/en/latest/commands/configtxlator.html)(recommended)
+
+```configtx.yaml
+Organizations:
+    - &SampleOrg
+        Name: SampleOrg
+        SkipAsForeign: false
+        ID: SampleOrg
+        MSPDir: msp
+        Policies: &SampleOrgPolicies
+            Readers:
+                Type: Signature
+                Rule: "OR('SampleOrg.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('SampleOrg.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('SampleOrg.admin')"
+            Endorsement:
+                Type: Signature
+                Rule: "OR('SampleOrg.member')"
+        OrdererEndpoints:
+            - "127.0.0.1:7050"
+
+        # AnchorPeers defines the location of peers which can be used for
+        # cross-org gossip communication.
+        #
+        # NOTE: this value should only be set when using the deprecated
+        # `configtxgen --outputAnchorPeersUpdate` command.
+
+        AnchorPeers:
+            - Host: 127.0.0.1
+              Port: 7051
+
+```
+
+## Mar05
+
+I tried structuring it on test/ but me dumdum
+laid some basic stuff :((
