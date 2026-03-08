@@ -1,39 +1,36 @@
-import { Link, useNavigate } from "react-router-dom";
-import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import { Link } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
+export function Login({setUser}: any) {
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
 
-export function Login() {
-
-    const auth = getAuth();
-    const navigate = useNavigate();
-
-    const [authorizing, setAuthorizing] = useState(false);
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const signInEmail = async () => {
-        setAuthorizing(true);
-        setError("");
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({...formData, [e.target.name]: e.target.value });
+    };
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then(response => {
-                console.log("Signed in with email and password:", response.user.uid);
-                navigate("/dashboard");
-            })
-            .catch((error) => {
-                setError(error.message || "Failed to log in");
-                console.error("Error signing in with email and password:", error);
-                setAuthorizing(false);
-            });
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        try {
+            const response = await axios.post("/api/v1/auth/login", formData);
+            localStorage.setItem("token", response.data.token);
+            setUser(response.data.user);
+        } catch (err) {
+            setError("Login failed. Please check your credentials and try again.");
+        }
     }
 
     return (
             <div className="text-3xl flex items-center justify-center h-screen bg-zinc-950">
                 <div className="flex flex-col items-center justify-center">
-                    <div className="bg-zinc-800 font-mono p-4 rounded shadow-md w-80" >
+                    <form className="bg-zinc-900 font-mono p-4 rounded shadow-md w-80" onSubmit={handleSubmit}>
                         <div className="flex items-center justify-center">
                             <h1 className="text-2xl font-bold mb-4 text-amber-400">Login</h1>
+                            {error && <p className="text-red-500">{error}</p>}
                         </div>
                         {error && (
                             <div className="p-4 w-full bg-zinc-700 rounded mb-4">
@@ -42,12 +39,12 @@ export function Login() {
                         )}
                         
                         <div>
-                            <input type="email" 
-                            placeholder="E-mail" 
+                            <input type="text" 
+                            placeholder="Username" 
                             className="text-lg mb-2 p-2 border border-gray-300 rounded text-gray-400 w-full" 
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            name="username"
+                            value={formData.username}
+                            onChange={handleInputChange}
                             required
                             />
                         </div>
@@ -57,8 +54,8 @@ export function Login() {
                             placeholder="Password" 
                             className="text-lg mb-2 p-2 border border-gray-300 rounded text-gray-400 w-full" 
                             name="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            value={formData.password}
+                            onChange={handleInputChange} 
                             required
                             />
                         </div>
@@ -66,8 +63,7 @@ export function Login() {
                         <div>
                             <button className="bg-amber-600 hover:bg-amber-700 text-white text-lg px-4 py-2 rounded w-full" 
                             name="loginButton"
-                            onClick={signInEmail}
-                            disabled={authorizing}
+                            type="submit"
                             >Login</button>
                         </div>
 
