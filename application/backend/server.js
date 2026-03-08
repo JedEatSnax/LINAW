@@ -28,8 +28,8 @@ const corsOptions = {
     origin: ["http://localhost:5173"]
 }
 app.use(cors(corsOptions))
+*/
 
-    
 app.use(express.json())
 app.use('/api', usersRouter);
 app.use('/api', networkRouter)
