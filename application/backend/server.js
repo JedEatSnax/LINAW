@@ -32,10 +32,6 @@ const corsOptions = {
 app.use(cors(corsOptions))
 */
 
-app.get("/api", (req, res) => {
-    res.json({ assets: ["vehicle", "real estate", "cash"] })
-})
-
 app.use(express.json())
 app.use('/api', usersRouter);
 app.use('/api', networkRouter)

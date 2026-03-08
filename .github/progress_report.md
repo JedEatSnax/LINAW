@@ -25,7 +25,9 @@ cd into root and run docker compose -d postgres
 
 to check whether the backend is connected you need the url for the database just mention me or message me for the .env file. 
 
-also for anyone testing it one must need the database folder sitting inside the application dir 
+also for anyone testing it one must need the database folder sitting inside the application dir.
+
+also I delete the unnecessary api endpoint in server.js
 
 
 
