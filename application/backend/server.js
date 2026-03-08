@@ -1,18 +1,28 @@
 const express = require("express");
+//const { initializeApp, applicationDefault } = require('firebase-admin/app')
+const { Sequelize } = require('sequelize')
 
-const path = require('path');
-require ('dotenv').config({
-  path: path.resolve(__dirname, '../../.env')
-})
-
-require('./db/knex');
 const app = express()
 const port = '3000'
 
-// Don't delete this. It's the import of the modules for the endpoints 
-const { router: usersRouter } = require('./routes/usersRoute');
+/*
+initializeApp({
+    credential: applicationDefault()
+});
+*/
+
+// Don't delete this. It's the import of the modules for the db and all
+const { router: usersRouter } = require('./routes/users.route');
 const { router: networkRouter } = require('./routes/network.route') 
 
+
+const sequelize = new Sequelize('postgres','linawAdmin@pgAdmin.com', 'linawAdmin',{
+    host: 'localhost',
+    port: 5432,
+    dialect: 'postgres'
+})
+
+/*
 const cors = require("cors")
 const corsOptions = {
     origin: ["http://localhost:5173"]
@@ -24,7 +34,15 @@ app.use(express.json())
 app.use('/api', usersRouter);
 app.use('/api', networkRouter)
 
-app.listen(port, () => {
-    console.log(`🚀 Express running on port ${port}`)
-})
+sequelize.authenticate()
+    .then(() => 
+        console.log('Connected to Postgres SQL (Docker)'),
+    
+    sequelize.sync()
+        .then(() => {
+            app.listen(port, () => {
+                console.log(`Express running on port ${port}`)
+            })
+        })
+)
 
