@@ -1,15 +1,14 @@
 import { Sidebar } from "../components/sidebar";
 import { Topbar } from "../components/topbar";
 
-export function Settings() {
+export function ChaincodeEvents() {
     return(
         <main>
             <Header />
             <Sidebar />
-            <h1>Settings</h1>
+            <h1>Chaincode Event</h1>
         </main>
     );
 }
 
-
-export default Settings
+export default ChaincodeEvents

@@ -1,15 +1,14 @@
 import { Sidebar } from "../components/sidebar";
+import { Homedash } from "../components/homedash";
 import { Topbar } from "../components/topbar";
 
-export function Settings() {
+export function Dashboard() {
     return(
         <main>
             <Header />
             <Sidebar />
-            <h1>Settings</h1>
         </main>
     );
 }
 
-
-export default Settings
+export default Dashboard
