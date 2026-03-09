@@ -1,6 +1,6 @@
-import { Sidebar } from "../components/sidebar";
+import { Sidebar } from "../components/hamburger";
 import { Homedash } from "../components/homedash";
-import { Topbar } from "../components/topbar";
+import { Topbar } from "../components/header";
 
 export function Dashboard() {
     return(
