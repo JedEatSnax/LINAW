@@ -21,7 +21,7 @@ I'll be pushing this progress_report.md but i'll try to not add it to every pr.
 
 so here to run the docker 
 
-cd into root and run docker compose -d postgres
+cd into root and run docker compose up -d postgres
 
 to check whether the backend is connected you need the url for the database just mention me or message me for the .env file. 
 
