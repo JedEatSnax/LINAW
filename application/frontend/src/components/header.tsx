@@ -1,13 +1,9 @@
 "use-client";
 
-export const Header = () => {
+export const Topbar = () => {
     return (
-        <div>
-            <header className="bg-gray-950 border-b border-gray-700 flex items-center p-4 h-16">
-                <h1 className="text-amber-500 font-bold font-ibm-mono tracking-widest px-2">
-                    LINAW FABRIC EXPLORER
-                </h1>
-            </header>
+        <div className="fixed top-0 left-0 right-0 h-12 bg-gray-900 border-b border-slate-700 flex items-center px-4 shadow z-10">
+            <span className="text-amber-500 font-bold text-lg">LINAW</span>
         </div>
     );
 }
