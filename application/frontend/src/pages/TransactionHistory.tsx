@@ -1,5 +1,5 @@
-import { Sidebar } from "../components/hamburger";
-import { Topbar } from "../components/header";
+import { Sidebar } from "../components/sidebar";
+import { Topbar } from "../components/topbar";
 
 export function TransactionHistory() {
     return(
