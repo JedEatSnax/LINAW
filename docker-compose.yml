@@ -4,8 +4,8 @@ services:
     image: postgres:16
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: linawAdmin@pgAdmin.com
-      POSTGRES_PASSWORD: linawAdmin
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - ./application/database:/var/lib/postgresql/data
     ports:
