@@ -24,16 +24,15 @@ const { router: networkRouter } = require('./routes/network.route')
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   host: 'localhost',
   port: 5432,
-  dialect: 'postgres',
-  logging: false  // Optional: quiet logs
+  dialect: 'postgres'  // Optional: quiet logs
 });
-/*
+
 const cors = require("cors")
 const corsOptions = {
     origin: ["http://localhost:5173"]
 }
 app.use(cors(corsOptions))
-*/
+
 
 app.use(express.json())
 app.use('/api', usersRouter);

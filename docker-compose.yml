@@ -3,7 +3,7 @@ services:
   postgres:
     image: postgres:16
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: linaw
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -13,13 +13,32 @@ services:
     networks:
       - postgres
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U linaw" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    depends_on:
+      - postgres
     restart: unless-stopped
 
 
 networks:
   postgres:
     driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
