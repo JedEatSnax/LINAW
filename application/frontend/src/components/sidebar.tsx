@@ -1,4 +1,5 @@
 "use-client";
+>>>>>>> 6883f9a (Made components do client-side rendering.)
 
         </div>
       </div>
