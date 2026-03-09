@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //const authenticate = require('../middleware/authenticate')
 const userService = require('../service/userService')
 class userController {
@@ -22,11 +23,23 @@ class userController {
         }catch (err){
             console.error('Signup controller error:', err)
             res.status(500).json({ message: 'Server error' });
+=======
+const userService = require('../service/userService')
+
+class userController {
+    async signup (req, res) {
+        try {
+            const user = await userService.signup(req.body)
+            res.status(201).json(user)
+        }catch (err){
+            console.error(err)
+>>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
         }
     }
 
     async login (req, res) {
         try {
+<<<<<<< HEAD
             
             const users = await userService.login({
                 ...req.body, 
@@ -47,6 +60,12 @@ class userController {
         } catch (err){
             console.error(err)
             return res.status(500).json({ message: 'Internal server error' })
+=======
+            const user = await userService.login(req.body)
+            res.status(201).json(user)
+        } catch (err){
+            console.error(err)
+>>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
         }
     }
 }

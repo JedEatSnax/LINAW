@@ -2,6 +2,7 @@
 node_modules/
 package-lock.json/
 application/database
+application/backend/db/knexfile.js
 .npm/
 .env*
 logs/
