@@ -22,32 +22,11 @@ function App() {
     console.log(response.data.assets)
   }
 
-  useEffect(() => {
-    fetchAPI()
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const response = await axios.get("/api/v1/auth/me", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUser(response.data);
-        } catch (err) {
-          console.error("Failed to fetch user:", err);
-          localStorage.removeItem("token");
-        }
-      }
-    };
-    fetchUser();
-  }, [])
-
   return(
     <BrowserRouter>
       <Routes>
         <Route path = "/" element={<Navigate to="/login"/>}/>
-        <Route path = "/login" element={<Login setUser={setUser}/>}/>
+        <Route path = "/login" element={<Login />}/>
         <Route path = "/register" element={<Register/>}/>
         <Route path = "/dashboard" element={<Dashboard/>}/>
         <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
