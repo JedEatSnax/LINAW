@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client";
 import logo from "../assets/react.svg"
 import { useEffect, useState } from 'react';
@@ -112,8 +113,11 @@ export default function Sidebar() {
       <div className='flex items-center gap-2 px-3 py-2'>
         <div><FaUserCircle size={30} /></div>
         <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
-          <p>Current User</p>
-          <span className='text-xs'>{userEmail}</span>
+          <p>sample</p>
+          <span className='text-xs'>sample@gmail.com</span>
+=======
+"use-client";
+>>>>>>> 6883f9a (Made components do client-side rendering.)
 
         </div>
       </div>
