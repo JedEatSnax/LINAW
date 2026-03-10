@@ -9,8 +9,11 @@ import { TransactionHistory } from "./pages/TransactionHistory"
 import { QueryLedger } from "./pages/QueryLedger"
 // import { useState, useEffect } from 'react'
 // import axios from "axios"
+// import { useState, useEffect } from 'react'
+// import axios from "axios"
 
 function App() {
+  /**
   /**
   const [array, setArray] = useState([])
 
@@ -25,21 +28,26 @@ function App() {
   }, [])
   **/
 
+  useEffect(() => {
+    fetchAPI()
+  }, [])
+  **/
+
   return(
     <div className="bg-gray-950">
-    <BrowserRouter>
-      <Routes>
-        <Route path = "/" element={<Navigate to="/login"/>}/>
-        <Route path = "/login" element={<Login />}/>
-        <Route path = "/register" element={<Register/>}/>
-        <Route path = "/dashboard" element={<Dashboard/>}/>
-        <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
-        <Route path = "/settings" element={<Settings/>}/>
-        <Route path = "/transaction-history" element={<TransactionHistory/>}/>
-        <Route path = "/query-ledger" element={<QueryLedger/>}/>
-        <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path = "/" element={<Navigate to="/login"/>}/>
+          <Route path = "/login" element={<Login/>}/>
+          <Route path = "/register" element={<Register/>}/>
+          <Route path = "/dashboard" element={<Dashboard/>}/>
+          <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
+          <Route path = "/settings" element={<Settings/>}/>
+          <Route path = "/transaction-history" element={<TransactionHistory/>}/>
+          <Route path = "/query-ledger" element={<QueryLedger/>}/>
+          <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
+        </Routes>
+      </BrowserRouter>
     </div>
   )
 }

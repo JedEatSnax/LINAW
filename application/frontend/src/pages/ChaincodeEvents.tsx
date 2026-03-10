@@ -1,5 +1,5 @@
-import { Sidebar } from "../components/sidebar";
-import { Topbar } from "../components/topbar";
+import Sidebar from "../components/sidebar";
+import { Header } from "../components/header";
 
 export function ChaincodeEvents() {
     return(
