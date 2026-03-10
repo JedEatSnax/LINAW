@@ -1,4 +1,4 @@
-import { Sidebar } from "../components/sidebar";
+import Sidebar from "../components/sidebar";
 import { Topbar } from "../components/topbar";
 
 export function SubmitTransaction() {
