@@ -1,6 +1,4 @@
-import { Sidebar } from "../components/sidebar";
-import { Homedash } from "../components/homedash";
-import { Topbar } from "../components/topbar";
+import Sidebar from "../components/sidebar";
 import { Header } from "../components/header";
 
 export function Dashboard() {
