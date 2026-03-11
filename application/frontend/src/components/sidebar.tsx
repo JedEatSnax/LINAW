@@ -10,6 +10,8 @@ import { TbReportSearch } from "react-icons/tb";
 import { IoLogoBuffer } from "react-icons/io";
 import { IoIosSettings } from "react-icons/io";
 import { FaHistory } from "react-icons/fa";
+
+
 const menuItems = [
   {
     icons: <IoHomeOutline size={25} />,
@@ -43,6 +45,7 @@ const menuItems = [
   }
 ]
 
+
 export default function Sidebar() {
 
   const [open, setOpen] = useState(true)
@@ -66,8 +69,10 @@ export default function Sidebar() {
                 <NavLink
                   to={item.to}
                   className={({ isActive }) =>
-                    `px-3 py-2 my-2 rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group ${
-                      isActive ? 'bg-amber-700/20 text-amber-500' : 'hover:bg-slate-900'
+                    `relative group flex items-center gap-4 py-2 pl-4 pr-4 my-2 -mr-2 duration-300 cursor-pointer ${
+                      isActive
+                        ? 'bg-amber-700/20 text-amber-500 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-amber-500'
+                        : 'hover:bg-slate-900'
                     }`
                   }
                 >
