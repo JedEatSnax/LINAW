@@ -1,10 +1,10 @@
 import Sidebar from "../components/sidebar";
-import { Topbar } from "../components/topbar";
+import { Header } from "../components/header";
 
 export function Settings() {
     return(
         <main>
-            <Topbar />
+            <Header />
             <Sidebar />
             <h1>Settings</h1>
         </main>

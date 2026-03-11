@@ -1,10 +1,10 @@
 import Sidebar from "../components/sidebar";
-import { Topbar } from "../components/topbar";
+import { Header } from "../components/header";
 
 export function SubmitTransaction() {
     return(
         <main>
-            <Topbar />
+            <Header />
             <Sidebar />
             <h1>Submit Transaction</h1>
         </main>
