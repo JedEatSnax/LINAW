@@ -55,7 +55,7 @@ export function Register() {
                         <div>
                             <input type="email" 
                             placeholder="Email" 
-                            className="text-lg mb-2 p-2 border border-gray-300 text-gray-400 rounded w-full font-ibm-sans" 
+                            className="text-lg mb-3 p-2 border border-gray-300 text-gray-400 rounded w-full font-ibm-sans" 
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -82,7 +82,7 @@ export function Register() {
                             />
                         </div>
 
-                        <div className="mb-2 flex items-center justify-center">
+                        <div className="mb-3 flex items-center justify-center">
                             <button className="bg-amber-600 hover:bg-amber-700 text-gray-100 text-lg px-4 py-2 mb-3 rounded w-full font-ibm-mono tracking-wider" 
                             name="registerButton"
                             onClick={registerUser}>Register</button>
