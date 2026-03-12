@@ -4,7 +4,17 @@ class userController {
     async signup (req, res) {
         try {
             const user = await userService.signup(req.body)
-            res.status(201).json(user)
+            if (!user) {
+                return res.status(400).json({
+                    message: 'Signup failed',
+                })
+            }
+
+            return res.status (201).json({
+                id: user.id,
+                username: user.username,
+                message: 'Signup successful',
+            })
         }catch (err){
             console.error(err)
         }
@@ -20,7 +30,7 @@ class userController {
                 })
             }
 
-            return res.status(200).json({
+            return res.status(202).json({
                 email: user.email,
                 message: 'Login successful',
                 loggedIn: true,
