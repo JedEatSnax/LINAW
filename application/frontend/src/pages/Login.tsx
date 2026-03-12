@@ -33,7 +33,7 @@ export function Login() {
                 <div className="flex flex-col items-center justify-center">
                     <div className="bg-zinc-800 font-mono p-4 rounded shadow-md w-90" >
                         <div className="flex items-center justify-center">
-                            <h1 className="tracking-wider text-2xl font-ibm-mono font-bold mb-5 text-amber-400">Login to LINAW</h1>
+                            <h1 className="text-2xl font-bold mb-4 text-amber-400">Login</h1>
                         </div>
                         {error && (
                             <div className="p-4 w-full bg-zinc-700 rounded mb-4">

@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import axios from "axios"
 import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
 import { Dashboard } from "./pages/Dashboard"
@@ -9,11 +7,11 @@ import { ChaincodeEvents } from "./pages/ChaincodeEvents"
 import { SubmitTransaction } from "./pages/SubmitTransaction"
 import { TransactionHistory } from "./pages/TransactionHistory"
 import { QueryLedger } from "./pages/QueryLedger"
-
+// import { useState, useEffect } from 'react'
+// import axios from "axios"
 
 function App() {
-  const [user, setUser] = useState(null)
-  const [error, setError] = useState("")
+  /**
   const [array, setArray] = useState([])
 
   const fetchAPI = async () => {
@@ -21,6 +19,11 @@ function App() {
     setArray(response.data.fruits)
     console.log(response.data.assets)
   }
+
+  useEffect(() => {
+    fetchAPI()
+  }, [])
+  **/
 
   return(
     <BrowserRouter>
