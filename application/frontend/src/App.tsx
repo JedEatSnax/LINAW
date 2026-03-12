@@ -12,6 +12,8 @@ import { QueryLedger } from "./pages/QueryLedger"
 
 
 function App() {
+  const [user, setUser] = useState(null)
+  const [error, setError] = useState("")
   const [array, setArray] = useState([])
 
   const fetchAPI = async () => {
@@ -20,15 +22,11 @@ function App() {
     console.log(response.data.assets)
   }
 
-  useEffect(() => {
-    fetchAPI()
-  }, [])
-
   return(
     <BrowserRouter>
       <Routes>
         <Route path = "/" element={<Navigate to="/login"/>}/>
-        <Route path = "/login" element={<Login/>}/>
+        <Route path = "/login" element={<Login />}/>
         <Route path = "/register" element={<Register/>}/>
         <Route path = "/dashboard" element={<Dashboard/>}/>
         <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
