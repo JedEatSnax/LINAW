@@ -26,6 +26,7 @@ function App() {
   **/
 
   return(
+    <div className="bg-gray-950">
     <BrowserRouter>
       <Routes>
         <Route path = "/" element={<Navigate to="/login"/>}/>
@@ -39,6 +40,7 @@ function App() {
         <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
       </Routes>
     </BrowserRouter>
+    </div>
   )
 }
 
