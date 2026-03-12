@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import axios from "axios"
 import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
 import { Dashboard } from "./pages/Dashboard"
@@ -9,9 +7,11 @@ import { ChaincodeEvents } from "./pages/ChaincodeEvents"
 import { SubmitTransaction } from "./pages/SubmitTransaction"
 import { TransactionHistory } from "./pages/TransactionHistory"
 import { QueryLedger } from "./pages/QueryLedger"
-
+// import { useState, useEffect } from 'react'
+// import axios from "axios"
 
 function App() {
+  /**
   const [array, setArray] = useState([])
 
   const fetchAPI = async () => {
@@ -23,21 +23,24 @@ function App() {
   useEffect(() => {
     fetchAPI()
   }, [])
+  **/
 
   return(
-    <BrowserRouter>
-      <Routes>
-        <Route path = "/" element={<Navigate to="/login"/>}/>
-        <Route path = "/login" element={<Login/>}/>
-        <Route path = "/register" element={<Register/>}/>
-        <Route path = "/dashboard" element={<Dashboard/>}/>
-        <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
-        <Route path = "/settings" element={<Settings/>}/>
-        <Route path = "/transaction-history" element={<TransactionHistory/>}/>
-        <Route path = "/query-ledger" element={<QueryLedger/>}/>
-        <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
-      </Routes>
-    </BrowserRouter>
+    <div className="bg-gray-950">
+      <BrowserRouter>
+        <Routes>
+          <Route path = "/" element={<Navigate to="/login"/>}/>
+          <Route path = "/login" element={<Login/>}/>
+          <Route path = "/register" element={<Register/>}/>
+          <Route path = "/dashboard" element={<Dashboard/>}/>
+          <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
+          <Route path = "/settings" element={<Settings/>}/>
+          <Route path = "/transaction-history" element={<TransactionHistory/>}/>
+          <Route path = "/query-ledger" element={<QueryLedger/>}/>
+          <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
+        </Routes>
+      </BrowserRouter>
+    </div>
   )
 }
 
