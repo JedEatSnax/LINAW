@@ -1,0 +1,30 @@
+version: '1.0'
+services:
+  peer0:
+    image: hyperledger/fabric-peer:2.5
+    container_name: peer0-${NETWORK_ID}
+    environment:
+      - CORE_PEER_ID=peer0.org1.example.com
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp/peer
+      - CORE_PEER_TLS_ENABLED=false
+    volumes:
+      - ./organizations:/etc/hyperledger
+    ports:
+      - "7051:7051"
+    networks:
+      - fabric-net
+
+  orderer:
+    image: hyperledger/fabric-orderer:2.5
+    container_name: orderer-${NETWORK_ID}
+    environment:
+      - ORDERER_GENERAL_GENESISMETHOD=file
+    volumes:
+      - ./organizations:/etc/hyperledger
+    ports:
+      - "7050:7050"
+    networks:
+      - fabric-net
+
+networks:
+  fabric-net:
