@@ -1,9 +1,15 @@
+const auth = require('../middleware/auth')
 const userService = require('../service/userService')
-
 class userController {
     async signup (req, res) {
         try {
-            const user = await userService.signup(req.body)
+            await auth.decodeToken(req, res, () => {})
+
+            const user = await userService.signup({
+                ...req.body,
+                firebaseUID: req.user.firebaseUID
+            });
+
             if (!user) {
                 return res.status(400).json({
                     message: 'Signup failed',
@@ -16,13 +22,18 @@ class userController {
                 message: 'Signup successful',
             })
         }catch (err){
-            console.error(err)
+            res.status(500).json({ message: 'Server error' });
         }
     }
 
     async login (req, res) {
         try {
-            const user = await userService.login(req.body)
+            await auth.decodeToken(req,res, () => {})
+            
+            const user = await userService.login({
+                ...req.body, 
+                firebaseUID: req.user.firebaseUID
+            })
             if (!user) {
                 return res.status(401).json({
                     message: 'Invalid email or firebaseUID',
