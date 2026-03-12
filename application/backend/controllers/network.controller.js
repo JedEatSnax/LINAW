@@ -6,7 +6,11 @@ exports.createNetwork = async (req, res, next) => {
     try {
       const network = await networkManager.createNetwork(
         req.body.network_name, 
-        req.body.org_name
+        req.body.org_name,
+        req.body.admin,
+        req.body.adminpw,
+        req.body.localhost,
+        req.body.caname
       );
         res.status(200).json(network)
     }catch (error){
