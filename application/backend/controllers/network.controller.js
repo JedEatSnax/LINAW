@@ -1,7 +1,5 @@
 const networkManager = require('../services/networkManager');
 
-// for now network creation with only network name and org.
-// will implement channel config, MSP, chaincode, and more later.
 exports.createNetwork = async (req, res, next) => {
     try {
       const network = await networkManager.createNetwork(
