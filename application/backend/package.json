@@ -4,14 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-<<<<<<< HEAD
-    "migrate": "npx knex migrate:latest --knexfile db/knexfile.js",
-    "undo-migrate": "npx knex migrate:rollback --knexfile db/knexfile.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-=======
     "build": "echo \"No backend build step configured\"",
     "test": "echo \"No backend tests configured\"",
->>>>>>> ce93f2d (fix 4th revision on workflow backend page routing)
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
