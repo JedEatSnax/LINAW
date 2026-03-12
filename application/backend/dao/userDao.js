@@ -20,14 +20,20 @@ class userDao {
     }
 
     async login (loginData) {
-        const { email, firebaseUID } = loginData
-
-        const user = await db('users')
-            .where({ email, firebaseUID })
-            .select('id', 'email', 'username')
-            .first()
-
-        return user || null
+        try {
+            const { email, firebaseUID } = loginData
+    
+            const user = await db('users')
+                .where({ firebaseUID }) 
+                .orWhere('email', email)
+                .select('id', 'email')
+                .first()
+    
+            return user ? user.email : null;
+        } catch (err) {
+            console.error('DAO login error:', err);
+            throw err;
+        }
     }
 
     // async findUserByEmail(email) {
