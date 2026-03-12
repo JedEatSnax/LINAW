@@ -19,7 +19,7 @@ class userController {
             return res.status (201).json({
                 id: user.id,
                 username: user.username,
-                message: 'Signup successful',
+                message: 'Signup successful'
             })
         }catch (err){
             res.status(500).json({ message: 'Server error' });
