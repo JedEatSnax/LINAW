@@ -30,6 +30,7 @@ function App() {
 
   return(
     <div className="bg-gray-950">
+<<<<<<< HEAD
       <BrowserRouter>
         <Routes>
           <Route path = "/" element={<Navigate to="/login"/>}/>
@@ -44,6 +45,21 @@ function App() {
           <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPass/></AuthRouteReversed>}/>
         </Routes>
       </BrowserRouter>
+=======
+    <BrowserRouter>
+      <Routes>
+        <Route path = "/" element={<Navigate to="/login"/>}/>
+        <Route path = "/login" element={<Login />}/>
+        <Route path = "/register" element={<Register/>}/>
+        <Route path = "/dashboard" element={<Dashboard/>}/>
+        <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
+        <Route path = "/settings" element={<Settings/>}/>
+        <Route path = "/transaction-history" element={<TransactionHistory/>}/>
+        <Route path = "/query-ledger" element={<QueryLedger/>}/>
+        <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
+      </Routes>
+    </BrowserRouter>
+>>>>>>> b352719 (Fixed the whiteband)
     </div>
   )
 }
