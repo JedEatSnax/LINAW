@@ -1,5 +1,5 @@
 const express = require("express");
-//const { initializeApp, applicationDefault } = require('firebase-admin/app')
+
 const path = require('path');
 require ('dotenv').config({
   path: path.resolve(__dirname, '../../.env')
@@ -8,12 +8,6 @@ require ('dotenv').config({
 require('./db/knex');
 const app = express()
 const port = '3000'
-
-/*
-initializeApp({
-    credential: applicationDefault()
-});
-*/
 
 // Don't delete this. It's the import of the modules for the endpoints 
 const { router: usersRouter } = require('./routes/usersRoute');
