@@ -30,22 +30,6 @@ function App() {
 
   return(
     <div className="bg-gray-950">
-<<<<<<< HEAD
-      <BrowserRouter>
-        <Routes>
-          <Route path = "/" element={<Navigate to="/login"/>}/>
-          <Route path = "/login" element={<AuthRouteReversed><Login/></AuthRouteReversed>}/>
-          <Route path = "/register" element={<AuthRouteReversed><Register/></AuthRouteReversed>}/>
-          <Route path = "/dashboard" element={<AuthRoute><Dashboard/></AuthRoute>}/>
-          <Route path = "/chaincode-events" element={<AuthRoute><ChaincodeEvents/></AuthRoute>}/>
-          <Route path = "/settings" element={<AuthRoute><Settings/></AuthRoute>}/>
-          <Route path = "/transaction-history" element={<AuthRoute><TransactionHistory/></AuthRoute>}/>
-          <Route path = "/query-ledger" element={<AuthRoute><QueryLedger/></AuthRoute>}/>
-          <Route path = "/submit-transaction" element={<AuthRoute><SubmitTransaction/></AuthRoute>}/>
-          <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPass/></AuthRouteReversed>}/>
-        </Routes>
-      </BrowserRouter>
-=======
     <BrowserRouter>
       <Routes>
         <Route path = "/" element={<Navigate to="/login"/>}/>
@@ -59,7 +43,6 @@ function App() {
         <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
       </Routes>
     </BrowserRouter>
->>>>>>> b352719 (Fixed the whiteband)
     </div>
   )
 }
