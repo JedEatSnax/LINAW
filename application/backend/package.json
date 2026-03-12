@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/JedEatSnax/LINAW#readme",
   "dependencies": {
+    "@grpc/grpc-js": "^1.14.3",
     "@hyperledger/fabric-gateway": "^1.10.1",
     "cors": "^2.8.6",
     "date-fns": "^4.1.0",
