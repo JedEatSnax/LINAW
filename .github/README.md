@@ -1,2 +1,2 @@
 # Ledger for Integrity, Neutrality, and Accountability on the Web
-Blockchain Initiative LINAW is the thesis of computer science student-researchers from STI College Pasay-EDSA. Learn more about us in the [AUTHORS](AUTHORS.md) file. If you want to contribute to LINAW, check out the [CONTRIBUTING](CONTRIBUTING.md) first before making a pull request.
+Blockchain Initiative LINAW is the thesis of computer science student-researchers from STI College Pasay-EDSA. Learn more about us in the [AUTHORS](.github/AUTHORS.md) file. If you want to contribute to LINAW, check out the [CONTRIBUTING](.github/CONTRIBUTING.md) first before making a pull request.
