@@ -1,5 +1,6 @@
-import Sidebar from "../components/sidebar";
 import { Header } from "../components/header";
+import Sidebar from "../components/sidebar";
+
 export function QueryLedger() {
     return(
         <main>
