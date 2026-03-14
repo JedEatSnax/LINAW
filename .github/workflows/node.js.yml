@@ -63,7 +63,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-          cache-dependency-path: application/backend/package-lock.json
+          cache-dependency-path: application/backend/routes/package-lock.json
 
       - name: Backend Install
         run: npm ci
