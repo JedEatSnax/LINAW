@@ -67,12 +67,12 @@ jobs:
 
       - name: Backend Install
         run: npm ci
-        working-directory: application/backend
+        working-directory: application/backend/routes
 
       - name: Backend Build
         run: npm run build --if-present
-        working-directory: application/backend
+        working-directory: application/backend/routes
 
       - name: Backend Test
         run: npm test --if-present
-        working-directory: application/backend
+        working-directory: application/backend/routes
