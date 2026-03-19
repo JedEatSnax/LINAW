@@ -3,11 +3,11 @@ const db = require('../db/db')
 class userDao {
     async signup (userData) {
         try {
-            const { email, firebaseUID } = userData;
-            const [user] = await db('users')
+            const { email, firebase_uid } = userData;
+            const [user] = await db('user')
             .insert ({
                 email,
-                firebaseUID: firebaseUID,
+                firebase_uid: firebase_uid,
             })
             .returning (['id', 'username']);
             console.log('Inserted user row:', user);
@@ -21,10 +21,10 @@ class userDao {
 
     async login (loginData) {
         try {
-            const { email, firebaseUID } = loginData
+            const { email, firebase_uid } = loginData
     
-            const user = await db('users')
-                .where({ firebaseUID }) 
+            const user = await db('user')
+                .where({ firebase_uid }) 
                 .orWhere('email', email)
                 .select('id', 'email')
                 .first()
@@ -36,13 +36,13 @@ class userDao {
         }
     }
 
-    // async findUserByEmail(email) {
-    //     const user = await knex('users')
-    //         .where ({ email })
-    //         .select('id', 'email', 'username')
-    //         .first();
-    //     return user || null;
-    // }
+    async findByFirebaseUid(firebase_uid) {
+        const user = await knex('users')
+            .where ({ firebase_uid })
+            .select('firebase_uid')
+            .first();
+        return user || null;
+    }
 
 
 }

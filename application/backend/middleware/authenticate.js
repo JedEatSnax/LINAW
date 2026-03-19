@@ -1,6 +1,6 @@
 const admin = require('../config/firebase-config')
 
-class auth {
+class authenticate {
     async decodeToken (req,res,next){
         const authHeader = req.headers.authorization
         if (!authHeader || !authHeader.startsWith('bearer ')){
@@ -9,12 +9,11 @@ class auth {
             })
         }
 
-
         const token = authHeader.split(' ')[1];
 
         try {
             const decodedValue = await admin.auth().verifyIdToken(token);
-            console.log("Decoded token: ", decodedValue.firebaseUID, decodedValue.email)
+            console.log("Decoded token: ", decodedValue.firebase_uid, decodedValue.email)
             req.user = decodedValue
             next()
 
@@ -26,4 +25,4 @@ class auth {
     }
 }
 
-module.exports = new auth();
+module.exports = new authenticate();
