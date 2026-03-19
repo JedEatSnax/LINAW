@@ -1,16 +1,14 @@
-const auth = require('../middleware/auth')
+const auth = require('../middleware/authenticate')
 const networkService = require('../service/networkService')
 
 class networkController {
-    async network(req, res, next) {
+    async networkCreation(req, res, next) {
         try {
-            await auth.decodeToken(req, res, () => { })
+            await authenticate.decodeToken(req, res, () => { })
 
-            const network = await networkService.network({
+            const network = await networkService.networkCreation({
                 ...req.body,
-                networkname: req.network.networkName,
-                organisationName: req.network.organizationName
-
+                name: req.network.Name,
             })
 
             if (!network) {
@@ -21,13 +19,51 @@ class networkController {
 
             return res.status (201).json({
                 network: network,
-                organizationName: organisationName,
-                message: 'Network creation successful'
+                message: 'Network created successfully'
             })
         } catch (error) {
             res.status(500).json({ message: 'Server error'})
         }
     }
+
+    async networkMember (req, res) {
+        try {
+            
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async organization (req, res){
+        try {
+            await authenticate.decodeToken(req, res, () => {})
+
+            const organization = await networkService.organizationCreation({
+                ...req.body,
+                name: req.organization.Name
+            })
+
+            if (!organization) {
+                return res.status(400).json({
+                    message: 'Organization creation failed'
+                })
+            }
+
+            return res.status(201).json({
+                organization: organization,
+                message: 'Organization created successfully'
+            })
+
+        } catch (error) {
+            res.status(500).json({message: 'Server error'})
+        }
+    }
+
+    async node (req, res) {
+
+    }
+ 
 }
 
 module.exports = new networkController()
