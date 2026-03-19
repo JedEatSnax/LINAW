@@ -16,3 +16,6 @@
 - Make sure only registered users can only access pages like /dashboard
 - Make error messages tell you what you did wrong
 - Make cards for dashboard
+- Forgot password page
+- Update Login and Register page design (Design inspired by Coolify)
+    - Forgot password page will be using new design (As well as testbed for new design)

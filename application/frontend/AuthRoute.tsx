@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Makes sure unauthenticated users cannot access pages that require authentication.
 import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
@@ -37,3 +38,6 @@ const AuthRoute: React.FunctionComponent<IAuthRouteProps> = (props) => {
 }
 
 export default AuthRoute
+=======
+// Makes pages like Dashboard to be accessible for authenticated users only
+>>>>>>> f61f337 (Created Forgot Password page)

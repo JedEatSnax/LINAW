@@ -8,8 +8,11 @@ import { SubmitTransaction } from "./pages/SubmitTransaction"
 import { TransactionHistory } from "./pages/TransactionHistory"
 import { QueryLedger } from "./pages/QueryLedger"
 import { ForgotPass } from "./pages/ForgotPass"
+<<<<<<< HEAD
 import AuthRoute from "../AuthRoute"
 import AuthRouteReversed from "../AuthRouteReversed"
+=======
+>>>>>>> f61f337 (Created Forgot Password page)
 // import { useState, useEffect } from 'react'
 // import axios from "axios"
 // import { useState, useEffect } from 'react'
@@ -49,6 +52,7 @@ function App() {
           <Route path = "/transaction-history" element={<TransactionHistory/>}/>
           <Route path = "/query-ledger" element={<QueryLedger/>}/>
           <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
+          <Route path = "/forgot-password" element={<ForgotPass/>}/>
         </Routes>
       </BrowserRouter>
     </div>
