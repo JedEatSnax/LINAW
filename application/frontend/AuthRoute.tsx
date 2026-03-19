@@ -1,0 +1,1 @@
+// Makes pages like Dashboard to be accessible for authenticated users only
