@@ -29,22 +29,22 @@ export function Login() {
     }
 
     return (
-            <div className="text-3xl flex items-center justify-center h-screen bg-zinc-950">
+            <div className="flex items-center justify-center h-screen bg-zinc-950">
                 <div className="flex flex-col items-center justify-center">
-                    <div className="bg-zinc-800 font-mono p-4 rounded shadow-md w-90" >
+                    <div className="w-110" >
                         <div className="flex items-center justify-center">
-                            <h1 className="tracking-wider text-2xl font-ibm-mono font-bold mb-5 text-amber-400">Login to LINAW</h1>
+                            <h1 className="tracking-wider text-5xl font-ibm-mono font-bold mb-5 text-amber-400">LINAW</h1>
                         </div>
                         {error && (
-                            <div className="p-4 w-full bg-zinc-700 rounded mb-4">
+                            <div className="p-4 w-full bg-zinc-800 rounded mb-4">
                                 <p className="text-red-500 text-sm ml-2">{error}</p>
                             </div>
                         )}
                         
                         <div>
+                            <p className="text-amber-400 font-ibm-mono left-align">Email<span className="text-red-500">*</span></p>
                             <input type="email" 
-                            placeholder="E-mail" 
-                            className="text-lg mb-3 p-2 border border-gray-300 rounded text-gray-400 w-full font-ibm-sans" 
+                            className="text-lg mb-3 p-2 border border-gray-300 rounded text-gray-400 bg-zinc-900 w-full font-ibm-sans" 
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -53,9 +53,9 @@ export function Login() {
                         </div>
 
                         <div>
+                            <p className="text-amber-400 font-ibm-mono left-align">Password<span className="text-red-500">*</span></p>
                             <input type="password" 
-                            placeholder="Password" 
-                            className="text-lg mb-3 p-2 border border-gray-300 rounded text-gray-400 w-full font-ibm-sans" 
+                            className="text-lg mb-4 p-2 border border-gray-300 rounded text-gray-400 bg-zinc-900 w-full font-ibm-sans" 
                             name="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -64,7 +64,7 @@ export function Login() {
                         </div>
 
                         <div>
-                            <button className="bg-amber-600 hover:bg-amber-700 text-gray-100 text-lg px-4 py-2 rounded w-full font-ibm-mono tracking-wider" 
+                            <button className="bg-amber-600 hover:bg-amber-700 text-gray-100 text-lg px-4 py-2 mb-1 rounded w-full font-ibm-mono tracking-wider" 
                             name="loginButton"
                             onClick={signInEmail}
                             disabled={authorizing}
@@ -72,7 +72,8 @@ export function Login() {
                         </div>
 
                         <div className="flex flex-col items-center justify-center mt-2">
-                            <a href="#" className="text-amber-300 text-sm mb-1 font-ibm-sans hover:text-amber-500 transition-colors duration-200">Forgot password?</a> 
+                            <hr className="border-gray-300 w-full p-1"></hr>
+                            <Link to="/forgot-password" className="text-amber-300 text-sm mb-1 font-ibm-sans hover:text-amber-500 transition-colors duration-200">Forgot password?</Link>
                             <span className="text-gray-300 text-sm">Don't have an account?
                                 <Link to="/register" className="text-amber-300 text-sm font-ibm-sans hover:text-amber-500 transition-colors duration-200"> Register</Link> </span>
                         </div>
