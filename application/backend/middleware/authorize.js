@@ -1,1 +1,1 @@
-// this will be just an authorization middleware which will be used to check if the user is authorized to access the route or not
+// this will be just an authorization middleware which will be used to check if the users is authorized to access the route or not
