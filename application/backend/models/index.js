@@ -1,4 +1,4 @@
 module.exports = {
-  user: require('./user'),
+  users: require('./users'),
   network: require('./network')
 }
