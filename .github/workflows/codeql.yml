@@ -13,9 +13,9 @@ name: "CodeQL Advanced"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main, workflows/github-actions  ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main, workflows/github-actions  ]
   schedule:
     - cron: '16 5 * * 6'
 
