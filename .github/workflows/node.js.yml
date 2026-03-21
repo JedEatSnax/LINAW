@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-slim] 
+        os: [ubuntu-latest] 
         # Don't use Windows or Mac for CI to reduce costs
         # RHEL, openSUSE, and Debian aren't supported at GitHub Actions
         # Learn more about self-hosted runners at https://www.youtube.com/watch?v=aLHyPZO0Fy0
@@ -63,16 +63,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-          cache-dependency-path: application/backend/routes/package-lock.json
+          cache-dependency-path: application/backend/package-lock.json
 
       - name: Backend Install
         run: npm ci
-        working-directory: application/backend/routes
+        working-directory: application/backend
 
       - name: Backend Build
         run: npm run build --if-present
-        working-directory: application/backend/routes
+        working-directory: application/backend
 
       - name: Backend Test
         run: npm test --if-present
-        working-directory: application/backend/routes
+        working-directory: application/backend
