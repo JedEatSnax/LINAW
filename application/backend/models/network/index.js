@@ -1,6 +1,6 @@
 module.exports = {
-    networkCreationSchema: require('./networkCreationModel'),
-    networkMemberSchema: require('./networkMembers'),
-    organizationSchema: require('./organizationCreation.js'),
-    nodeSchema: require ('./nodeCreation.js')
+    networkCreationSchema: require('./networkCreation'),
+    networkMemberAdditionSchema: require('./networkMemberAddition'),
+    organizationSchema: require('./organizationCreation'),
+    nodeSchema: require ('./nodeCreation')
 }

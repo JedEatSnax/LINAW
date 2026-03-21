@@ -4,15 +4,15 @@ class userDao {
     async signup (userData) {
         try {
             const { email, firebase_uid } = userData;
-            const [user] = await db('user')
+            const [users] = await db('users')
             .insert ({
                 email,
                 firebase_uid: firebase_uid,
             })
             .returning (['id', 'username']);
-            console.log('Inserted user row:', user);
+            console.log('Inserted users row:', users);
 
-        return user;
+        return users;
         } catch (err) {
             if (err.code == "23505") throw Error("EMAIL_ALREADY_EXISTS")
             throw err
@@ -23,13 +23,13 @@ class userDao {
         try {
             const { email, firebase_uid } = loginData
     
-            const user = await db('user')
+            const users = await db('users')
                 .where({ firebase_uid }) 
                 .orWhere('email', email)
                 .select('id', 'email')
                 .first()
     
-            return user ? user.email : null;
+            return users ? users.email : null;
         } catch (err) {
             console.error('DAO login error:', err);
             throw err;
@@ -37,11 +37,11 @@ class userDao {
     }
 
     async findByFirebaseUid(firebase_uid) {
-        const user = await knex('users')
+        const users = await knex('users')
             .where ({ firebase_uid })
             .select('firebase_uid')
             .first();
-        return user || null;
+        return users || null;
     }
 
 

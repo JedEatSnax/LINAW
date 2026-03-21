@@ -1,14 +1,10 @@
-const auth = require('../middleware/authenticate')
 const networkService = require('../service/networkService')
 
 class networkController {
-    async networkCreation(req, res, next) {
+    async networkCreation(req, res) {
         try {
-            await authenticate.decodeToken(req, res, () => { })
-
-            const network = await networkService.networkCreation({
-                ...req.body,
-                name: req.network.Name,
+            const network = await networkService.networkCreation({ 
+                name: req.body.name
             })
 
             if (!network) {
@@ -18,30 +14,36 @@ class networkController {
             }
 
             return res.status (201).json({
-                network: network,
+                network,
                 message: 'Network created successfully'
             })
         } catch (error) {
+            console.error(error)
             res.status(500).json({ message: 'Server error'})
         }
     }
 
     async networkMember (req, res) {
         try {
-            
+            const networkMember = await networkService.networkMemberAddition({
+                name: req.body.name,
+                email: req.body.email,
+                role: req.body.role
+            })
             
         } catch (error) {
-            
+            console.error(error)
+            res.status(500).json({ message: 'Server error'})
         }
     }
 
-    async organization (req, res){
+    async organization (req, res){ 
         try {
-            await authenticate.decodeToken(req, res, () => {})
-
             const organization = await networkService.organizationCreation({
                 ...req.body,
-                name: req.organization.Name
+                name: req.organization.name,
+                network: req.organization.networkId,
+                firebase_uid: req.body.uid
             })
 
             if (!organization) {
@@ -56,13 +58,14 @@ class networkController {
             })
 
         } catch (error) {
+            console.error(error)
             res.status(500).json({message: 'Server error'})
         }
     }
 
-    async node (req, res) {
+    // async node (req, res) {
 
-    }
+    // }
  
 }
 

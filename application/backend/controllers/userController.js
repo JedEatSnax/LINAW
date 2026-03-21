@@ -1,40 +1,38 @@
-const auth = require('../middleware/authenticate')
+//const authenticate = require('../middleware/authenticate')
 const userService = require('../service/userService')
 class userController {
     async signup (req, res) {
         try {
-            await authenticate.decodeToken(req, res, () => {})
-
-            const user = await userService.signup({
+            const users = await userService.signup({
                 ...req.body,
-                firebase_uid: req.user.firebase_uid
+                firebase_uid: req.body.firebase_uid
             });
 
-            if (!user) {
+            if (!users) {
                 return res.status(400).json({
                     message: 'Signup failed',
                 })
             }
 
             return res.status (201).json({
-                id: user.id,
-                username: user.username,
+                id: users.id,
+                username: users.username,
                 message: 'Signup successful'
             })
         }catch (err){
+            console.error('Signup controller error:', err)
             res.status(500).json({ message: 'Server error' });
         }
     }
 
     async login (req, res) {
         try {
-            await authenticate.decodeToken(req,res, () => {})
             
-            const user = await userService.login({
+            const users = await userService.login({
                 ...req.body, 
-                firebase_uid: req.user.firebase_uid
+                firebase_uid: req.body.firebase_uid
             })
-            if (!user) {
+            if (!users) {
                 return res.status(401).json({
                     message: 'Invalid email or firebase_uid',
                     loggedIn: false,
@@ -42,7 +40,7 @@ class userController {
             }
 
             return res.status(202).json({
-                email: user.email,
+                email: users.email,
                 message: 'Login successful',
                 loggedIn: true,
             })

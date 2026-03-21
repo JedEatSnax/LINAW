@@ -14,8 +14,8 @@ class authenticate {
         try {
             const decodedValue = await admin.auth().verifyIdToken(token);
             console.log("Decoded token: ", decodedValue.firebase_uid, decodedValue.email)
-            req.user = decodedValue
-            next()
+            req.users = decodedValue
+            return next()
 
         } catch (error) {
             res.status(401).json({
