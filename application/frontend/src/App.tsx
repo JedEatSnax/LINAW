@@ -8,6 +8,8 @@ import { SubmitTransaction } from "./pages/SubmitTransaction"
 import { TransactionHistory } from "./pages/TransactionHistory"
 import { QueryLedger } from "./pages/QueryLedger"
 import { ForgotPass } from "./pages/ForgotPass"
+import AuthRoute from "../AuthRoute"
+import AuthRouteReversed from "../AuthRouteReversed"
 // import { useState, useEffect } from 'react'
 // import axios from "axios"
 
@@ -31,15 +33,15 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path = "/" element={<Navigate to="/login"/>}/>
-          <Route path = "/login" element={<Login/>}/>
-          <Route path = "/register" element={<Register/>}/>
-          <Route path = "/dashboard" element={<Dashboard/>}/>
-          <Route path = "/chaincode-events" element={<ChaincodeEvents/>}/>
-          <Route path = "/settings" element={<Settings/>}/>
-          <Route path = "/transaction-history" element={<TransactionHistory/>}/>
-          <Route path = "/query-ledger" element={<QueryLedger/>}/>
-          <Route path = "/submit-transaction" element={<SubmitTransaction/>}/>
-          <Route path = "/forgot-password" element={<ForgotPass/>}/>
+          <Route path = "/login" element={<AuthRouteReversed><Login/></AuthRouteReversed>}/>
+          <Route path = "/register" element={<AuthRouteReversed><Register/></AuthRouteReversed>}/>
+          <Route path = "/dashboard" element={<AuthRoute><Dashboard/></AuthRoute>}/>
+          <Route path = "/chaincode-events" element={<AuthRoute><ChaincodeEvents/></AuthRoute>}/>
+          <Route path = "/settings" element={<AuthRoute><Settings/></AuthRoute>}/>
+          <Route path = "/transaction-history" element={<AuthRoute><TransactionHistory/></AuthRoute>}/>
+          <Route path = "/query-ledger" element={<AuthRoute><QueryLedger/></AuthRoute>}/>
+          <Route path = "/submit-transaction" element={<AuthRoute><SubmitTransaction/></AuthRoute>}/>
+          <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPass/></AuthRouteReversed>}/>
         </Routes>
       </BrowserRouter>
     </div>
