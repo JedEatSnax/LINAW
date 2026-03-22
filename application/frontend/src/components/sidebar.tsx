@@ -1,7 +1,8 @@
 "use client";
 import logo from "../assets/react.svg"
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 import { MdMenuOpen } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
@@ -46,6 +47,22 @@ const menuItems = [
 export default function Sidebar() {
 
   const [open, setOpen] = useState(true)
+  const [userEmail, setUserEmail] = useState('Not signed in')
+  const navigate = useNavigate()
+  const auth = getAuth()
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserEmail(user?.email ?? 'Not signed in')
+    })
+
+    return () => unsubscribe()
+  }, [auth])
+
+  const handleLogout = async () => {
+    await signOut(auth)
+    navigate('/login', { replace: true })
+  }
 
   return (
     <nav className={`shadow-md h-screen p-2 flex flex-col duration-500 bg-gray-950 text-slate-400 ${open ? 'w-60' : 'w-16'} border-r border-gray-700`}>
@@ -90,8 +107,8 @@ export default function Sidebar() {
       <div className='flex items-center gap-2 px-3 py-2'>
         <div><FaUserCircle size={30} /></div>
         <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
-          <p>sample</p>
-          <span className='text-xs'>sample@gmail.com</span>
+          <p>Current User</p>
+          <span className='text-xs'>{userEmail}</span>
 
         </div>
       </div>
