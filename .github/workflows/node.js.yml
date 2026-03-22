@@ -3,19 +3,27 @@
 
 name: Node.js CI
 
+permissions:
+  contents: read
+  pull-requests: write
+  
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main, workflows/github-actions ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main, workflows/github-actions  ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  frontend:
+    name: Frontend (Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
+        os: [ubuntu-latest] 
+        # Don't use Windows or Mac for CI to reduce costs
+        # RHEL, openSUSE, and Debian aren't supported at GitHub Actions
+        # Learn more about self-hosted runners at https://www.youtube.com/watch?v=aLHyPZO0Fy0
         node-version: [20.x, 22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
@@ -27,9 +35,48 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: application/frontend/package-lock.json
-    - run: npm ci
+    - name: Frontend Install
+      run: npm ci
       working-directory: application/frontend
-    - run: npm run build
+    - name: Frontend Build
+      run: npm run build
       working-directory: application/frontend
-    - run: npm test --if-present
+    - name: Frontend Test
+      run: npm test --if-present
       working-directory: application/frontend
+  
+  backend:
+    name: Backend (Node ${{ matrix.node-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-slim] 
+        # Don't use Windows or Mac for CI to reduce costs
+        # RHEL, openSUSE, and Debian aren't supported at GitHub Actions
+        # Learn more about self-hosted runners at https://www.youtube.com/watch?v=aLHyPZO0Fy0
+        node-version: [20.x, 22.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: application/backend/package-lock.json
+
+      - name: Backend Install
+        run: npm ci
+        working-directory: application/backend
+
+      - name: Backend Build
+        run: npm run build --if-present
+        working-directory: application/backend
+
+      - name: Backend Test
+        run: npm test --if-present
+        working-directory: application/backend
