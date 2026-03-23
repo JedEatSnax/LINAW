@@ -113,7 +113,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div className='px-3 pb-2'>
+      <div className={`${open ? 'px-3 pb-2' : 'hidden'}`}>
         <button
           type='button'
           onClick={handleLogout}
