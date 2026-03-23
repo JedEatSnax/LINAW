@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
+import axios from "axios";
 
 export function Register() {
     const auth = getAuth();
@@ -26,6 +27,16 @@ export function Register() {
                 console.error("Error registering user:", error);
             });
     };
+
+    const postRegister = async (email: string, uid: string) => {
+        try {
+            await axios.post("/api/register", { email, uid });
+        } catch (error) {
+            console.error("Error posting register:", error);
+        }
+    };
+
+    postRegister(email, auth.currentUser?.uid ?? "");
 
     return (
             <div className="flex items-center justify-center h-screen bg-zinc-950">
