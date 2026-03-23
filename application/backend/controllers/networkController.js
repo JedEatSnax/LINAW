@@ -4,7 +4,8 @@ class networkController {
     async networkCreation(req, res) {
         try {
             const network = await networkService.networkCreation({ 
-                name: req.body.name
+                name: req.body.name,
+                created_by: req.body.created_by
             })
 
             if (!network) {
@@ -30,6 +31,17 @@ class networkController {
                 email: req.body.email,
                 role: req.body.role
             })
+
+            if (!networkMember) {
+                return res.status(400).json({
+                    message: 'Network member creation failed'
+                })
+            }
+
+            return res.status(201).json({
+                networkMember,
+                message: 'Network member created successfully'
+            })
             
         } catch (error) {
             console.error(error)
@@ -41,9 +53,9 @@ class networkController {
         try {
             const organization = await networkService.organizationCreation({
                 ...req.body,
-                name: req.organization.name,
-                network: req.organization.networkId,
-                firebase_uid: req.body.uid
+            name: req.body.name,
+            networkId: req.body.networkId,
+            firebase_uid: req.body.uid
             })
 
             if (!organization) {
