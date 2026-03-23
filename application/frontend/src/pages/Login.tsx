@@ -1,6 +1,6 @@
 "use client";
 import { Link, useNavigate } from "react-router-dom";
-import {getAuth, onAuthStateChanged, signInWithEmailAndPassword} from "firebase/auth";
+import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
 import { useState } from "react";
 import axios from "axios";
 
@@ -20,11 +20,35 @@ export function Login() {
 
         signInWithEmailAndPassword(auth, email, password)
             .then(response => {
+                if (auth.currentUser?.emailVerified === false) {
+                    setError("Email not verified. Please check your inbox for a verification email.");
+                    setAuthorizing(false);
+                    return;
+                }
                 console.log("Signed in with email and password:", response.user.uid);
                 navigate("/dashboard");
             })
             .catch((error) => {
-                setError(error.message || "Failed to log in");
+                switch (error.code) {
+                    case "auth/user-not-found":
+                        setError("No account found with this email.");
+                        break;
+                    case "auth/invalid-credential":
+                        setError("Invalid email or password.");
+                        break;
+                    case "auth/invalid-email":
+                        setError("Invalid email.");
+                        break;
+                    case "auth/invalid-password":
+                        setError("Invalid password.");
+                        break;
+                    case "auth/too-many-requests":
+                        setError("Too many attempts. Please try again later.");
+                        break;
+                    default:
+                        console.log("default");
+                        setError(error.message || "Failed to log in");
+                }
                 console.error("Error signing in with email and password:", error);
                 setAuthorizing(false);
             });
