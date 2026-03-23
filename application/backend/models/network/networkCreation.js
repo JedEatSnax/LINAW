@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 networkCreationSchema = joi.object ({
-    Name: joi.toString()
+    name: joi.string().trim().required()
 })
 
 module.exports = networkCreationSchema;
