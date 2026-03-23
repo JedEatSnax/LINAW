@@ -1,0 +1,25 @@
+name: 'Dependency Review'
+on:
+  push:
+  pull_request:
+  merge_group:
+
+permissions:
+  contents: read
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - name: 'Dependency Review (PR/Merge Group)'
+        if: github.event_name != 'push'
+        uses: actions/dependency-review-action@v4
+      - name: 'Dependency Review (Push)'
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        uses: actions/dependency-review-action@v4
+        with:
+          base-ref: ${{ github.event.before }}
+          head-ref: ${{ github.sha }}
+          fail-on-severity: moderate
