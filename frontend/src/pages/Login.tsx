@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import {getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import {getAuth, onAuthStateChanged, signInWithEmailAndPassword} from "firebase/auth";
 import { useState } from "react";
+import axios from "axios";
 
 export function Login() {
 
@@ -26,7 +27,17 @@ export function Login() {
                 console.error("Error signing in with email and password:", error);
                 setAuthorizing(false);
             });
-    }
+    };
+
+    const postLogin = async (email: string, uid: string) => {
+        try {
+            await axios.post("/api/login", { email, uid });
+        } catch (error) {
+            console.error("Error posting login:", error);
+        }
+    };
+
+    postLogin(email, auth.currentUser?.uid ?? "");
 
     return (
             <div className="flex items-center justify-center h-screen bg-zinc-950">
