@@ -9,9 +9,7 @@ permissions:
   
 on:
   push:
-    branches: [ main, workflows/github-actions ]
   pull_request:
-    branches: [ main, workflows/github-actions  ]
 
 jobs:
   frontend:
@@ -24,7 +22,7 @@ jobs:
         # Don't use Windows or Mac for CI to reduce costs
         # RHEL, openSUSE, and Debian aren't supported at GitHub Actions
         # Learn more about self-hosted runners at https://www.youtube.com/watch?v=aLHyPZO0Fy0
-        node-version: [20.x, 22.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -55,7 +53,7 @@ jobs:
         # Don't use Windows or Mac for CI to reduce costs
         # RHEL, openSUSE, and Debian aren't supported at GitHub Actions
         # Learn more about self-hosted runners at https://www.youtube.com/watch?v=aLHyPZO0Fy0
-        node-version: [20.x, 22.x]
+        node-version: [22.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
 
