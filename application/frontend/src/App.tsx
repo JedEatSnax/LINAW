@@ -31,11 +31,6 @@ function App() {
   }, [])
   **/
 
-  useEffect(() => {
-    fetchAPI()
-  }, [])
-  **/
-
   return(
     <div className="bg-gray-950">
       <BrowserRouter>
