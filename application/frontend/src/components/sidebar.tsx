@@ -64,6 +64,15 @@ export default function Sidebar() {
     navigate('/login', { replace: true })
   }
 
+  const handleProfileClick = () => {
+    if (!auth.currentUser) {
+      navigate('/login', { replace: true })
+      return
+    }
+
+    navigate('/settings')
+  }
+
   return (
     <nav className={`shadow-md h-screen p-2 flex flex-col duration-500 bg-gray-950 text-slate-400 ${open ? 'w-60' : 'w-16'} border-r border-gray-700`}>
 
@@ -105,11 +114,18 @@ export default function Sidebar() {
       </ul>
       {/* footer */}
       <div className='flex items-center gap-2 px-3 py-2'>
-        <div><FaUserCircle size={30} /></div>
+        <button
+          type='button'
+          onClick={handleProfileClick}
+          aria-label='Go to settings'
+          className='rounded text-slate-300 transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/70'
+        >
+          <FaUserCircle size={30} />
+        </button>
+
         <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
           <p>Current User</p>
-          <span className='text-xs'>{userEmail}</span>
-
+          <span className='text-xs font-ibm-sans'>{userEmail}</span>
         </div>
       </div>
 
