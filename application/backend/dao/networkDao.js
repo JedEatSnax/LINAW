@@ -22,10 +22,10 @@ class networkDao {
 
     async organizationCreation (organizationData){
         try {
-            const { organization_name, network_id, users_id } = organizationData;
+            const { name, network_id, users_id } = organizationData;
             const [ ornaization] = await db('organization')
             .insert({
-                organization_name,
+                name,
                 network_id,
                 users_id
             })

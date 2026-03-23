@@ -36,31 +36,30 @@ class NetworkService {
   async networkCreation({name}) {
     const validated = this.validate('networkCreationSchema', {name});
 
+    const users = await this.userDao.findByFirebaseUid(firebase_uid);
+    if (!users) throw new Error ('users not found');
+
     const payload = {
-      name: validated.name
+      name: validated.name,
     }
 
     return this.networkDao.networkCreation(payload);
   }
 
-  async networkMemberAddition({name, role}) {
-    const validated = this.validate('networkMemberAdditionSchema', {name, role});
-    
-    const users = await this.userDao.findByFirebaseUid(firebase_uid);
-    if (!users) throw new Error ('users not found')
-    
-      const payload = {
-        ...validated,
-        name: users.id,
-        network_id: networkID,
-        role 
-      };
+  async networkMemberAddition({name, email, role}) {
+    const validated = this.validate('networkMemberAdditionSchema', {name, email, role});
+
+    const payload = {
+      name: validated.name,
+      email: validated.email,
+      role: validated.role
+    };
 
     return this.networkDao.networkMemberAddition(payload);
   }
 
   async organizationCreation({name, networkId, firebase_uid}) {
-    const validated = this.validate('organization', { name, networkId, firebase_uid });
+    const validated = this.validate('organizationSchema', { name, networkId, firebase_uid });
 
     const users = await this.userDao.findByFirebaseUid(firebase_uid);
     if (!users) throw new Error ('users not found');
