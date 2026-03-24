@@ -15,7 +15,7 @@ const AuthRoute: React.FunctionComponent<IAuthRouteProps> = (props) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            if (user) {
+            if (user && user.emailVerified) {
                 setIsAuthenticated(true);
                 setLoading(false);
                 console.log('authorized');

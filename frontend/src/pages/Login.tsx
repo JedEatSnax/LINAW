@@ -20,8 +20,9 @@ export function Login() {
         signInWithEmailAndPassword(auth, email, password)
             .then(response => {
                 if (auth.currentUser?.emailVerified === false) {
-                    setError("Email not verified. Please check your inbox for a verification email.");
                     setAuthorizing(false);
+                    console.log("email not verified");
+                    setError("Email not verified. Please check your inbox for a verification email.");
                     return;
                 }
                 console.log("Signed in with email and password:", response.user.uid);

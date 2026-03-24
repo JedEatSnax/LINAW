@@ -11,12 +11,12 @@ const AuthRouteReversed: React.FunctionComponent<IAuthRouteReversedProps> = (pro
     const { children } = props;
     const auth = getAuth();
     const [loading, setLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isVerifiedAuthenticated, setIsVerifiedAuthenticated] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             console.log("already authenticated:", !!user);
-            setIsAuthenticated(!!user);
+            setIsVerifiedAuthenticated(!!user && user.emailVerified);
             setLoading(false);
         });
 
@@ -25,7 +25,7 @@ const AuthRouteReversed: React.FunctionComponent<IAuthRouteReversedProps> = (pro
 
     if (loading) return <p></p>;
 
-    if (isAuthenticated) return <Navigate to="/dashboard" replace />;
+    if (isVerifiedAuthenticated) return <Navigate to="/dashboard" replace />;
 
     return <>{children}</>;
 };
