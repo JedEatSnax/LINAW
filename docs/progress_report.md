@@ -55,3 +55,11 @@ for now the authorization will take a bit more time dynamic role fucks with me. 
 ### re-created db
 
 so yep i disabled for now the firebase auth. frontend is taking too long to integrate backend but it's okay, re-implementation is easy enough of me that i can do it in 5-15 mins depending on the scale but yeah I created network creation endpoint. btw the part of why there's a separate for organization creation umm when we create a user it doesn't have any organization so yep it needs to create an org first and I tested this it works imma check for further bugs tommorrow night and then i'll write the implementaion of hyperledger fabric. thanks btw for that repo that teaches that in code.
+
+### 03/25/26 progress
+
+so I made some progress. I implemented RBAC alongside with RuBAC, though rules will be done a bit more later than I wanted too. I also implement rate limiting. everything is protected just waiting for that frontend to backend integration. 
+
+also imma drop organizations table and network table for now since i kinda just did it without really talking to aaron our dev for hyperledger implementation. anyways i can always adjust and recreate it anyways. 
+
+i made sure i that the endpoints are now protected with firebase auth. The authorization is still not complete if you see the permissions. Still work in progress.
