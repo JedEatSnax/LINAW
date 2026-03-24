@@ -5,7 +5,12 @@ export function Dashboard() {
     return(
         <main>
             <Header />
-            <Sidebar />
+            <div className="flex">
+                <Sidebar />
+                <div className="flex-1 p-6">
+                    <h1 className="font-ibm-mono text-amber-400">Dashboard</h1>
+                </div>
+            </div>
         </main>
     );
 }
