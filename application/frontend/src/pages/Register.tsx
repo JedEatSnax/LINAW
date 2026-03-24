@@ -1,6 +1,6 @@
 "use client";
 import { Link, useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import { useState } from "react";
 import axios from "axios";
 
@@ -22,7 +22,16 @@ export function Register() {
             .then(response => {
                 console.log("User registered:", response.user);
                 postRegister(email, auth.currentUser?.uid ?? "");
-                navigate("/dashboard");
+                sendEmailVerification(auth.currentUser!)
+                    .then(() => {
+                        console.log("Verification email sent");
+                        alert("Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in. You are being redirected to the login page.");
+                    })
+                    .catch(error => {
+                        console.error("Error sending verification email:", error);
+                    });
+                signOut(auth);
+                navigate("/login");
             })
             .catch(error => {
                 setError("Failed to create account: " + error.message);
