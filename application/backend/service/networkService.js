@@ -41,6 +41,7 @@ class NetworkService {
 
     const payload = {
       name: validated.name,
+      created_by: validated.users_id
     }
 
     return this.networkDao.networkCreation(payload);
@@ -68,7 +69,7 @@ class NetworkService {
         ...validated,
         orgnization_name: organization_name,
         network_id: networkId,
-        created_by: users.id,
+        created_by: users_id,
         status: 'creating'
     };
 

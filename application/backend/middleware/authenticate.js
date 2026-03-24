@@ -3,7 +3,8 @@ const admin = require('../config/firebase-config')
 class authenticate {
     async decodeToken (req,res,next){
         const authHeader = req.headers.authorization
-        if (!authHeader || !authHeader.startsWith('bearer ')){
+
+        if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')){
             return res.status(401).json({
                 message: 'UNAUTHORIZED: No valid Bearer token'
             })
@@ -13,10 +14,11 @@ class authenticate {
 
         try {
             const decodedValue = await admin.auth().verifyIdToken(token);
-            console.log("Decoded token: ", decodedValue.firebase_uid, decodedValue.email)
-            req.users = decodedValue
-            return next()
 
+            console.log("Decoded token: ", decodedValue.uid, decodedValue.email)
+            
+            req.user = decodedValue
+            return next()
         } catch (error) {
             res.status(401).json({
                 message: 'UNAUTHORIZED: Invalid token'
