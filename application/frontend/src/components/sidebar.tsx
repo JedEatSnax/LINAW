@@ -74,7 +74,7 @@ export default function Sidebar() {
   }
 
   return (
-    <nav className={`shadow-md h-screen p-2 flex flex-col duration-500 bg-gray-950 text-slate-400 ${open ? 'w-60' : 'w-16'} border-r border-gray-700`}>
+    <nav className={`shadow-md h-screen p-2 flex flex-col duration-500 bg-zinc-950 text-slate-400 ${open ? 'w-60' : 'w-16'} border-r border-gray-700`}>
 
       {/* Header */}
       <div className=' px-3 py-2 h-20 flex justify-between items-center'>
