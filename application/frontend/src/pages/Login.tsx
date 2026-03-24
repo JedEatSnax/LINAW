@@ -26,6 +26,7 @@ export function Login() {
                     return;
                 }
                 console.log("Signed in with email and password:", response.user.uid);
+                postLogin(email, auth.currentUser?.uid ?? "");
                 navigate("/dashboard");
             })
             .catch((error) => {
@@ -54,15 +55,13 @@ export function Login() {
             });
     };
 
-    const postLogin = async (email: string, uid: string) => {
+    const postLogin = async (email: string, firebase_uid: string) => {
         try {
-            await axios.post("/api/login", { email, uid });
+            await axios.post("/api/login", { email, firebase_uid });
         } catch (error) {
             console.error("Error posting login:", error);
         }
     };
-
-    postLogin(email, auth.currentUser?.uid ?? "");
 
     return (
             <div className="flex items-center justify-center h-screen bg-zinc-950">
