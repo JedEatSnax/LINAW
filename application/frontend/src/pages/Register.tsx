@@ -21,6 +21,7 @@ export function Register() {
         createUserWithEmailAndPassword(auth, email, password)
             .then(response => {
                 console.log("User registered:", response.user);
+                postRegister(email, auth.currentUser?.uid ?? "");
                 navigate("/dashboard");
             })
             .catch(error => {
@@ -29,15 +30,13 @@ export function Register() {
             });
     };
 
-    const postRegister = async (email: string, uid: string) => {
+    const postRegister = async (email: string, firebase_uid: string) => {
         try {
-            await axios.post("/api/register", { email, uid });
+            await axios.post("/api/register", { email, firebase_uid });
         } catch (error) {
             console.error("Error posting register:", error);
         }
     };
-
-    postRegister(email, auth.currentUser?.uid ?? "");
 
     return (
             <div className="flex items-center justify-center h-screen bg-zinc-950">
