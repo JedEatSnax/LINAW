@@ -8,7 +8,6 @@
 - Make login and registration actually work
     - Study firebase implementation
 - Registration and Login to be made in accordance to new color scheme 
-<<<<<<< HEAD
 - Make sure only registered users can only access pages like /dashboard
 - Make error messages tell you what you did wrong
 - Forgot password page
@@ -26,19 +25,3 @@
 
 ## Todo
 - Make cards for dashboard
-=======
-
-## Semi-done
-- Improve sidebar component (Since JedEatSnax has already made the sidebar) 
-
-## Todo
-- Make sure only registered users can only access pages like /dashboard
-- Make error messages tell you what you did wrong
-- Make cards for dashboard
-<<<<<<< HEAD
->>>>>>> bf33bca (Making cards for dashboard)
-=======
-- Forgot password page
-- Update Login and Register page design (Design inspired by Coolify)
-    - Forgot password page will be using new design (As well as testbed for new design)
->>>>>>> 3be0b5a (Created Forgot Password page)
