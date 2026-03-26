@@ -1,7 +1,9 @@
 name: 'Dependency Review'
 on:
   push:
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
   merge_group:
 
 permissions:
