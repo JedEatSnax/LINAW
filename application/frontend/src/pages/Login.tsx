@@ -1,3 +1,4 @@
+"use client";
 import { Link, useNavigate } from "react-router-dom";
 import {getAuth, onAuthStateChanged, signInWithEmailAndPassword} from "firebase/auth";
 import { useState } from "react";

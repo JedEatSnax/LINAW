@@ -1,5 +1,6 @@
 import Sidebar from "../components/sidebar";
 import { Header } from "../components/header";
+import { uiClasses } from "../components/uiClasses";
 
 export function TransactionHistory() {
     return(
@@ -8,7 +9,10 @@ export function TransactionHistory() {
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar />
                 <div className="flex-1 p-6 overflow-y-auto">
-                    <h1 className="font-ibm-mono text-amber-400">Transaction History</h1>
+                    <div className={uiClasses.sectionTitle}>
+                        Transaction History
+                        <hr className="border-gray-700 mt-2"></hr>
+                    </div>
                 </div>
             </div>
         </main>
