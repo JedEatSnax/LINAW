@@ -1,3 +1,4 @@
+"use client";
 import {} from 'firebase/auth';
 import { Link } from 'react-router-dom';
 

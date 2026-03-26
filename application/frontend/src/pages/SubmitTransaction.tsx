@@ -1,3 +1,4 @@
+"use client";
 import { uiClasses } from "../components/uiClasses";
 import Sidebar from "../components/sidebar";
 import { Header } from "../components/header";
@@ -134,7 +135,7 @@ export function SubmitTransaction() {
                             <button
                                 type='button'
                                 onClick={handleCreate}
-                                className={uiClasses.primaryButton}
+                                className={uiClasses.primaryBlueButton}
                             >
                                 Create
                             </button>
@@ -156,7 +157,7 @@ export function SubmitTransaction() {
                             <button
                                 type='button'
                                 onClick={handleTransfer}
-                                className={uiClasses.primaryButton}
+                                className={uiClasses.primaryBlueButton}
                             >
                                 Transfer
                             </button>
@@ -182,7 +183,7 @@ export function SubmitTransaction() {
                             <button
                                 type='button'
                                 onClick={handleUpdate}
-                                className={uiClasses.primaryButton}
+                                className={uiClasses.primaryBlueButton}
                             >
                                 Update
                             </button>
@@ -204,7 +205,7 @@ export function SubmitTransaction() {
                             <button
                                 type='button'
                                 onClick={handleDelete}
-                                className={uiClasses.primaryDeleteButton}
+                                className={uiClasses.primaryRedButton}
                             >
                                 Delete
                             </button>

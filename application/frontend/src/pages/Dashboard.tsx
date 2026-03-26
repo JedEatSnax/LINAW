@@ -1,5 +1,8 @@
+"use client";
 import Sidebar from "../components/sidebar";
+import EditableSchemaTable from "../components/tableSchema";
 import { Header } from "../components/header";
+import { uiClasses } from "../components/uiClasses";
 
 export function Dashboard() {
     return(
@@ -8,7 +11,11 @@ export function Dashboard() {
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar />
                 <div className="flex-1 p-6 overflow-y-auto">
-                    <h1 className="font-ibm-mono text-amber-400">Dashboard</h1>
+                    <div className={uiClasses.sectionTitle}>
+                        Dashboard
+                        <hr className="border-gray-700 mt-2"></hr>
+                    </div>
+                    <EditableSchemaTable />
                 </div>
             </div>
         </main>

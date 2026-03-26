@@ -1,5 +1,6 @@
 import Sidebar from "../components/sidebar";
 import { Header } from "../components/header";
+import { uiClasses } from "../components/uiClasses";
 
 export function Settings() {
     return(
@@ -8,7 +9,10 @@ export function Settings() {
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar />
                 <div className="flex-1 p-6 overflow-y-auto">
-                    <h1 className="font-ibm-mono text-amber-400">Settings</h1>
+                    <div className={uiClasses.sectionTitle}>
+                        Settings
+                        <hr className="border-gray-700 mt-2"></hr>
+                    </div>
                 </div>
             </div>
         </main>
