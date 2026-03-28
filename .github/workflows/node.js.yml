@@ -32,16 +32,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: application/frontend/package-lock.json
+        cache-dependency-path: frontend/package-lock.json
     - name: Frontend Install
       run: npm ci
-      working-directory: application/frontend
+      working-directory: frontend
     - name: Frontend Build
       run: npm run build
-      working-directory: application/frontend
+      working-directory: frontend
     - name: Frontend Test
       run: npm test --if-present
-      working-directory: application/frontend
+      working-directory: frontend
   
   backend:
     name: Backend (Node ${{ matrix.node-version }})
@@ -65,16 +65,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-          cache-dependency-path: application/backend/package-lock.json
+          cache-dependency-path: backend/package-lock.json
 
       - name: Backend Install
         run: npm ci
-        working-directory: application/backend
+        working-directory: backend
 
       - name: Backend Build
         run: npm run build --if-present
-        working-directory: application/backend
+        working-directory: backend
 
       - name: Backend Test
         run: npm test --if-present
-        working-directory: application/backend
+        working-directory: backend
