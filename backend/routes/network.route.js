@@ -4,7 +4,7 @@ const networkController = require('../controllers/networkController')
 const authenticate = require ('../middleware/authenticate')
 const { strictLimiter, apiLimiter } = require('../middleware/rateLimiter')
 
-router.use(authenticate.decodeToken)
+router.use(apiLimiter, authenticate.decodeToken)
 
 router.post('/network', strictLimiter, networkController.networkCreation)
 router.post('/network/member', apiLimiter, networkController.networkMember)
