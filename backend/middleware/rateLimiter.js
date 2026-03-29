@@ -1,11 +1,11 @@
 const rateLimiter = require('express-rate-limit')
 
-const strictLimiter = ratelimiter({
+const strictLimiter = rateLimiter({
     windowMs: 15 * 60 * 1000,
     max: 5,
-    message: { message: 'too many request, try again later'},
+    message: { message: 'too many requests, try again later'},
     standardHeaders: true,
-    legacyHeader: false
+    legacyHeaders: false
 }) 
 
 const apiLimiter = rateLimiter({
