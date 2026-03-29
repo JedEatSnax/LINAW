@@ -35,6 +35,9 @@
     "pg": "^8.19.0",
     "sequelize": "^6.37.8"
   },
+  "overrides": {
+    "@tootallnate/once": "^3.0.1"
+  },
   "devDependencies": {
     "nodemon": "^3.1.14"
   }
