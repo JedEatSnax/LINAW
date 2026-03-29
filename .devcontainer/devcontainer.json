@@ -1,9 +1,9 @@
 {
-    "name": "LINAW Fabric Ubuntu (Prod-like)",
+    "name": "LINAW Production Blockchain Simulation",
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
-            "version": "20"
+            "version": "22"
         },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
     },
