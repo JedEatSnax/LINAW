@@ -1,0 +1,19 @@
+const express = require('express')
+const router = express.Router()
+const userController = require('../controllers/userController')
+const authenticate = require('../middleware/authenticate')
+const { strictLimiter, apiLimiter } = require('../middleware/rateLimiter')
+
+
+router.use(strictLimiter, authenticate.decodeToken)
+router.use(apiLimiter, authenticate.decodeToken)
+router.post('/signup', strictLimiter, userController.signup) // (create users)
+router.post('/login', strictLimiter, userController.login) // (create session/get firebaseUID token  )
+//const requireAuth = require('./requireAuth')
+// router.post('/logout', userController.logout) // (terminations of cookie sessions)
+// router.post('/users', userController.users) // (admin create user)
+// router.post('/tenants', userController.tenants)
+// router.get('/me', userController.me) // (get current user profile)
+// router.get('/users', userController.users) // 
+// router.get('/tenants', userController.tenants)
+module.exports = {router};
