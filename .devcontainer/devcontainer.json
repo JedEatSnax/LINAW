@@ -1,0 +1,32 @@
+{
+    "name": "LINAW Fabric Ubuntu (Prod-like)",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "20"
+        },
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "containerEnv": {
+        "WORKSPACE_FOLDER": "${containerWorkspaceFolder}",
+        "FABRIC_VERSION": "2.5.12",
+        "FABRIC_CA_VERSION": "1.5.15"
+    },
+    "postCreateCommand": "bash .devcontainer/postCreate.sh",
+    "forwardPorts": [3000, 7050, 7051, 7053, 7054],
+    "portsAttributes": {
+        "3000": { "label": "Node.js API" },
+        "7050": { "label": "Fabric Orderer" },
+        "7051": { "label": "Fabric Peer" },
+        "7053": { "label": "Peer Event Service" },
+        "7054": { "label": "Fabric CA" }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-docker",
+                "dbaeumer.vscode-eslint"
+            ]
+        }
+    }
+}
