@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import "tailwindcss";
+
+@theme {
+    --font-ibm-mono: "IBM Plex Mono", monospace;
+    --font-ibm-sans: "IBM Plex Sans", sans-serif;
+}
+
+
+/* 
+    Scrollbar styles 
+    https://tailwindcss.com/docs/colors
+*/
+
+/* width */
+::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: oklch(14.1% 0.005 285.823); /*zinc-950*/
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: oklch(37.2% 0.044 257.287); /*slate-700*/
+    border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: oklch(44.6% 0.043 257.281); /*slate-600*/
+}

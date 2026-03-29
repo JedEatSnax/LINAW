@@ -1,4 +1,4 @@
-# Documentation
+# Contributing
 This file will enlighten other developers how to contribute to the repository. After reading this, please go to the [Pull Reqest](PULL_REQUEST_TEMPLATE.md) files to learn how to properly add and merge changes into the **main** branch. Additionally, check out the [Issue Template](ISSUE_TEMPLATE.md) file to report any bugs or errors in the code. Lastly, if your case doesn't fit the templates, feel free to create your own.
 
 ## 0. Learn Shortcuts and Keybinds
