@@ -5,7 +5,7 @@
 
 // this part for up is saying that for migrating the new changes or latest changes
 exports.up = async function(knex) {
-<<<<<<< HEAD
+
     await knex.raw('CREATE EXTENSION IF NOT EXISTS "pgcrypto"')
 
     await knex.raw(`
@@ -71,11 +71,6 @@ exports.up = async function(knex) {
         FOR EACH ROW
         EXECUTE FUNCTION update_updated_at_column();
     `)
-=======
-   return knex.schema.alterTable('users', function(table) {
-    table.dropColumn('password');  // Or 'username', etc.
-  });
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
 };
 
 /**
@@ -84,7 +79,7 @@ exports.up = async function(knex) {
  */
 
 // down export is just rollbacks which is undo migration
-<<<<<<< HEAD
+
 exports.down = async function(knex) {
     await knex.raw('DROP TRIGGER IF EXISTS update_organization_updated_at ON organization');
     await knex.raw('DROP TRIGGER IF EXISTS update_network_updated_at ON network');
@@ -94,10 +89,5 @@ exports.down = async function(knex) {
     await knex.schema.dropTable('organization')
     await knex.schema.dropTable('network')
     await knex.schema.dropTable('users')
-=======
-exports.down = function(knex) {
-   return knex.schema.alterTable('users', function(table) {
-    table.dropColumn('password');  // Or 'username', etc.
-  });
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
+
 };

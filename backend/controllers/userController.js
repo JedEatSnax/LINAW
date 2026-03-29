@@ -1,4 +1,5 @@
 const userService = require('../service/userService')
+const auth = require('../middleware/authenticate')
 
 class userController {
     async signup (req, res) {

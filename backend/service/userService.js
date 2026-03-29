@@ -1,4 +1,3 @@
-
 class userService {
     constructor() {
         const { signupSchema, loginSchema } = require('../models/user')
