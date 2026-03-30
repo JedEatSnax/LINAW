@@ -1,2 +1,2 @@
-fabric-samples/
-*install-fabric.sh
+/fabric-samples/
+/install-fabric.sh
