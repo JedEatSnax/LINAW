@@ -9,7 +9,7 @@ const port = '3000'
 const { router: usersRouter } = require('./routes/usersRoute');
 const { router: fabricRouter } = require('./routes/fabric.route') 
 
-const cors = require("cors")
+const cors = require("cors") 
 const corsOptions = {
     origin: ["http://localhost:5173"]
 }
