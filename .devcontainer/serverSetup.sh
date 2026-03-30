@@ -13,6 +13,8 @@ function download_hashicorp_vault {
     https://apt.releases.hashicorp.com \
     $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" \
     | sudo tee /etc/apt/sources.list.d/hashicorp.list
+    sudo apt-get update
+    sudo apt-get install -y vault
 }
 
 function download_docker {
@@ -28,6 +30,26 @@ function download_docker {
 		Architectures: $(dpkg --print-architecture)
 		Signed-By: /etc/apt/keyrings/docker.asc
 	EOF
+
+    sudo apt-get update
+    sudo apt install -y \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin
+    
+    sudo usermod -aG docker $USER
+}
+
+function download_fabric {
+    local FABRIC_VERSION="${FABRIC_VERSION:-2.5.15}"
+    local CA_VERSION="${CA_VERSION:-1.5.17}"
+
+    curl -sSLO https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh
+    chmod +x install-fabric.sh
+    ./install-fabric.sh --fabric-version "$FABRIC_VERSION" --ca-version "$CA_VERSION" docker binary
+    docker pull hyperledger/fabric-nodeenv:2.5
 }
 
 # ================================
@@ -55,15 +77,28 @@ sudo apt-get install -y --no-install-recommends \
 
 
 # --------------------------------
-# 2. Install software packages
+# 2. Call functions
+# --------------------------------
+download_docker
+download_hashicorp_vault
+download_fabric
+#download_node
+
+
+# --------------------------------
+# 3. Install software packages
 # --------------------------------
 sudo apt-get install -y --no-install-recommends \
     unattended-upgrades \
     cryptsetup \
     fail2ban \
     ufw \
-    vault
+    lynis
 
+# --------------------------------
+# Update, upgrade, and clean
+# --------------------------------
+sudo timedatectl set-ntp true
 sudo dpkg-reconfigure --priority=low unattended-upgrades -y
 sudo apt-get update --fix-missing
 sudo apt-get full-upgrade -y
@@ -73,13 +108,14 @@ sudo apt-get autoremove -y
 
 sudo systemctl enable ufw vault docker
 sudo systemctl start ufw vault docker
-
-#
-# ADD INTRUSION DETECTION AND PREVENTION SYSTEMS SOON !!!
-#
+sudo systemctl status ufw vault docker
 
 
-
-#
-# INSTALL 
-#
+# ================================
+# CONSIDERATIONS
+# Good to have but not priority
+# ================================
+# 1. Intrusion prevention system
+# 2. Intrusion detection system
+# 3. Only specific user has access to Docker for safety
+# 4. Limit root user access for safety
