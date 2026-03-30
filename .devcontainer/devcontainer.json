@@ -1,5 +1,5 @@
 {
-    "name": "LINAW Production Blockchain Simulation",
+    "name": "Production Backend & Blockchain Server Simulation",
     "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
     "features": {
         "ghcr.io/devcontainers/features/node:1": {
@@ -12,7 +12,7 @@
         "FABRIC_VERSION": "2.5.12",
         "FABRIC_CA_VERSION": "1.5.15"
     },
-    "postCreateCommand": "bash .devcontainer/serverSetup",
+    "postCreateCommand": "bash .devcontainer/serverSetup.sh",
     "forwardPorts": [3000, 7050, 7051, 7053, 7054],
     "portsAttributes": {
         "3000": { "label": "Node.js API" },
