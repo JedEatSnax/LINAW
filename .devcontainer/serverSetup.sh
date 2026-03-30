@@ -50,6 +50,7 @@ function download_fabric {
     chmod +x install-fabric.sh
     ./install-fabric.sh --fabric-version "$FABRIC_VERSION" --ca-version "$CA_VERSION" docker binary
     docker pull hyperledger/fabric-nodeenv:2.5
+    rm install-fabric.sh
 }
 
 # ================================
