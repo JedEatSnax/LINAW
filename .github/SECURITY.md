@@ -4,7 +4,7 @@
 
 Please do not open public issues for security vulnerabilities.
 
-To report a vulnerability, email: security@example.com
+To report a vulnerability, email: **victoria.335343[@]pasay-edsa.sti.edu.ph** or the other [authors](AUTHORS.md).
 
 Include the following details when possible:
 - A clear description of the issue

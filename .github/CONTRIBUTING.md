@@ -5,8 +5,7 @@ This file will enlighten other developers how to contribute to the repository. A
 Everyone should practice the keybinds and shortcuts of all the software that you will use within your respective operating systems. This will ensure that everyone will be faster in delivering code as we enter the development stage.
 
 ## 1. Git and GitHub Security and Verification
-For security purposes, go to **GitHub Profile Picture** --> **Settings** --> **Emails** --> and turn on **Keep my email address private**
-![GitHub Email](<01 GitHub Email.png>)
+For security purposes, go to **GitHub Profile Picture** --> **Settings** --> **Emails** --> and turn on **Keep my email address private** ![GitHub Email](<01 GitHub Email.png>)
 
 Additionally, follow this setup guide to always verify your commits to the repository.
 - **YouTube Link:** https://youtu.be/zPENYmyx6ug

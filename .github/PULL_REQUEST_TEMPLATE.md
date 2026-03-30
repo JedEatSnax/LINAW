@@ -2,7 +2,7 @@
 
 Describe what this PR changes and why.
 
-## Related Issue
+## Related Issue (if applicable)
 
 Closes #
 
