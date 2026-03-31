@@ -5,7 +5,7 @@
 
 // this part for up is saying that for migrating the new changes or latest changes
 exports.up = async function(knex) {
-<<<<<<< HEAD
+
     await knex.raw('CREATE EXTENSION IF NOT EXISTS "pgcrypto"')
 
     await knex.raw(`
@@ -25,31 +25,6 @@ exports.up = async function(knex) {
         table.timestamp('created_at').defaultTo(knex.fn.now())
         table.timestamp('updated_at').defaultTo(knex.fn.now())
     })
-    
-    await knex.schema.createTable('network', function(table) {
-        table.uuid('network_id').primary().defaultTo(knex.raw('gen_random_uuid()'))
-        table.string('name').notNullable().unique()
-        table.uuid('created_by').notNullable()
-            .references('user_id')
-            .inTable('users')
-            .onDelete('CASCADE')
-        table.timestamp('created_at').defaultTo(knex.fn.now())
-        table.timestamp('updated_at').defaultTo(knex.fn.now())
-    })
-
-    await knex.schema.createTable('organization', function(table){
-        table.uuid('organization_id').primary().defaultTo(knex.raw('gen_random_uuid()'))
-        table.uuid('network_id').notNullable()
-            .references('network_id')
-            .inTable('network')
-            .onDelete('CASCADE')
-        table.string('name').notNullable()
-        table.uuid('msp_id').nullable()
-        table.timestamp('created_at').defaultTo(knex.fn.now())
-        table.timestamp('updated_at').defaultTo(knex.fn.now())
-
-        table.unique(['network_id', 'name'])
-    })
 
     await knex.raw(`
         CREATE TRIGGER update_users_updated_at
@@ -57,25 +32,6 @@ exports.up = async function(knex) {
         FOR EACH ROW
         EXECUTE FUNCTION update_updated_at_column();
     `);
-
-    await knex.raw(`
-        CREATE TRIGGER update_network_updated_at
-        BEFORE UPDATE ON network
-        FOR EACH ROW
-        EXECUTE FUNCTION update_updated_at_column();   
-    `)
-
-    await knex.raw(`
-        CREATE TRIGGER update_organization_updated_at
-        BEFORE UPDATE ON organization
-        FOR EACH ROW
-        EXECUTE FUNCTION update_updated_at_column();
-    `)
-=======
-   return knex.schema.alterTable('users', function(table) {
-    table.dropColumn('password');  // Or 'username', etc.
-  });
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
 };
 
 /**
@@ -84,20 +40,11 @@ exports.up = async function(knex) {
  */
 
 // down export is just rollbacks which is undo migration
-<<<<<<< HEAD
+
 exports.down = async function(knex) {
-    await knex.raw('DROP TRIGGER IF EXISTS update_organization_updated_at ON organization');
-    await knex.raw('DROP TRIGGER IF EXISTS update_network_updated_at ON network');
     await knex.raw('DROP TRIGGER IF EXISTS update_users_updated_at ON users');
     await knex.raw('DROP FUNCTION IF EXISTS update_updated_at_column');
 
-    await knex.schema.dropTable('organization')
-    await knex.schema.dropTable('network')
     await knex.schema.dropTable('users')
-=======
-exports.down = function(knex) {
-   return knex.schema.alterTable('users', function(table) {
-    table.dropColumn('password');  // Or 'username', etc.
-  });
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
+
 };

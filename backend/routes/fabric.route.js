@@ -1,0 +1,27 @@
+const express = require('express')
+const router = express.Router()
+const fabricController = require('../controllers/fabricController')
+const authenticate = require ('../middleware/authenticate')
+const { apiLimiter } = require('../middleware/rateLimiter')
+
+router.use( apiLimiter, authenticate.decodeToken)
+
+//blockchain 
+router.post('/networks', fabricController.networkCreate)
+router.get ('/networks', fabricController.networkRead)
+
+router.post('/networks/:id/channels', fabricController.channelCreate)
+router.get ('/networks/:id/channels', fabricController.channelRead)
+
+router.post('/channel/:channel_id/contracts', fabricController.smartcontract)
+router.get ('/channel/:channel_id/contracts', fabricController.contractReadAll)
+
+// transaction
+router.post('/assets', fabricController.createAsset)
+router.post('/assets/:id/transfer', fabricController.assetTransfer)
+router.put ('/assets/:id', fabricController.assetUpdate)
+router.get ('/assets/:id', fabricController.assetRead)
+router.get ('/assets', fabricController.assestReadAll)
+
+
+module.exports = {router};
