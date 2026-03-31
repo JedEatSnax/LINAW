@@ -1,7 +1,7 @@
 const userService = require('../service/userService')
 
 class userController {
-    async signup (req, res, next) {
+    async signup (req, res) {
         try {
             const user = await userService.signup(req.body)
             if (!user) {
@@ -11,30 +11,21 @@ class userController {
             }
 
             return res.status (201).json({
-                email: user.email,
+                id: user.id,
+                username: user.username,
                 message: 'Signup successful',
             })
         }catch (err){
-            return next(err)
+            console.error(err)
         }
     }
 
-    async login (req, res, next) {
+    async login (req, res) {
         try {
             const user = await userService.login(req.body)
-
-            if (!user) {
-                return res.status(400).json({
-                    message: 'login failed'
-                })
-            }
-
-            return res.status(200).json({
-                email: user.email,
-                message: 'Login Successful'
-            })
+            res.status(201).json(user)
         } catch (err){
-            return next(err)
+            console.error(err)
         }
     }
 }

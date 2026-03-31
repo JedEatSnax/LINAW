@@ -17,42 +17,43 @@ export function Login() {
         setAuthorizing(true);
         setError("");
 
-        signInWithEmailAndPassword(auth, email, password)
-            .then(response => {
-                if (auth.currentUser?.emailVerified === false) {
-                    setAuthorizing(false);
-                    console.log("email not verified");
-                    setError("Email not verified. Please check your inbox for a verification email.");
-                    return;
-                }
-                console.log("Signed in with email and password:", response.user.uid);
-                postLogin(email, auth.currentUser?.uid ?? "");
-                navigate("/dashboard");
-            })
-            .catch((error) => {
-                switch (error.code) {
-                    case "auth/user-not-found":
-                        setError("No account found with this email.");
-                        break;
-                    case "auth/invalid-credential":
-                        setError("Invalid email or password.");
-                        break;
-                    case "auth/invalid-email":
-                        setError("Invalid email.");
-                        break;
-                    case "auth/invalid-password":
-                        setError("Invalid password.");
-                        break;
-                    case "auth/too-many-requests":
-                        setError("Too many attempts. Please try again later.");
-                        break;
-                    default:
-                        console.log("default");
-                        setError(error.message || "Failed to log in");
-                }
-                console.error("Error signing in with email and password:", error);
-                setAuthorizing(false);
-            });
+        try {
+            const response = await signInWithEmailAndPassword(auth, email, password);
+
+            if (!response.user.emailVerified) {
+                console.log("email not verified");
+                setError("Email not verified. Please check your inbox for a verification email.");
+                return;
+            }
+
+            console.log("Signed in with email and password:", response.user.uid);
+            await postLogin(email, response.user.uid);
+            navigate("/dashboard");
+        } catch (error: any) {
+            switch (error.code) {
+                case "auth/user-not-found":
+                    setError("No account found with this email.");
+                    break;
+                case "auth/invalid-credential":
+                    setError("Invalid email or password.");
+                    break;
+                case "auth/invalid-email":
+                    setError("Invalid email.");
+                    break;
+                case "auth/invalid-password":
+                    setError("Invalid password.");
+                    break;
+                case "auth/too-many-requests":
+                    setError("Too many attempts. Please try again later.");
+                    break;
+                default:
+                    console.log("default");
+                    setError(error.message || "Failed to log in");
+            }
+            console.error("Error signing in with email and password:", error);
+        } finally {
+            setAuthorizing(false);
+        }
     };
 
     const postLogin = async (email: string, firebase_uid: string) => {
@@ -60,6 +61,7 @@ export function Login() {
             await axios.post("/api/login", { email, firebase_uid });
         } catch (error) {
             console.error("Error posting login:", error);
+            throw error;
         }
     };
 

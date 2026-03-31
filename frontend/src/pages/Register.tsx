@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import { useState } from "react";
-import axios from "axios";
 
 export function Register() {
     const auth = getAuth();
@@ -17,32 +16,18 @@ export function Register() {
             return;
         }
 
-        createUserWithEmailAndPassword(auth, email, password)
-            .then(response => {
-                console.log("User registered:", response.user);
-                postRegister(email, auth.currentUser?.uid ?? "");
-                sendEmailVerification(auth.currentUser!)
-                    .then(() => {
-                        console.log("Verification email sent");
-                        alert("Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in. You are being redirected to the login page.");
-                    })
-                    .catch(error => {
-                        console.error("Error sending verification email:", error);
-                    });
-                signOut(auth);
-                navigate("/login");
-            })
-            .catch(error => {
-                setError("Failed to create account: " + error.message);
-                console.error("Error registering user:", error);
-            });
-    };
-
-    const postRegister = async (email: string, firebase_uid: string) => {
         try {
-            await axios.post("/api/register", { email, firebase_uid });
+            const response = await createUserWithEmailAndPassword(auth, email, password);
+            console.log("User registered:", response.user);
+            await sendEmailVerification(response.user);
+            console.log("Verification email sent");
+            alert("Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in. You are being redirected to the login page.");
+            await signOut(auth);
+            navigate("/login");
         } catch (error) {
-            console.error("Error posting register:", error);
+            const err = error as any;
+            setError("Failed to create account: " + (err.message || "Unknown error"));
+            console.error("Error registering user:", error);
         }
     };
 

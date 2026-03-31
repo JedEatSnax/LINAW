@@ -1,4 +1,5 @@
 const db = require('../db/db')
+const knex = require('../db/knex');
 
 
 class userDao {
@@ -10,7 +11,7 @@ class userDao {
                 email: email,
                 firebase_uid: firebase_uid,
             })
-            .returning (['user_id', 'email']);
+            .returning (['user_id', 'username']);
             console.log('Inserted users row:', users);
 
         return users;
@@ -30,7 +31,7 @@ class userDao {
                 .select('user_id', 'email')
                 .first()
     
-            return users || null;   
+            return users ? users.email : null;
         } catch (err) {
             console.error('DAO login error:', err);
             throw err;
@@ -38,7 +39,7 @@ class userDao {
     }
 
     async findByFirebaseUid(firebase_uid) {
-        const users = await db('users')
+        const users = await knex('users')
             .where ({ 'firebase_uid': firebase_uid })
             .select('firebase_uid')
             .first();
@@ -46,9 +47,9 @@ class userDao {
     }
 
     async findUserByEmail(email) {
-        const user = await db('users')
+        const user = await knex('users')
             .where ({ 'email': email })
-            .select('user_id', 'email')
+            .select('user_id', 'email', 'username')
             .first();
         return user || null;
     }
