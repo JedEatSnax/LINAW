@@ -2,63 +2,46 @@ const joi = require('joi')
 
 const objectIdlike = joi.string().trim().min(1).max(128).required()
 
-const assetIdParam = joi.object({
-    id: joi.string().trim().min(1).max(128).required()
-}).required()
+const assestIdParam = joi.object({
+    id: joi.string().trim().required()
+})
 
 const networkIdParam = joi.object({
     id: objectIdlike.required()
-}).required()
+})
 
 const channelIdParam = joi.object({
     channel_id: objectIdlike.required()
-}).required()
+})
 
-const orgCreateSchema = joi.object({
-    name: joi.string().alphanum().min(2).max(30).required(),
-    mspId: joi.string().alphanum().min(2).max(30).required(),
-    peerCount: joi.number().integer().min(1).max(5).required(),
-});
-
-const resourceLimitSchema = joi.object({
-    cpus: joi.string()
-        .pattern(/^(0(\.\d+)?|[1-9]\d*(\.\d+)?)$/)
-        .default('0.5'),
-    memory: joi.string()
-        .pattern(/^\d+(B|K|KB|M|MB|G)$/)
-        .default('512M'),
-});
-
-const networkCreateSchema = joi.object({
-    config: joi.object({
+const networkCreateSchema = {
+    body: joi.object({
         name: joi.string().trim().min(3).max(100).required(),
-        orgs: joi.array().items(orgCreateSchema).min(1).unique('mspId').required(),
-        consensus: joi.string().valid('etcdraft', 'solo').default('etcdraft'),
-        channelPolicy: joi.string().valid('MAJORITY', 'ALL', 'ANY').default('MAJORITY'),
-        channelId: joi.string().alphanum().min(3).max(30).default('mychannel'),
-        stateDb: joi.string().valid('couchdb', 'leveldb').default('couchdb'),
-        ordererCount: joi.number().integer().valid(1, 3, 5).default(1),
-        resources: joi.object({
-            peer: resourceLimitSchema.default({ cpus: '0.5', memory: '512M' }),
-            orderer: resourceLimitSchema.default({ cpus: '0.25', memory: '256M' }),
-            ca: resourceLimitSchema.default({ cpus: '0.1', memory: '128M' }),
-        }).default(),
-    }).required()
-}).required()
+        description: joi.string().trim().max(255).optional(),
+        orgs: joi.array()
+            .items(
+                joi.object({
+                    name: joi.string().trim().min(2).max(100).required(),
+                    msp_ID: joi.string().trim().min(2).max(100).required()
+                })
+            )
+            .min(1)
+            .unique()
+            .required()
+    })
+}
 
-// NOTE: current route is GET /networks (no :id). Keep this schema permissive.
-const networkReadSchema = joi.object({
-    params: joi.object().optional(),
-    query: joi.object().optional()
-}).required()
-
-const channelCreateSchema = joi.object({
+const channelCreateSchema = {
     params: networkIdParam,
     body: joi.object({
         name: joi.string()
             .trim()
             .lowercase()
+<<<<<<< HEAD
             .pattern(/^[a-z][a-z0-9-]{0,60}$/)
+=======
+            .pattern(/^[a-z][a-z0-9-][0,60]$/)
+>>>>>>> f868fa1a (chore: Pulling dev/wii/test's validators folder to replace models)
             .required(),
         memberOrgs: joi.array()
             .items(
@@ -66,6 +49,7 @@ const channelCreateSchema = joi.object({
             )
             .min(1)
             .required()
+<<<<<<< HEAD
     }).required()
 }).required()
 
@@ -88,12 +72,30 @@ const contractReadAllSchema = joi.object({
 }).required()
 
 const createAssetSchema = joi.object({
+=======
+    })
+}
+
+const smartcontractSchema = {
+    params: channelIdParam,
+    body: joi.object({
+        contractType: joi.string()
+            .valid()
+            .required(),
+        contractName: joi.string().trim().min(2).max(100).optional(),
+        version: joi.string().trim().min(1).max(20).optional()
+    })  
+}
+
+const createAssetSchema = {
+>>>>>>> f868fa1a (chore: Pulling dev/wii/test's validators folder to replace models)
     body: joi.object({
         id: joi.string().trim().min(1).max(128).required(),
         color: joi.string().trim().min(1).max(50).required(),
         size: joi.number().integer().positive().max(1000000).required(),
         owner: joi.string().trim().min(1).max(256).required(),
         appraisedValue: joi.number().positive().max(999999999).required()
+<<<<<<< HEAD
     }).required()
 }).required()
 
@@ -105,12 +107,26 @@ const assetTransferSchema = joi.object({
 }).required()
 
 const assetUpdateSchema = joi.object({
+=======
+    })
+}
+
+const assetTransferSchema = {
+    params: channelIdParam,
+    body: joi.object({
+        owner: joi.string().trim().min(1).max(256).required()
+    })
+}
+
+const assetUpdateSchema = {
+>>>>>>> f868fa1a (chore: Pulling dev/wii/test's validators folder to replace models)
     params: assetIdParam,
     body: joi.object({
         color: joi.string().trim().min(1).max(50).required(),
         size: joi.number().integer().positive().max(1000000).required(),
         owner: joi.string().trim().min(1).max(256).required(),
         appraisedValue: joi.number().positive().max(999999999).required()
+<<<<<<< HEAD
     }).required()
 }).required()
 
@@ -131,9 +147,37 @@ module.exports = {
     channelReadSchema,
     smartContractSchema,
     contractReadAllSchema,
+=======
+    })
+}
+
+const assetReadSchema = {
+    params: assestIdParam
+}
+
+const assetReadAllSchema = {
+    query: joi.object({
+        owner: joi.string().trim().max(256).optional(),
+        limit: joi.number()
+            .integer()
+            .min(1)
+            .max(100)
+            .optional()
+    })
+}
+
+module.exports = {
+    networkCreateSchema,
+    channelCreateSchema,
+    smartcontractSchema,
+>>>>>>> f868fa1a (chore: Pulling dev/wii/test's validators folder to replace models)
     createAssetSchema,
     assetTransferSchema,
     assetUpdateSchema,
     assetReadSchema,
+<<<<<<< HEAD
     assetDeleteSchema
+=======
+    assetReadAllSchema
+>>>>>>> f868fa1a (chore: Pulling dev/wii/test's validators folder to replace models)
 }
