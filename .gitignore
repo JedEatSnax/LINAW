@@ -1,6 +1,10 @@
 /fabric-samples/
 /install-fabric.sh
 database
+
+# Documentation
 progress.md
 TODO.md
 Status.md
+GRYPHEN_DOCS.md
+NOTES.md
