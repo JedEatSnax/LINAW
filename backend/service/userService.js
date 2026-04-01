@@ -18,7 +18,7 @@ class userService {
     }
 
   validate(method, data) {
-    const schema = this.schemas[`${method}Schema`];
+    const schema = this.schemas[method];
 
     if (!schema) {
       throw new Error(`Validation schema not found for method: ${method}`);
@@ -37,7 +37,7 @@ class userService {
         }
 
         return value;
-    }
+    } 
 
     signup(data) {
         const validated = this.validate('signup', data)

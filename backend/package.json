@@ -6,7 +6,8 @@
   "scripts": {
     "migrate": "npx knex migrate:latest --knexfile db/knexfile.js",
     "undo-migrate": "npx knex migrate:rollback --knexfile db/knexfile.js",
-    "test": "node --test native/tests/",
+    "test": "jest --runInBand",
+    "test:node": "node --test native/tests/",
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
@@ -26,11 +27,12 @@
     "@grpc/grpc-js": "^1.14.3",
     "@hyperledger/fabric-gateway": "^1.10.1",
     "cors": "^2.8.6",
-    "express-rate-limit": "^8.3.1",
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.1",
     "firebase-admin": "^13.7.0",
+    "jest": "^30.3.0",
     "joi": "^18.0.2",
     "knex": "^3.1.0",
     "pg": "^8.19.0",
@@ -40,6 +42,7 @@
     "@tootallnate/once": "^3.0.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }

@@ -12,16 +12,17 @@ Last updated: 2026-03-31
 
 - [ ] Finish permissions and apply authorization at the router level
   - [ ] Complete permission definitions in backend/config/authorization/
-  - [ ] Map roles to permissions clearly and remove duplicates/inconsistencies
+  - [x] Map roles to permissions clearly and remove duplicates/inconsistencies
   - [ ] Enforce middleware checks in every protected route
   - [ ] Add test cases for authorized vs unauthorized access
 
 - [ ] Finish Hyperledger Fabric client-facing endpoints
-  - [ ] Audit existing endpoints in backend/routes/ and controllers/services
+  - [x] Audit existing endpoints in backend/routes/ and controllers/services
   - [x] finish client fabric facing endpoint
+  - [x] finish service and validation layer
   - [ ] Implement missing CRUD/query/invoke endpoints needed by frontend
-  - [ ] Standardize request/response format and error handling
-  - [ ] Validate endpoints against frontend API usage
+  - [x] Standardize request/response format and error handling
+  - [x] Validate endpoints against frontend API usage
 
 - [ ] Write the Fabric gateway connection
   - [ ] Finalize gateway config structure (identity, wallet, MSP, peers)

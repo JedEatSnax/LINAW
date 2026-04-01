@@ -11,7 +11,7 @@ class userDao {
                 email: email,
                 firebase_uid: firebase_uid,
             })
-            .returning (['user_id', 'username']);
+            .returning (['user_id', 'username', 'email']);
             console.log('Inserted users row:', users);
 
         return users;
@@ -31,7 +31,7 @@ class userDao {
                 .select('user_id', 'email')
                 .first()
     
-            return users ? users.email : null;
+            return users || null;
         } catch (err) {
             console.error('DAO login error:', err);
             throw err;
