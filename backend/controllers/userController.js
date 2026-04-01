@@ -1,8 +1,7 @@
 const userService = require('../service/userService')
-const auth = require('../middleware/authenticate')
 
 class userController {
-    async signup (req, res) {
+    async signup (req, res, next) {
         try {
             const user = await userService.signup(req.body)
             if (!user) {
@@ -12,21 +11,30 @@ class userController {
             }
 
             return res.status (201).json({
-                id: user.id,
-                username: user.username,
+                email: user.email,
                 message: 'Signup successful',
             })
         }catch (err){
-            console.error(err)
+            return next(err)
         }
     }
 
-    async login (req, res) {
+    async login (req, res, next) {
         try {
             const user = await userService.login(req.body)
-            res.status(201).json(user)
+
+            if (!user) {
+                return res.status(400).json({
+                    message: 'login failed'
+                })
+            }
+
+            return res.status(200).json({
+                email: user.email,
+                message: 'Login Successful'
+            })
         } catch (err){
-            console.error(err)
+            return next(err)
         }
     }
 }

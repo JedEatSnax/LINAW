@@ -7,16 +7,14 @@ class ValidationError extends Error {
   }
 }
 
-const {
-
-} = require('../validators/network');
+const fabricSchema = require('../validators/fabric/fabricSchema')
+const AppError = require('../utils/AppError')
+const fabricService = require('./fabricService')
 
 class appFabricService {
+
   constructor() {
-    this.schemas = {
-
-    };
-
+    this.schemas = fabricSchema
   }
 
     validate(schemaKey, data) {
@@ -39,6 +37,131 @@ class appFabricService {
     }
 
         return value;
+    }
+
+    async networkCreate ({body, user}) {
+      const validated = this.validate('networkCreateSchema', { body })
+
+      const { name, description, orgs } = validated.body
+
+      return await fabricService.networkCreate({
+        name,
+        description,
+        orgs,
+        requestedBy: user?.uid
+      })
+    }
+
+    async networkRead ({params, user}) {
+      throw new AppError('Network read is not implemented', 501, 'NOT_IMPLEMENTED');
+    }
+
+    async channelCreate ({params, body, user}) {
+      const validated = this.validate('channelCreateSchema', { params, body })
+
+      const { id } = validated.params
+      const { name, memberOrgs } = validated.body
+
+      return await fabricService.channelCreate({
+        id,
+        name,
+        memberOrgs,
+        requestedBy: user?.uid
+      })
+    }
+
+    async channelRead ({params, user}) {
+      throw new AppError('Channel read is not implemented', 501, 'NOT_IMPLEMENTED');
+    }
+
+    async smartContract ({params, body, user}) {
+      const validated = this.validate('smartContractSchema', { params, body })
+
+      const { contractType, contractName, version} = validated.body
+
+      return await fabricService.smartContract({
+        channel_id: validated.params.channel_id,
+        contractType,
+        contractName,
+        version,
+        requestedBy: user?.uid
+      })
+    }
+
+    async contractReadAll ({params, user}) {
+      const validated = this.validate('contractReadAllSchema', { params })
+
+      return await fabricService.contractReadAll({
+        channel_id: validated.params.channel_id,
+        requestedBy: user?.uid
+      })
+    }
+
+    async createAsset ({ body, user}) {
+      const validated = this.validate('createAssetSchema', { body })
+
+      const { id, color, size, owner, appraisedValue } = validated.body
+
+      return await fabricService.createAsset({
+        id,
+        color,
+        size,
+        owner,
+        appraisedValue,
+        requestedBy: user?.uid
+      })
+    }
+
+    async assetTransfer ({ params, body, user}) { 
+      const validated = this.validate('assetTransferSchema', {params, body})
+
+      const { id } = validated.params
+      const { owner } = validated.body
+
+      return await fabricService.assetTransfer({
+        id,
+        owner,
+        requestedBy: user?.uid
+      })
+    }
+
+    async assetUpdate ({params, body, user}) {
+      const validated = this.validate('assetUpdateSchema', {params, body})
+
+      const { id } = validated.params
+      const {color, size, owner, appraisedValue} = validated.body
+
+      return await fabricService.assetUpdate({
+        id, 
+        color,
+        size,
+        owner,
+        appraisedValue,
+        requestedBy: user?.uid
+      })
+    }
+
+    async assetRead ({params, user}) {
+      const validated = this.validate('assetReadSchema', {params})
+
+      const { id } = validated.params
+
+      return await fabricService.assetRead({
+        id,
+        requestedBy: user?.uid
+      })
+    }
+
+    async assestReadAll ({query, user}) {
+      const validated = this.validate('assetReadAllSchema', {query})
+
+      const { owner, limit } = validated.query
+
+      return await fabricService.assestReadAll({
+        owner,
+        limit,
+        requestedBy: user?.uid
+      })
     }
 
 }

@@ -2,19 +2,19 @@ const joi = require('joi')
 
 const objectIdlike = joi.string().trim().min(1).max(128).required()
 
-const assestIdParam = joi.object({
-    id: joi.string().trim().required()
-})
+const assetIdParam = joi.object({
+    id: joi.string().trim().min(1).max(128).required()
+}).required()
 
 const networkIdParam = joi.object({
     id: objectIdlike.required()
-})
+}).required()
 
 const channelIdParam = joi.object({
     channel_id: objectIdlike.required()
-})
+}).required()
 
-const networkCreateSchema = {
+const networkCreateSchema = joi.object({
     body: joi.object({
         name: joi.string().trim().min(3).max(100).required(),
         description: joi.string().trim().max(255).optional(),
@@ -26,18 +26,24 @@ const networkCreateSchema = {
                 })
             )
             .min(1)
-            .unique()
+            .unique('mspID')
             .required()
-    })
-}
+    }).required()
+}).required()
 
-const channelCreateSchema = {
+// NOTE: current route is GET /networks (no :id). Keep this schema permissive.
+const networkReadSchema = joi.object({
+    params: joi.object().optional(),
+    query: joi.object().optional()
+}).required()
+
+const channelCreateSchema = joi.object({
     params: networkIdParam,
     body: joi.object({
         name: joi.string()
             .trim()
             .lowercase()
-            .pattern(/^[a-z][a-z0-9-][0,60]$/)
+            .pattern(/^[a-z][a-z0-9-]{0,60}$/)
             .required(),
         memberOrgs: joi.array()
             .items(
@@ -45,52 +51,59 @@ const channelCreateSchema = {
             )
             .min(1)
             .required()
-    })
-}
+    }).required()
+}).required()
 
-const smartcontractSchema = {
+// NOTE: current route is GET /networks/:id/channels (network id)
+const channelReadSchema = joi.object({
+    params: networkIdParam
+}).required()
+
+const smartContractSchema = joi.object({
     params: channelIdParam,
     body: joi.object({
-        contractType: joi.string()
-            .valid()
-            .required(),
+        contractType: joi.string().trim().min(2).max(100).required(),
         contractName: joi.string().trim().min(2).max(100).optional(),
         version: joi.string().trim().min(1).max(20).optional()
-    })  
-}
+    }).required()
+}).required()
 
-const createAssetSchema = {
+const contractReadAllSchema = joi.object({
+    params: channelIdParam
+}).required()
+
+const createAssetSchema = joi.object({
     body: joi.object({
         id: joi.string().trim().min(1).max(128).required(),
         color: joi.string().trim().min(1).max(50).required(),
         size: joi.number().integer().positive().max(1000000).required(),
         owner: joi.string().trim().min(1).max(256).required(),
         appraisedValue: joi.number().positive().max(999999999).required()
-    })
-}
+    }).required()
+}).required()
 
-const assetTransferSchema = {
-    params: channelIdParam,
+const assetTransferSchema = joi.object({
+    params: assetIdParam,
     body: joi.object({
         owner: joi.string().trim().min(1).max(256).required()
-    })
-}
+    }).required()
+}).required()
 
-const assetUpdateSchema = {
+const assetUpdateSchema = joi.object({
     params: assetIdParam,
     body: joi.object({
         color: joi.string().trim().min(1).max(50).required(),
         size: joi.number().integer().positive().max(1000000).required(),
         owner: joi.string().trim().min(1).max(256).required(),
         appraisedValue: joi.number().positive().max(999999999).required()
-    })
-}
+    }).required()
+}).required()
 
-const assetReadSchema = {
-    params: assestIdParam
-}
+const assetReadSchema = joi.object({
+    params: assetIdParam
+}).required()
 
-const assetReadAllSchema = {
+const assetReadAllSchema = joi.object({
     query: joi.object({
         owner: joi.string().trim().max(256).optional(),
         limit: joi.number()
@@ -98,16 +111,23 @@ const assetReadAllSchema = {
             .min(1)
             .max(100)
             .optional()
-    })
-}
+    }).required()
+}).required()
+
+// Backwards-compat alias (existing code uses this misspelling)
+const assestReadAllSchema = assetReadAllSchema
 
 module.exports = {
     networkCreateSchema,
+    networkReadSchema,
     channelCreateSchema,
-    smartcontractSchema,
+    channelReadSchema,
+    smartContractSchema,
+    contractReadAllSchema,
     createAssetSchema,
     assetTransferSchema,
     assetUpdateSchema,
     assetReadSchema,
-    assetReadAllSchema
+    assetReadAllSchema,
+    assestReadAllSchema
 }
