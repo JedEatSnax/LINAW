@@ -26,13 +26,13 @@ Last updated: 2026-03-31
 
 - [ ] Write the Fabric gateway connection
   - [ ] Finalize gateway config structure (identity, wallet, MSP, peers)
-  - [ ] Implement stable connection lifecycle and retry/disconnect handling
+  - [x] Implement stable connection lifecycle and retry/disconnect handling
   - [ ] Move secrets/config to environment variables where applicable
   - [ ] Add a smoke test for gateway connect + simple query
 
 ## Want To Do
 
-  - [ ] Review latest Hyperledger Fabric implementation progress and speed up delivery
+  - [x] Review latest Hyperledger Fabric implementation progress and speed up delivery
   - [ ] Review current implementation status in backend/Status.md and progress.md
   - [ ] Identify blockers (missing SDK wiring, endpoint gaps, auth coupling, etc.)
   - [ ] Split remaining Fabric work into 1-2 day milestones
@@ -54,15 +54,15 @@ Last updated: 2026-03-31
 Build a client -> backend -> Hyperledger Fabric flow without depending on unfinished network-orchestration code.
 
 ## 1. Backend Fabric Connector Module
-- [ ] Create one connector module that manages Fabric Gateway connect/disconnect.
-- [ ] Make the connector return reusable network/contract handles.
-- [ ] Read all connector settings from environment variables:
-  - [ ] Connection profile path
-  - [ ] MSP ID
-  - [ ] User cert path
-  - [ ] User private key path
-  - [ ] Peer endpoint
-  - [ ] TLS cert path
+- [x] Create one connector module that manages Fabric Gateway connect/disconnect.
+- [x] Make the connector return reusable network/contract handles.
+- [x] Read all connector settings from environment variables:
+  - [x] Connection profile path
+  - [x] MSP ID
+  - [x] User cert path
+  - [x] User private key path
+  - [x] Peer endpoint
+  - [x] TLS cert path
 
 ## 2. Thin Fabric Service Layer
 - [ ] Add a generic query method using `evaluateTransaction`.

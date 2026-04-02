@@ -103,6 +103,10 @@ const assetReadSchema = joi.object({
     params: assetIdParam
 }).required()
 
+const assetDeleteSchema = joi.object({
+    params: assetIdParam
+}).required()
+
 const assetReadAllSchema = joi.object({
     query: joi.object({
         owner: joi.string().trim().max(256).optional(),

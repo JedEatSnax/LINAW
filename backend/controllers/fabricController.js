@@ -124,6 +124,19 @@ class fabricController {
         }
     }
 
+    async assetDelete (req, res, next) {
+        try {
+            const deleted = await appFabricService.assetDelete({
+                params: req.params,
+                user: req.user
+            })
+
+            return res.status(200).json(deleted)
+        } catch (error) {
+            next(error)
+        }
+    }
+
     async assetRead (req, res, next) {
         try {
             const read = await appFabricService.assetRead({
@@ -137,9 +150,9 @@ class fabricController {
         }
     }
 
-    async assestReadAll (req, res, next) {
+    async assetReadAll (req, res, next) {
         try {
-            const readAll = await appFabricService.assestReadAll({
+            const readAll = await appFabricService.assetReadAll({
                 query: req.query,
                 user: req.user
             })

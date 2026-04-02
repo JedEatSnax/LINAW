@@ -141,6 +141,17 @@ class appFabricService {
       })
     }
 
+    async assetDelete ({params, user}) {
+      const validated = this.validate('assetDeleteSchema', {params})
+
+      const { id } = validated.params
+
+      return await fabricService.assetDelete({
+        id,
+        requestedBy: user?.uid
+      })
+    }
+
     async assetRead ({params, user}) {
       const validated = this.validate('assetReadSchema', {params})
 
@@ -152,12 +163,12 @@ class appFabricService {
       })
     }
 
-    async assestReadAll ({query, user}) {
+    async assetReadAll ({query, user}) {
       const validated = this.validate('assetReadAllSchema', {query})
 
       const { owner, limit } = validated.query
 
-      return await fabricService.assestReadAll({
+      return await fabricService.assetReadAll({
         owner,
         limit,
         requestedBy: user?.uid
