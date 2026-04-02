@@ -63,3 +63,8 @@ so I made some progress. I implemented RBAC alongside with RuBAC, though rules w
 also imma drop organizations table and network table for now since i kinda just did it without really talking to aaron our dev for hyperledger implementation. anyways i can always adjust and recreate it anyways. 
 
 i made sure i that the endpoints are now protected with firebase auth. The authorization is still not complete if you see the permissions. Still work in progress.
+
+
+### 03/29/ 26 -> 04/02/2026 
+
+During my mental health break from March 29, 2026 to April 3, 2026, I was able to complete significant development work related to the client-side Hyperledger Fabric integration. Specifically, I finished the implementation of Fabric-connected endpoints from the routing layer up to the application service layer, and I also developed supporting backend components such as validations, unit tests, a centralized error handler, Fabric gateway connection setup, Fabric configuration, and the service layer responsible for actual blockchain communication.

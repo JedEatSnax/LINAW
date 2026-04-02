@@ -103,19 +103,11 @@ const assetReadSchema = joi.object({
     params: assetIdParam
 }).required()
 
-const assetReadAllSchema = joi.object({
-    query: joi.object({
-        owner: joi.string().trim().max(256).optional(),
-        limit: joi.number()
-            .integer()
-            .min(1)
-            .max(100)
-            .optional()
-    }).required()
+const assetDeleteSchema = joi.object({
+    params: assetIdParam
 }).required()
 
-// Backwards-compat alias (existing code uses this misspelling)
-const assestReadAllSchema = assetReadAllSchema
+
 
 module.exports = {
     networkCreateSchema,
@@ -128,6 +120,5 @@ module.exports = {
     assetTransferSchema,
     assetUpdateSchema,
     assetReadSchema,
-    assetReadAllSchema,
-    assestReadAllSchema
+    assetDeleteSchema
 }

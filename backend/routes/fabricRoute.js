@@ -20,8 +20,9 @@ router.get ('/channel/:channel_id/contracts', fabricController.contractReadAll)
 router.post('/assets', fabricController.createAsset)
 router.post('/assets/:id/transfer', fabricController.assetTransfer)
 router.put ('/assets/:id', fabricController.assetUpdate)
+router.delete ('/assets/:id', fabricController.assetDelete)
 router.get ('/assets/:id', fabricController.assetRead)
-router.get ('/assets', fabricController.assestReadAll)
+router.get ('/assets', fabricController.assetReadAll)
 
-
+    
 module.exports = {router};
