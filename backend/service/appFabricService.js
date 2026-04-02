@@ -163,14 +163,8 @@ class appFabricService {
       })
     }
 
-    async assetReadAll ({query, user}) {
-      const validated = this.validate('assetReadAllSchema', {query})
-
-      const { owner, limit } = validated.query
-
+    async assetReadAll ({user}) {
       return await fabricService.assetReadAll({
-        owner,
-        limit,
         requestedBy: user?.uid
       })
     }

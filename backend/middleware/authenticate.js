@@ -14,8 +14,6 @@ class authenticate {
 
         try {
             const decodedValue = await auth.verifyIdToken(token);
-
-            console.log("Decoded token: ", decodedValue.uid, decodedValue.email)
             
             req.user = decodedValue
             return next()

@@ -1,13 +1,15 @@
 # Backend Status Report
 
-Date: 2026-03-30
-Scope reviewed: current backend in this workspace (Express + Firebase Admin + Knex/Postgres + partial Fabric stubs)
+Date: 2026-04-03
+Scope reviewed: current backend in this workspace (Express + Firebase Admin + Knex/Postgres + Fabric gateway/service wiring)
 
 ## Honest assessment
 
 You have a good base architecture direction (routes -> controllers -> services -> DAO, with schema validation and middleware separation), but the backend is currently in a fragile state for production.
 
-Main reason: there are several hard runtime blockers and schema/column mismatches that will break core flows before business logic can stabilize.
+Main reason: multiple “happy path” flows will fail immediately due to (a) auth being applied to endpoints that must be public, (b) DB schema vs DAO/validator mismatches, and (c) Fabric gateway/service code containing typos that will throw at runtime.
+
+Update note: you fixed several of the previously listed crashers (confirmed in git diff), but a few core integration mismatches remain.
 
 ## What is good already
 
@@ -16,91 +18,123 @@ Main reason: there are several hard runtime blockers and schema/column mismatche
 - Authentication middleware exists and is integrated.
 - Knex + migration setup exists (good direction for DB evolution).
 - Rate limiting is already added.
+- Centralized error handler exists and your tests assert its response shape.
+
+## Recent fixes confirmed (since last review)
+
+- Removed the debug token logging in auth middleware.
+- Removed Sequelize dependency from backend dependencies.
+- Added validators/fabric index so validators/index.js no longer hard-crashes on import.
+- Removed the unimplemented Fabric network/channel read routes.
+- Improved Fabric gateway naming (gateway/client) and fixed fs.readdirSync usage (but there is still one remaining typo; see below).
 
 ## Critical issues (fix first)
 
-1. Unresolved Git conflict markers in migration file (DB boot blocker)
-- File: db/migrations/20260309150048_init.js:8, db/migrations/20260309150048_init.js:74, db/migrations/20260309150048_init.js:87
-- Problem: file still contains <<<<<<<, =======, >>>>>>> conflict markers.
-- Impact: migrations are invalid and schema state is unreliable.
+1. Users endpoints are protected, but their semantics are inconsistent with Firebase auth flow
+- File: routes/usersRoute.js
+- Problem: /signup and /login both require authenticate.decodeToken (Bearer token). If your frontend already authenticates with Firebase, “/login” in the backend typically shouldn’t exist.
+- Impact: confusing API contract and higher chance of wiring the frontend wrong (and you’ll end up trusting body fields that should come from the token).
+- Senior suggestion: treat backend “signup” as “bootstrap my DB user record” and derive firebase_uid from req.user.uid (decoded token), not from req.body.
 
-2. Signup/Login are protected by token middleware (auth flow deadlock)
-- File: routes/usersRoute.js:8, routes/usersRoute.js:9
-- Problem: router-level decodeToken middleware runs before /signup and /login.
-- Impact: unauthenticated users cannot signup/login, likely immediate 401.
+2. Signup validation does not match DAO requirements (runtime DB errors)
+- File: validators/user/signupModel.js
+- Problem: signup schema only requires email, but dao/userDao.js expects firebase_uid.
+- File: dao/userDao.js
+- Problem: signup inserts firebase_uid but it may be undefined; DB has firebase_uid NOT NULL.
+- Impact: signup can fail with a DB constraint error even if validation passes.
+- Why this matters: validation should prevent bad writes, not let the DB be the first line of defense.
 
-3. Network service references undefined members/variables (runtime crash)
-- File: service/networkService.js:39
-- Problem: this.userDao is used but never initialized in constructor.
-- File: service/networkService.js:39
-- Problem: firebase_uid variable is not defined in networkCreation.
-- File: service/networkService.js:70
-- Problem: organization_name variable is not defined.
-- File: service/networkService.js:72
-- Problem: users_id variable is not defined.
-- File: service/networkService.js:80
-- Problem: validate is called with key node, but schema key is nodeSchema.
-- Impact: network and organization endpoints will fail at runtime.
+3. DB schema vs DAO mismatch: username is queried/returned but never created
+- File: db/migrations/20260309150048_init.js
+- Problem: users table has (user_id, email, firebase_uid, timestamps) but no username.
+- File: dao/userDao.js
+- Problem: returning/selecting username in multiple queries.
+- Impact: Postgres will throw “column username does not exist” on signup and on findUserByEmail.
 
-4. DB column mismatches between migration and DAO/controller responses
-- File: db/migrations/20260309150048_init.js:21-27 creates users.user_id, users.email, users.firebase_uid (no id, no username).
-- File: dao/userDao.js:14 returns id, username.
-- File: dao/userDao.js:31 selects id, email.
-- File: controllers/userController.js:14-16 returns user.id and user.username.
-- Impact: inserts/selects and response payload mapping are inconsistent; responses can be wrong/null or throw depending on query result.
+4. Knex config is currently broken (will not authenticate to Postgres)
+- File: db/knexfile.js
+- Problem: connection.user and connection.password are literally the strings 'POSTGRES_USER'/'POSTGRES_PASSWORD', not environment variables.
+- Impact: DB connections will fail unless your Postgres user is literally named POSTGRES_USER.
 
-5. Organization DAO writes column that migration does not define
-- File: dao/networkDao.js:25-31 inserts users_id into organization table.
-- File: db/migrations/20260309150048_init.js:40-52 organization table has network_id, name, msp_id but no users_id.
-- Impact: insert into organization will fail with column does not exist.
+5. Multiple Knex instances are created (inconsistent behavior + extra pools)
+- Files: db/db.js, db/knex.js, server.js
+- Problem: server.js requires db/knex.js (creates a Knex instance and tests a connection) while DAOs use db/db.js (creates another Knex instance).
+- Impact: double pooling, inconsistent env/config, and debugging becomes harder.
+- Why this matters: a single DB client should be the source of truth for the whole process.
 
-6. Environment file load path likely points to wrong location
-- File: server.js:5 uses path.resolve(__dirname, '../../.env')
-- Problem: from backend/server.js this resolves two levels up; backend/.env is one level down from repo root and should normally be ../.env or direct default load.
-- Impact: env variables may silently fail to load depending on where command is run.
+6. Docker-compose DB credentials still don’t line up cleanly with app config
+- File: docker-compose.yml and db/knexfile.js
+- Problem: docker-compose uses env variables; knexfile is halfway moved but currently incorrect.
+- Impact: “docker compose up” can succeed but app DB connection fails (or vice versa) depending on env and cwd.
+- Why this matters: repeatable setup is part of backend correctness.
+
+7. Fabric gateway still has a remaining typo that will crash gateway init
+- File: config/fabric/fabricGateway.js
+- Problem: uses file[0] instead of files[0] when selecting the key file.
+- Impact: gateway init will throw ReferenceError before any Fabric call.
+
+8. Fabric service transaction flows still contain multiple runtime blockers
+- File: service/fabricService.js
+- Problems (examples): assetDelete uses {arguements: ...}, commmit misspelling, missing await on commit.getResult(), assetReadAll ignores owner/limit passed from appFabricService.
+- Impact: transfer/delete/read-all endpoints will behave incorrectly or crash under real Fabric.
+
+9. Repo hygiene risk: root .gitignore was deleted
+- File: .gitignore (repo root)
+- Impact: it’s easy to accidentally start tracking things you didn’t intend. Backend has its own .gitignore, but root-level ignores still matter for the whole repo.
 
 ## High-priority quality/security concerns
 
-1. Token payload is logged
-- File: middleware/authenticate.js:18
-- Risk: logs can expose user identifiers and increase sensitive-data surface.
+1. Authn/authz boundary needs a clear source of truth
+- File: middleware/authorize.js
+- Risk: req.user.role will not exist unless you set Firebase custom claims or you load roles from your DB. Until that’s implemented, authorization will be inconsistent.
 
-2. Controller error paths do not always send a response
-- File: controllers/userController.js:18-20 and controllers/userController.js:27-29
-- Risk: requests can hang on unhandled errors; operational debugging is harder.
-
-3. Duplicate DB clients without a single source of truth
+2. Duplicate DB clients without a single source of truth
 - File: db/db.js and db/knex.js
 - Risk: inconsistent environment usage and connection lifecycle behavior.
-
-4. Implicit globals in Joi schema files
-- File: models/user/signupModel.js:3, models/user/loginModel.js:3, models/network/organizationCreation.js:3
-- Problem: schemas are assigned without const/let.
-- Risk: implicit global mutation bugs in CommonJS runtime.
-
-5. Package drift / uncertainty
-- File: package.json includes sequelize, but code path appears Knex-based.
-- Risk: dependency sprawl and ambiguity around data layer standard.
 
 ## Suggested action plan (stabilize first)
 
 Phase 1: Make backend runnable and deterministic
-- Resolve migration conflict file and keep one coherent schema history.
-- Align all DAO column names with migration names (user_id vs id, name vs organization_name, etc.).
-- Fix networkService constructor and undefined variable references.
-- Remove router-level auth requirement for /signup and /login; apply auth selectively.
+- Decide what /signup and /login mean with Firebase auth (recommended: remove backend /login; make /signup an idempotent “bootstrap my DB user” using req.user.uid).
+- Align signup validation, DAO insert, and DB schema (either add username to DB + validators, or remove username usage everywhere).
 - Standardize on one Knex instance export and use it everywhere.
+- Fix knexfile env usage and make DB config consistent between docker-compose and knexfile.
+- Fix Fabric gateway typos first (so it can connect), then fix Fabric service transaction calls.
 
 Phase 2: Improve correctness and observability
 - Return consistent error responses from all controllers.
 - Introduce centralized error middleware (map known domain errors to 4xx, unknown to 500).
 - Add request validation failure structure (field, message, code).
 - Remove sensitive logs and add structured logging.
+- Add minimal “readiness checks” (DB ping, Fabric gateway init) so you can fail fast on boot.
 
 Phase 3: Add tests before major refactors
-- Add integration tests for signup/login/network/organization happy + failure paths.
+- Add integration tests that do NOT mock authenticate.decodeToken for signup/login, so you catch auth deadlocks.
+- Add a migration smoke test (fresh DB + migrate latest).
 - Add migration smoke test in CI (fresh DB + migrate latest).
-- Add DAO tests for column mapping assumptions.
+- Add DAO tests for column mapping assumptions (especially users.user_id/firebase_uid).
+
+## How well you did (senior evaluation)
+
+### What you did well
+- You chose a clean layering pattern and mostly stuck to it.
+- You already have a centralized error handler and tests that verify error response shape (this is a strong habit).
+- You’re thinking about rate limiting and authorization early, which is rare and good.
+
+### Where the bugs suggest process gaps
+- The biggest issues are “integration mismatches” (validator vs DAO vs migration; docker-compose vs knexfile; auth applied at the wrong layer). That usually means pieces were built in isolation without running the end-to-end flow after each change.
+- The Fabric code currently has multiple typos/undefined identifiers. That’s a sign it hasn’t been executed yet (or wasn’t executed after refactors).
+
+## Completion estimate (percent)
+
+This is an estimate based on what is present AND what would run end-to-end today:
+
+- Architecture scaffolding (folders, wiring, patterns): ~70%
+- Working user auth + DB persistence: ~25% (blocked by auth deadlock + schema/validator mismatches)
+- Fabric integration: ~25% (routing/validation improved; still blocked by remaining gateway typo + service typos)
+- Test coverage confidence: ~35% (tests validate error formatting but heavily mock auth/services)
+
+Overall backend completion: ~40% (range 35–45%).
 
 ## TypeScript migration plan (safe, incremental)
 

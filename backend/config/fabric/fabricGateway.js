@@ -16,8 +16,8 @@ const TLS_CERT_PATH = fabricConfig.tls_cert_path;
 const PEER_ENDPOINT = fabricConfig.peer_endpoint;
 const PEER_HOST_ALIAS = fabricConfig.peer_host_alias;
 
-let gatwaInstance = null
-let clietnInstance = null
+let gatewayInstance = null
+let clientInstance = null
 let networkInstance = null
 let contractInstance = null
 
@@ -40,7 +40,7 @@ function newIdentity () {
 }
 
 function newSigner() {
-    const files = fs.readDirSync(KEY_DIRECTORY_PATH)
+    const files = fs.readdirSync(KEY_DIRECTORY_PATH)
 
     if (!files.length) {
         throw new Error('No private key found in FABRIC_KEY_DIRECTORY_PATH')
@@ -53,20 +53,20 @@ function newSigner() {
     return signers.newPrivateKeySigner(privateKey)
 }
 
-function intGateway () {
+function initGateway () {
     if (contractInstance) {
         return {
-            gateway: gatwaInstance,
-            client: clietnInstance,
+            gateway: gatewayInstance,
+            client: clientInstance,
             network: networkInstance,
             contract: contractInstance
         }
     }
 
-    clietnInstance = newGrpcConnection()
+    clientInstance = newGrpcConnection()
     
-    gatwaInstance = connect ({
-        client: clietnInstance,
+    gatewayInstance = connect ({
+        client: clientInstance,
         identity: newIdentity(),
         signer: newSigner(),
         hash: hash.sha256,
@@ -87,13 +87,13 @@ function intGateway () {
 
     })
 
-    networkInstance = gatwaInstance.getNetwork(CHANNEL_NAME)
+    networkInstance = gatewayInstance.getNetwork(CHANNEL_NAME)
     contractInstance = networkInstance.getContract(CHAINCODE_NAME)
 
 
     return {
         gateway: gatewayInstance,
-        client: clietnInstance,
+        client: clientInstance,
         network: networkInstance,
         contract: contractInstance
     }
@@ -113,9 +113,9 @@ function closeGateway () {
         gatewayInstance = null
     }
 
-    if (clietnInstance) {
-        clietnInstance.close()
-        clietnInstance = null
+    if (clientInstance) {
+        clientInstance.close()
+        clientInstance = null
     }
 
     networkInstance = null
