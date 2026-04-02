@@ -1,5 +1,5 @@
 const role = require('./roles')
-const permission = require('./perrmisions')
+const permission = require('./permissions')
 
 const authorization = Object.freeze({
     [role.USER]: [
