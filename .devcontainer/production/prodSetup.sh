@@ -70,7 +70,8 @@ sudo apt-get install -y --no-install-recommends \
     tar \
     wget \
     gnupg \
-    unzip
+    unzip \
+    tree
 
 
 # --------------------------------
@@ -79,10 +80,6 @@ sudo apt-get install -y --no-install-recommends \
 download_docker
 download_hashicorp_vault
 download_node
-
-if [ -f "${WORKSPACE_DIR}/backend/package.json" ]; then
-    npm --prefix "${WORKSPACE_DIR}/backend" install
-fi
 
 
 # --------------------------------
@@ -98,6 +95,7 @@ sudo apt-get install -y --no-install-recommends \
 # --------------------------------
 # 4. Cleaning up
 # --------------------------------
+sudo timedatectl set-timezone Asia/Manila
 sudo timedatectl set-ntp true
 sudo dpkg-reconfigure --priority=low unattended-upgrades -y
 sudo apt-get update --fix-missing

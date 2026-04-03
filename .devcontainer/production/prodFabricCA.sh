@@ -92,7 +92,7 @@ function verify_installed_binaries {
 ##################################
 # Export environment variables
 ##################################
-export FABRIC_CA_CLIENT_HOME="${CA_CLIENT_DIR}"
+export FABRIC_CA_CLIENT_HOME="/usr/local/fabric/fabric-ca-client"
 # export FABRIC_CA_CLIENT_TLS_CERTFILES can be set if a custom TLS root cert path is required
 # export FABRIC_CA_CLIENT_MSPDIR can be set to override the default MSP directory
 export PATH="${BIN_DIR}":$PATH
