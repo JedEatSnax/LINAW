@@ -95,7 +95,7 @@ function verify_installed_binaries {
 export FABRIC_CA_CLIENT_HOME="${CA_CLIENT_DIR}"
 # export FABRIC_CA_CLIENT_TLS_CERTFILES can be set if a custom TLS root cert path is required
 # export FABRIC_CA_CLIENT_MSPDIR can be set to override the default MSP directory
-
+export PATH="${BIN_DIR}":$PATH
 
 
 ##################################
@@ -129,11 +129,6 @@ function download_fabric {
     curl -fL "${fabric_ca_url}" -o "${fabric_ca_tgz}"
     mkdir -p "${TMP_DIR}/fabric-ca"
     tar -xzf "${fabric_ca_tgz}" -C "${TMP_DIR}/fabric-ca"
-    
-    # go to bin dir and copy/paste ca client and server bin to their respective dir
-    cd "${BIN_DIR}"
-    cp fabric-ca-client "${CA_CLIENT_DIR}"
-    cp fabric-ca-client "${CA_SERVER_TLS_DIR}"
 
     sudo mkdir -p "${BIN_DIR}" "${CONFIG_DIR}"
     sudo cp -f "${TMP_DIR}/fabric/bin/"* "${BIN_DIR}/"
@@ -144,6 +139,11 @@ function download_fabric {
     if [ -d "${TMP_DIR}/fabric-ca/bin" ]; then
         sudo cp -f "${TMP_DIR}/fabric-ca/bin/"* "${BIN_DIR}/"
     fi
+
+    # Copy the installed CA binaries into the workspace-managed runtime folders.
+    mkdir -p "${CA_CLIENT_DIR}" "${CA_SERVER_TLS_DIR}"
+    cp -f "${BIN_DIR}/fabric-ca-client" "${CA_CLIENT_DIR}/"
+    cp -f "${BIN_DIR}/fabric-ca-server" "${CA_SERVER_TLS_DIR}/"
 
     for bin in "${BIN_DIR}"/*; do
         sudo ln -sf "${bin}" "/usr/local/bin/$(basename "${bin}")"

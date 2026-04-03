@@ -12,3 +12,7 @@ TODO.md
 Status.md
 GRYPHEN_DOCS.md
 NOTES.md
+
+# Stray Files
+*.pid
+*.log

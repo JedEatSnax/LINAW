@@ -44,7 +44,8 @@ sudo apt-get install -y --no-install-recommends \
     tar \
     wget \
     gnupg \
-    unzip
+    unzip \
+    tree
 
 if [ -f "${WORKSPACE_DIR}/backend/package.json" ]; then
     npm --prefix "${WORKSPACE_DIR}/backend" install
