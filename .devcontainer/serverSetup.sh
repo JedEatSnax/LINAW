@@ -78,7 +78,6 @@ sudo apt-get install -y --no-install-recommends \
 # --------------------------------
 download_docker
 download_hashicorp_vault
-download_fabric
 download_node
 
 if [ -f "${WORKSPACE_DIR}/backend/package.json" ]; then

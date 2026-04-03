@@ -10,7 +10,7 @@
     "containerEnv": {
         "WORKSPACE_FOLDER": "${containerWorkspaceFolder}"
     },
-    "postCreateCommand": "bash  .devcontainer/devPostCreate.sh && bash .devcontainer/fabricSetup.sh",
+    "postCreateCommand": "bash  .devcontainer/devPostCreate.sh && bash .devcontainer/fabricCAsetup.sh",
     "forwardPorts": [3000, 7050, 7051, 7053, 7054],
     "portsAttributes": {
         "3000": { "label": "Node.js API" },

@@ -56,65 +56,16 @@ function download_docker {
     sudo systemctl enable --now docker
 }
 
-function download_fabric {
-    local arch
-    arch="$(dpkg --print-architecture)"
-
-    case "${arch}" in
-        amd64|arm64)
-            ;;
-        *)
-            echo "Unsupported architecture for Fabric binaries: ${arch}"
-            exit 1
-            ;;
-    esac
-
-    if ! docker version >/dev/null 2>&1; then
-        echo "Docker is not reachable. Ensure the docker service is running and rerun this script."
-        exit 1
-    fi
-
-    echo "Installing Hyperledger Fabric ${FABRIC_VERSION} binaries (arch: ${arch})..."
-    local fabric_tgz="${TMP_DIR}/fabric.tgz"
-    local fabric_url="https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VERSION}/hyperledger-fabric-linux-${arch}-${FABRIC_VERSION}.tar.gz"
-    curl -fL "${fabric_url}" -o "${fabric_tgz}"
-    mkdir -p "${TMP_DIR}/fabric"
-    tar -xzf "${fabric_tgz}" -C "${TMP_DIR}/fabric"
-
-    echo "Installing Hyperledger Fabric CA ${FABRIC_CA_VERSION} binaries..."
-    local fabric_ca_tgz="${TMP_DIR}/fabric-ca.tgz"
-    local fabric_ca_url="https://github.com/hyperledger/fabric-ca/releases/download/v${FABRIC_CA_VERSION}/hyperledger-fabric-ca-linux-${arch}-${FABRIC_CA_VERSION}.tar.gz"
-    curl -fL "${fabric_ca_url}" -o "${fabric_ca_tgz}"
-    mkdir -p "${TMP_DIR}/fabric-ca"
-    tar -xzf "${fabric_ca_tgz}" -C "${TMP_DIR}/fabric-ca"
-
-    sudo mkdir -p "${BIN_DIR}" "${CONFIG_DIR}"
-    sudo cp -f "${TMP_DIR}/fabric/bin/"* "${BIN_DIR}/"
-    if [ -d "${TMP_DIR}/fabric/config" ]; then
-        sudo cp -rf "${TMP_DIR}/fabric/config/." "${CONFIG_DIR}/"
-    fi
-
-    if [ -d "${TMP_DIR}/fabric-ca/bin" ]; then
-        sudo cp -f "${TMP_DIR}/fabric-ca/bin/"* "${BIN_DIR}/"
-    fi
-
-    for bin in "${BIN_DIR}"/*; do
-        sudo ln -sf "${bin}" "/usr/local/bin/$(basename "${bin}")"
-    done
-
-    docker pull hyperledger/fabric-nodeenv:2.5
-}
-
-# ================================
+##################################
 # UBUNTU SYSTEM SETUP
-# ===============================
+##################################
 sudo apt-get update --fix-missing
 sudo apt-get full-upgrade -y
 
 
-# --------------------------------
+##################################
 # 1. Install base tools
-# --------------------------------
+##################################
 sudo apt-get install -y --no-install-recommends \
     apt-transport-https \
     software-properties-common \
@@ -130,12 +81,11 @@ sudo apt-get install -y --no-install-recommends \
     unzip
 
 
-# --------------------------------
+##################################
 # 2. Call functions
-# --------------------------------
+##################################
 download_docker
 download_hashicorp_vault
-download_fabric
 download_node
 
 if [ -f "${WORKSPACE_DIR}/backend/package.json" ]; then
@@ -148,9 +98,9 @@ orderer version | head -n 1 || true
 fabric-ca-client version | head -n 1 || true
 
 
-# --------------------------------
+##################################
 # 3. Install software packages
-# --------------------------------
+##################################
 sudo apt-get install -y --no-install-recommends \
     unattended-upgrades \
     cryptsetup \
@@ -158,9 +108,9 @@ sudo apt-get install -y --no-install-recommends \
     ufw \
     lynis
 
-# --------------------------------
+##################################
 # Update, upgrade, and clean
-# --------------------------------
+##################################
 sudo timedatectl set-ntp true
 sudo dpkg-reconfigure --priority=low unattended-upgrades -y
 sudo apt-get update --fix-missing
@@ -173,19 +123,19 @@ sudo systemctl enable vault docker
 sudo systemctl start vault docker
 sudo systemctl status vault docker
 
-# ================================
+##################################
 # CONSIDERATIONS
 # Good to have but not priority
-# ================================
+##################################
 # 1. Intrusion prevention system
 # 2. Intrusion detection system
 # 3. Only specific user has access to Docker for safety
 # 4. Limit root user access for safety
 
-# ================================
+##################################
 # UNEXECUTED COMMANDS
 # Uncompatible Docker server setups
-# ================================
+##################################
 # sudo systemctl enable ufw
 # sudo systemctl start ufw
 # sudo systemctl status ufw
