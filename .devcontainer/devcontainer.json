@@ -11,14 +11,6 @@
         "WORKSPACE_FOLDER": "${containerWorkspaceFolder}"
     },
     "postCreateCommand": "bash  .devcontainer/devPostCreate.sh && bash .devcontainer/fabricCAsetup.sh",
-    "forwardPorts": [3000, 7050, 7051, 7053, 7054],
-    "portsAttributes": {
-        "3000": { "label": "Node.js API" },
-        "7050": { "label": "Fabric Orderer" },
-        "7051": { "label": "Fabric Peer" },
-        "7053": { "label": "Peer Event Service" },
-        "7054": { "label": "Fabric CA" }
-    },
     "customizations": {
         "vscode": {
             "extensions": [
