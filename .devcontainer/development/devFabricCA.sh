@@ -131,6 +131,11 @@ function download_fabric {
     curl -fL "${fabric_ca_url}" -o "${fabric_ca_tgz}"
     mkdir -p "${TMP_DIR}/fabric-ca"
     tar -xzf "${fabric_ca_tgz}" -C "${TMP_DIR}/fabric-ca"
+    
+    # go to bin dir and copy/paste ca client and server bin to their respective dir
+    cd "${BIN_DIR}"
+    cp fabric-ca-client /workspaces/LINAW/fabric-ca-client
+    cp fabric-ca-server /workspaces/LINAW/fabric-ca-server-tls
 
     sudo mkdir -p "${BIN_DIR}" "${CONFIG_DIR}"
     sudo cp -f "${TMP_DIR}/fabric/bin/"* "${BIN_DIR}/"

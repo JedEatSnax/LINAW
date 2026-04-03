@@ -14,29 +14,12 @@ function has_systemd {
     [ -d /run/systemd/system ] && command -v systemctl >/dev/null 2>&1
 }
 
+
 cleanup() {
     rm -rf "${TMP_DIR}"
 }
 trap cleanup EXIT
 
-function download_node {
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-
-    # Devcontainer images may place nvm under /usr/local/share/nvm.
-    if [ -s "$HOME/.nvm/nvm.sh" ]; then
-        export NVM_DIR="$HOME/.nvm"
-    elif [ -s "/usr/local/share/nvm/nvm.sh" ]; then
-        export NVM_DIR="/usr/local/share/nvm"
-    else
-        echo "nvm.sh not found in expected locations; skipping Node install via nvm."
-        return
-    fi
-
-    . "$NVM_DIR/nvm.sh"
-    nvm install 24
-}
-
-download_node
 
 ##################################
 # UBUNTU SYSTEM SETUP
