@@ -10,7 +10,7 @@
     "containerEnv": {
         "WORKSPACE_FOLDER": "${containerWorkspaceFolder}"
     },
-    "postCreateCommand": "bash  .devcontainer/devPostCreate.sh && bash .devcontainer/fabricCAsetup.sh",
+    "postCreateCommand": "bash  .devcontainer/development/devSetup.sh && bash .devcontainer/development/devFabricCA.sh",
     "customizations": {
         "vscode": {
             "extensions": [
