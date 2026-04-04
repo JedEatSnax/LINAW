@@ -1,10 +1,12 @@
 database
 
 # Hyperledger Fabric
+fabric
+fabric-ca
+/fabric-ca-client
+/fabric-ca-server-tls
+/fabric-samples
 install-fabric.sh
-fabric-samples
-fabric-ca-client
-fabric-ca-server-tls
 
 # Documentation
 progress.md
@@ -14,5 +16,7 @@ GRYPHEN_DOCS.md
 NOTES.md
 
 # Stray Files
-*.pid
-*.log
+/*.pid
+/*.log
+/*.yaml
+/*.yml
