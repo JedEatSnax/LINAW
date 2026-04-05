@@ -1,21 +1,34 @@
-FROM hyperledger/fabric-peer:3.1.4 AS fabric_peer_upstream
+FROM cgr.dev/chainguard/go:latest-dev AS builder
+
+ARG TARGETARCH
+ARG TARGETOS
+ARG FABRIC_VER=v3.1.4
+ARG GO_TAGS
+
+WORKDIR /src/fabric
+COPY fabric /src/fabric/
+
+RUN make peer GO_TAGS=${GO_TAGS} FABRIC_VER=${FABRIC_VER}
+RUN mkdir -p /tmp/var-hyperledger
 
 FROM cgr.dev/chainguard/glibc-dynamic:latest
 
+ARG FABRIC_VER=v3.1.4
 ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
-ENV FABRIC_VER=v3.1.4
-ENV PATH=/usr/local/bin:/usr/bin:/bin
+ENV FABRIC_VER=${FABRIC_VER}
 
-WORKDIR /etc/hyperledger/fabric
+COPY --from=builder /etc/nsswitch.conf /etc/nsswitch.conf
+COPY --from=builder /etc/ssl/certs /etc/ssl/certs
+COPY --from=builder /src/fabric/build/bin/peer /usr/local/bin/peer
+COPY --from=builder /src/fabric/sampleconfig/core.yaml ${FABRIC_CFG_PATH}/core.yaml
+COPY --chown=nonroot:nonroot --from=builder /src/fabric/sampleconfig/msp ${FABRIC_CFG_PATH}/msp
+COPY --chown=nonroot:nonroot --from=builder /tmp/var-hyperledger/. /var/hyperledger/
 
-COPY --from=alpine:3.19 /etc/ssl/certs /etc/ssl/certs
-COPY --from=fabric_peer_upstream /usr/local/bin/peer /usr/bin/peer
-COPY config/core.yaml /etc/hyperledger/fabric/core.yaml  
-
-VOLUME ["/etc/hyperledger/fabric" ,"/var/hyperledger/"]
+VOLUME ["/etc/hyperledger/fabric"]
+VOLUME ["/var/hyperledger/"]
 
 EXPOSE 7051/tcp
 
 USER nonroot:nonroot
 
-CMD ["/usr/bin/peer", "version"]
+CMD ["peer", "node", "start"]

@@ -17,7 +17,6 @@ ARG FABRIC_VER=v3.1.4
 ENV FABRIC_CFG_PATH=/etc/hyperledger/fabric
 ENV FABRIC_VER=${FABRIC_VER}
 
-# glibc-dynamic has no shell; copy nsswitch.conf from builder stage.
 COPY --from=builder /etc/nsswitch.conf /etc/nsswitch.conf
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 COPY --from=builder /src/fabric/build/bin/orderer /usr/local/bin/orderer
@@ -29,7 +28,7 @@ COPY --chown=nonroot:nonroot --from=builder /tmp/var-hyperledger/. /var/hyperled
 VOLUME ["/etc/hyperledger/fabric"]
 VOLUME ["/var/hyperledger"]
 
-EXPOSE 7050
+EXPOSE 7050/tcp
 
 USER nonroot:nonroot
 
