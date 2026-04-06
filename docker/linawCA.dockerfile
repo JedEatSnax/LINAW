@@ -25,4 +25,4 @@ EXPOSE 7054/tcp
 USER nonroot:nonroot
 
 ENTRYPOINT ["fabric-ca-server"]
-CMD ["version"]
+CMD ["start", "-b", "admin:adminpw"]

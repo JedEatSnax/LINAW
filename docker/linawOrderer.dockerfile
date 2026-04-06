@@ -32,4 +32,5 @@ EXPOSE 7050/tcp
 
 USER nonroot:nonroot
 
-CMD ["orderer", "start"]
+ENTRYPOINT ["orderer"]
+CMD ["start"]

@@ -31,4 +31,5 @@ EXPOSE 7051/tcp
 
 USER nonroot:nonroot
 
-CMD ["peer", "node", "start"]
+ENTRYPOINT ["peer"]
+CMD ["node", "start"]
