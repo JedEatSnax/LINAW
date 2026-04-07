@@ -32,11 +32,15 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "express-rate-limit": "^8.3.1",
+    "fabric-contract-api": "^2.5.8",
+    "fabric-shim": "^2.5.8",
     "firebase-admin": "^13.7.0",
     "jest": "^30.3.0",
     "joi": "^18.0.2",
+    "json-stringify-deterministic": "^1.0.12",
     "knex": "^3.1.0",
-    "pg": "^8.19.0"
+    "pg": "^8.19.0",
+    "sort-keys-recursive": "^2.1.10"
   },
   "overrides": {
     "@tootallnate/once": "^3.0.1"
