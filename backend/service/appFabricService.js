@@ -9,7 +9,7 @@ class ValidationError extends Error {
 
 const fabricSchema = require('../validators/fabric/fabricSchema')
 const AppError = require('../utils/AppError')
-const fabricService = require('./fabricService')
+const fabricService = require('./fabric/assetRegistry')
 
 class appFabricService {
 
