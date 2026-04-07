@@ -68,3 +68,11 @@ i made sure i that the endpoints are now protected with firebase auth. The autho
 ### 03/29/ 26 -> 04/02/2026 
 
 During my mental health break from March 29, 2026 to April 3, 2026, I was able to complete significant development work related to the client-side Hyperledger Fabric integration. Specifically, I finished the implementation of Fabric-connected endpoints from the routing layer up to the application service layer, and I also developed supporting backend components such as validations, unit tests, a centralized error handler, Fabric gateway connection setup, Fabric configuration, and the service layer responsible for actual blockchain communication.
+
+### 04/07/ 26 
+
+bruh respectfully what in the fuck? hahahaha our transaction page in the frontend literally copies what the fabric samples does and I dugged deeps i noticed that even the chaincode for basic in the fabric samples are literally the same no other way around it. I'll write another chaincode for later i guess after finals or something, pretty much it will be another new endpoints. I'll be writing that after all of the chaos in our subjects subside. I'll write a literally custom chaincode after i settled everything. so yepp imma finish the basic asset transfer chaincode and prep another new chaincode for later. 
+
+The asset-transfer basic should suffice for our mvp. Though i'll make sure to write another for sure custom chaincode. 
+
+I think the best course of action instead of adding that new shit asap is to finish the mvp first like literally, I'll be finishing everything first before doing that new chaincode cause it'll need a lot of new things endpoints, controllers, service layer and another new validator.

@@ -1,5 +1,5 @@
-const AppError = require('../utils/AppError')
-const { getContract } = require ('../config/fabric/fabricGateway.js')
+const AppError = require('../../utils/AppError.js')
+const { getContract } = require ('../../config/fabric/fabricGateway.js')
 const { TextDecoder } = require('node:util');
 
 function parseBuffer (resultBuffer) {
@@ -16,7 +16,7 @@ function parseBuffer (resultBuffer) {
 	}
 }
 
-class fabricService {
+class assetRegistry {
 	
 	async createAsset ({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
@@ -99,12 +99,12 @@ class fabricService {
 
 			const commit = await contract.submitAsync(
 				'DeleteAsset',
-				{arguements: [id]}
+				{arguments: [id]}
 			)
 
 			const result = commit.getResult()
 
-			const status = await commmit.getStatus()
+			const status = await commit.getStatus()
 			if(!status.successful){
 				throw new Error(
 					`Transaction ${status.transactionId} failed to commit with status code ${String(status.code)}`
@@ -161,4 +161,4 @@ class fabricService {
 }
 
 
-module.exports = new fabricService();
+module.exports = new assetRegistry();

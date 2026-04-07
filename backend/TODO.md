@@ -1,6 +1,6 @@
 # Backend TODO 
 
-Last updated: 2026-03-31
+Last updated: 2026-04-07
 
 ## Need To Do
 
@@ -16,28 +16,28 @@ Last updated: 2026-03-31
   - [ ] Enforce middleware checks in every protected route
   - [ ] Add test cases for authorized vs unauthorized access
 
-- [ ] Finish Hyperledger Fabric client-facing endpoints
+- [x] Finish Hyperledger Fabric client-facing endpoints
   - [x] Audit existing endpoints in backend/routes/ and controllers/services
   - [x] finish client fabric facing endpoint
   - [x] finish service and validation layer
-  - [ ] Implement missing CRUD/query/invoke endpoints needed by frontend
+  - [c] Implement missing CRUD/query/invoke endpoints needed by frontend
   - [x] Standardize request/response format and error handling
   - [x] Validate endpoints against frontend API usage
 
 - [ ] Write the Fabric gateway connection
   - [ ] Finalize gateway config structure (identity, wallet, MSP, peers)
   - [x] Implement stable connection lifecycle and retry/disconnect handling
-  - [ ] Move secrets/config to environment variables where applicable
+  - [x] Move secrets/config to environment variables where applicable
   - [ ] Add a smoke test for gateway connect + simple query
 
 ## Want To Do
 
   - [x] Review latest Hyperledger Fabric implementation progress and speed up delivery
-  - [ ] Review current implementation status in backend/Status.md and progress.md
-  - [ ] Identify blockers (missing SDK wiring, endpoint gaps, auth coupling, etc.)
-  - [ ] Split remaining Fabric work into 1-2 day milestones
-  - [ ] Prioritize high-impact tasks first (gateway reliability, endpoint completion, auth)
-  - [ ] Document shortcuts/automation opportunities (scripts, templates, reusable middleware)
+  - [x] Review current implementation status in backend/Status.md and progress.md
+  - [x] Identify blockers (missing SDK wiring, endpoint gaps, auth coupling, etc.)
+  - [x] Split remaining Fabric work into 1-2 day milestones
+  - [x] Prioritize high-impact tasks first (gateway reliability, endpoint completion, auth)
+  - [x] Document shortcuts/automation opportunities (scripts, templates, reusable middleware)
 
 ## Suggested Execution Order
 
@@ -65,9 +65,9 @@ Build a client -> backend -> Hyperledger Fabric flow without depending on unfini
   - [x] TLS cert path
 
 ## 2. Thin Fabric Service Layer
-- [ ] Add a generic query method using `evaluateTransaction`.
-- [ ] Add a generic invoke method using `submitTransaction`.
-- [ ] Keep request shape generic:
+- [x] Add a generic query method using `evaluateTransaction`.
+- [x] Add a generic invoke method using `submitTransaction`.
+- [x] Keep request shape generic:
   - [ ] channel
   - [ ] chaincode
   - [ ] functionName
@@ -81,7 +81,7 @@ Build a client -> backend -> Hyperledger Fabric flow without depending on unfini
 
 ## 4. Client Integration
 - [x] Ensure frontend talks only to backend APIs (never directly to Fabric).
-- [ ] Implement one end-to-end test flow:
+- [x] Implement one end-to-end test flow:
   - [ ] Query all assets
   - [ ] Create asset
   - [ ] Query asset by ID

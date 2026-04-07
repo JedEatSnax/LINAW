@@ -8,10 +8,8 @@ router.use( apiLimiter, authenticate.decodeToken)
 
 //blockchain 
 router.post('/networks', fabricController.networkCreate)
-router.get ('/networks', fabricController.networkRead)
 
 router.post('/networks/:id/channels', fabricController.channelCreate)
-router.get ('/networks/:id/channels', fabricController.channelRead)
 
 router.post('/channel/:channel_id/contracts', fabricController.smartContract)
 router.get ('/channel/:channel_id/contracts', fabricController.contractReadAll)

@@ -153,7 +153,6 @@ class fabricController {
     async assetReadAll (req, res, next) {
         try {
             const readAll = await appFabricService.assetReadAll({
-                query: req.query,
                 user: req.user
             })
 

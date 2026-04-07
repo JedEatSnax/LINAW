@@ -1,1 +1,7 @@
-database
+# the git ignore in the backend directory can't add the database 
+# because it belongs to docker and that gitignore is in the 
+# backend directory, so i can't think of a way to ignore the 
+# database folder without ignoring the whole backend directory, 
+# so i added a new gitignore here in the root
+# to ignore the database folder.
+database/
