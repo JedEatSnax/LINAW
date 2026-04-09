@@ -1,7 +1,22 @@
-# the git ignore in the backend directory can't add the database 
-# because it belongs to docker and that gitignore is in the 
-# backend directory, so i can't think of a way to ignore the 
-# database folder without ignoring the whole backend directory, 
-# so i added a new gitignore here in the root
-# to ignore the database folder.
 database/
+
+# Hyperledger Fabric
+fabric
+fabric-ca
+/fabric-ca-client
+/fabric-ca-server-tls
+/fabric-samples
+install-fabric.sh
+
+# Documentation
+progress.md
+TODO.md
+Status.md
+GRYPHEN_DOCS.md
+NOTES.md
+
+# Stray Files
+/*.pid
+/*.log
+/*.yaml
+/*.yml
