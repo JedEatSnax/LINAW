@@ -24,6 +24,8 @@ COPY --from=builder /src/fabric/sampleconfig/core.yaml ${FABRIC_CFG_PATH}/core.y
 COPY --chown=nonroot:nonroot --from=builder /src/fabric/sampleconfig/msp ${FABRIC_CFG_PATH}/msp
 COPY --chown=nonroot:nonroot --from=builder /tmp/var-hyperledger/. /var/hyperledger/
 
+RUN  --mount=type=secret,id=peer-core,target=--from=builder /src/fabric/sampleconfig/core.yaml
+
 VOLUME ["/etc/hyperledger/fabric"]
 VOLUME ["/var/hyperledger/"]
 
