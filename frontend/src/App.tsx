@@ -1,15 +1,18 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+
 import { Login } from "./pages/Login"
 import { Register } from "./pages/Register"
-import { Dashboard } from "./pages/Dashboard"
-import { Settings } from "./pages/Settings"
-import { ChaincodeEvents } from "./pages/ChaincodeEvents"
-import { SubmitTransaction } from "./pages/SubmitTransaction"
-import { TransactionHistory } from "./pages/TransactionHistory"
-import { QueryLedger } from "./pages/QueryLedger"
-import { ForgotPass } from "./pages/ForgotPass"
+import { ForgotPassword } from "./pages/ForgotPassword"
+
 import AuthRoute from "../AuthRoute"
 import AuthRouteReversed from "../AuthRouteReversed"
+
+import { Dashboard } from "./pages/Dashboard"
+import { Settings } from "./pages/Settings"
+import { History } from "./pages/History"
+import { Organizations } from "./pages/Organizations"
+import { Assets } from "./pages/Assets"
+
 // import { useState, useEffect } from 'react'
 // import axios from "axios"
 // import { useState, useEffect } from 'react'
@@ -38,13 +41,13 @@ function App() {
           <Route path = "/" element={<Navigate to="/login"/>}/>
           <Route path = "/login" element={<AuthRouteReversed><Login/></AuthRouteReversed>}/>
           <Route path = "/register" element={<AuthRouteReversed><Register/></AuthRouteReversed>}/>
+          <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPassword/></AuthRouteReversed>}/>
+
           <Route path = "/dashboard" element={<AuthRoute><Dashboard/></AuthRoute>}/>
-          <Route path = "/chaincode-events" element={<AuthRoute><ChaincodeEvents/></AuthRoute>}/>
           <Route path = "/settings" element={<AuthRoute><Settings/></AuthRoute>}/>
-          <Route path = "/transaction-history" element={<AuthRoute><TransactionHistory/></AuthRoute>}/>
-          <Route path = "/query-ledger" element={<AuthRoute><QueryLedger/></AuthRoute>}/>
-          <Route path = "/submit-transaction" element={<AuthRoute><SubmitTransaction/></AuthRoute>}/>
-          <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPass/></AuthRouteReversed>}/>
+          <Route path = "/history" element={<AuthRoute><History/></AuthRoute>}/>
+          <Route path = "/organizations" element=<Organizations/> />
+          <Route path = "/assets" element=<Assets/> />
         </Routes>
       </BrowserRouter>
     </div>

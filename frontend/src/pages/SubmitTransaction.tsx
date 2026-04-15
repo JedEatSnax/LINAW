@@ -1,3 +1,10 @@
+/*
+
+This will be deleted soon. 
+
+Only here for reference.
+*/
+
 "use client";
 import { uiClasses } from "../components/uiClasses";
 import Sidebar from "../components/sidebar";

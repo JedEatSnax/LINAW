@@ -1,6 +1,23 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { uiClasses } from "./uiClasses";
+import { useEffect, useMemo, useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 type RowData = Record<string, string>;
 
@@ -31,18 +48,13 @@ function SchemaModal({
 }) {
   const [count, setCount] = useState(initialCount);
   const [names, setNames] = useState<string[]>(initialNames);
-  const firstInputRef = useRef<HTMLInputElement | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (open) {
       setCount(initialCount);
       setNames(initialNames);
-      setTimeout(() => firstInputRef.current?.focus(), 0);
     }
   }, [open, initialCount, initialNames]);
-
-  if (!open) return null;
 
   const ensureNamesLength = (nextCount: number) => {
     setNames((prev) => {
@@ -58,87 +70,50 @@ function SchemaModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="schema-title"
-      onKeyDown={(e) => {
-        if (e.key === "Escape") onClose();
-      }}
-    >
-      <div className="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h3 id="schema-title" className="text-lg font-semibold text-slate-900">
-              Define Attributes
-            </h3>
-            <p className="mt-1 text-sm text-slate-600">
-              Set the number of attributes once. After saving, the schema is locked.
-            </p>
-          </div>
-          <button
-            ref={closeButtonRef}
-            onClick={onClose}
-            className="rounded-md px-2 py-1 text-slate-500 hover:bg-slate-100"
-            aria-label="Close modal"
-          >
-            ✕
-          </button>
-        </div>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Define Attributes</DialogTitle>
+      <DialogContent>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Set the number of attributes once. After saving, the schema is locked.
+        </Typography>
 
-        <div className="mt-5 space-y-4">
-          <label className="block space-y-1">
-            <span className="text-sm font-medium text-slate-700">Number of attributes</span>
-            <input
-              ref={firstInputRef}
-              type="number"
-              min={1}
-              max={12}
-              value={count}
+        <Stack spacing={2} sx={{ mt: 1 }}>
+          <TextField
+            autoFocus
+            type="number"
+            label="Number of attributes"
+            slotProps={{ htmlInput: { min: 1, max: 12 } }}
+            value={count}
+            onChange={(e) => {
+              const next = Math.max(1, Number(e.target.value) || 1);
+              setCount(next);
+              ensureNamesLength(next);
+            }}
+            fullWidth
+          />
+
+          {names.slice(0, count).map((name, index) => (
+            <TextField
+              key={index}
+              label={`Attribute ${index + 1}`}
+              value={name}
               onChange={(e) => {
-                const next = Math.max(1, Number(e.target.value) || 1);
-                setCount(next);
-                ensureNamesLength(next);
+                const next = [...names];
+                next[index] = e.target.value;
+                setNames(next);
               }}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-slate-900"
+              fullWidth
             />
-          </label>
-
-          <div className="space-y-3">
-            {names.slice(0, count).map((name, index) => (
-              <label key={index} className="block space-y-1">
-                <span className="text-sm font-medium text-slate-700">Attribute {index + 1}</span>
-                <input
-                  value={name}
-                  onChange={(e) => {
-                    const next = [...names];
-                    next[index] = e.target.value;
-                    setNames(next);
-                  }}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-slate-900"
-                />
-              </label>
-            ))}
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2">
-            <button
-              onClick={onClose}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={save}
-              className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
-            >
-              Save Schema
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+          ))}
+        </Stack>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button variant="contained" onClick={save}>
+          Save Schema
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -152,19 +127,28 @@ function RowForm({
   onChange: (key: string, nextValue: string) => void;
 }) {
   return (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <Box
+      sx={{
+        display: "grid",
+        gap: 2,
+        gridTemplateColumns: {
+          xs: "1fr",
+          md: "repeat(2, minmax(0, 1fr))",
+          xl: "repeat(4, minmax(0, 1fr))",
+        },
+      }}
+    >
       {attributes.map((attr) => (
-        <label key={attr} className="space-y-1">
-          <span className="block text-sm font-medium text-slate-700">{attr}</span>
-          <input
+        <TextField
+          key={attr}
+          label={attr}
             value={value[attr] ?? ""}
             onChange={(e) => onChange(attr, e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-slate-900"
             placeholder={`Enter ${attr.toLowerCase()}`}
+          fullWidth
           />
-        </label>
       ))}
-    </div>
+    </Box>
   );
 }
 
@@ -188,38 +172,38 @@ function ActionBar({
   canDelete: boolean;
 }) {
   return (
-    <div className="mt-4 flex flex-wrap gap-2">
-      <button onClick={onCreate} className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-500">
+    <Stack direction="row" spacing={1} useFlexGap sx={{ mt: 2, flexWrap: "wrap" }}>
+      <Button onClick={onCreate} variant="contained" color="success">
         Create
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={onTransfer}
         disabled={!canTransfer}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50 hover:bg-indigo-500"
+        variant="contained"
+        color="info"
       >
         Transfer
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={onUpdate}
         disabled={!canUpdate}
-        className="rounded-lg bg-amber-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50 hover:bg-amber-500"
+        variant="contained"
+        color="warning"
       >
         Update
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={onDelete}
         disabled={!canDelete}
-        className="rounded-lg bg-rose-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-50 hover:bg-rose-500"
+        variant="contained"
+        color="error"
       >
         Delete
-      </button>
-      <button
-        onClick={onCancel}
-        className="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-50"
-      >
+      </Button>
+      <Button onClick={onCancel} variant="outlined" color="inherit">
         Cancel
-      </button>
-    </div>
+      </Button>
+    </Stack>
   );
 }
 
@@ -235,49 +219,46 @@ function DataTable({
   onSelectRow: (index: number) => void;
 }) {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200">
-        <thead className="bg-slate-50">
-          <tr>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">#</th>
+    <TableContainer>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>#</TableCell>
             {attributes.map((attr) => (
-              <th key={attr} className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+              <TableCell key={attr}>
                 {attr}
-              </th>
+              </TableCell>
             ))}
-            <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200 bg-white">
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {rows.length === 0 ? (
-            <tr>
-              <td colSpan={attributes.length + 2} className="px-4 py-8 text-center text-sm text-slate-500">
+            <TableRow>
+              <TableCell colSpan={attributes.length + 2} align="center" sx={{ py: 5, color: "text.secondary" }}>
                 No rows yet. Use the form above to create one.
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ) : (
             rows.map((row, index) => (
-              <tr key={index} className={index === activeRowIndex ? "bg-slate-100" : "hover:bg-slate-50"}>
-                <td className="px-4 py-3 text-sm text-slate-600">{index + 1}</td>
+              <TableRow key={index} hover selected={index === activeRowIndex}>
+                <TableCell sx={{ color: "text.secondary" }}>{index + 1}</TableCell>
                 {attributes.map((attr) => (
-                  <td key={attr} className="px-4 py-3 text-sm text-slate-800">
+                  <TableCell key={attr}>
                     {row[attr] || "-"}
-                  </td>
+                  </TableCell>
                 ))}
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() => onSelectRow(index)}
-                    className="rounded-md border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
-                  >
+                <TableCell>
+                  <Button onClick={() => onSelectRow(index)} variant="outlined" size="small">
                     Select
-                  </button>
-                </td>
-              </tr>
+                  </Button>
+                </TableCell>
+              </TableRow>
             ))
           )}
-        </tbody>
-      </table>
-    </div>
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 }
 
@@ -357,28 +338,31 @@ export default function EditableSchemaTable() {
   };
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto">
-      <div className="flex items-center justify-between gap-3">
-        <h2 className={uiClasses.sectionTitle}>Editable Table</h2>
-        <button
-          onClick={openSchema}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-white hover:bg-slate-800"
-        >
+    <Box sx={{ flex: 1, p: 3, overflowY: "auto" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ mb: 3, alignItems: "center", justifyContent: "space-between" }}
+      >
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Editable Table
+        </Typography>
+        <Button onClick={openSchema} variant="contained">
           {schema ? "Edit Schema" : "Set Attributes"}
-        </button>
-      </div>
+        </Button>
+      </Stack>
 
       {!schema && (
-        <div className={uiClasses.panelBody}>
-          <h1 className={uiClasses.panelSubHeader}>
+        <Paper variant="outlined" sx={{ p: 3, mb: 2 }}>
+          <Typography variant="body1" color="text.secondary">
             No schema yet. Click Set Attributes to begin.
-          </h1>
-        </div>
+          </Typography>
+        </Paper>
       )}
 
       {schema && (
-        <div className={"rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden"}>
-          <div className="border-b border-slate-200 p-4">
+        <Paper variant="outlined" sx={{ overflow: "hidden", mb: 2 }}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", p: 2 }}>
             <RowForm attributes={attributes} value={form} onChange={(k, v) => setForm((p) => ({ ...p, [k]: v }))} />
             <ActionBar
               onCreate={handleCreate}
@@ -394,7 +378,7 @@ export default function EditableSchemaTable() {
               canUpdate={activeRowIndex !== null}
               canDelete={activeRowIndex !== null}
             />
-          </div>
+          </Box>
 
           <DataTable
             attributes={attributes}
@@ -402,12 +386,12 @@ export default function EditableSchemaTable() {
             activeRowIndex={activeRowIndex}
             onSelectRow={selectRow}
           />
-        </div>
+        </Paper>
       )}
 
-      <div className={uiClasses.panelHeader}>
-        Current mode: <span className={uiClasses.panelSubHeader}>{mode}</span>
-      </div>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        Current mode: <Box component="span" sx={{ fontWeight: 700, textTransform: "capitalize" }}>{mode}</Box>
+      </Typography>
 
       <SchemaModal
         open={schemaOpen}
@@ -420,6 +404,6 @@ export default function EditableSchemaTable() {
           saveSchema(nextSchema);
         }}
       />
-    </div>
+    </Box>
   );
 }

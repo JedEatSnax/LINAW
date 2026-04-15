@@ -2,7 +2,7 @@ import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export function ForgotPass() {
+export function ForgotPassword() {
 
     const auth = getAuth();
     const [email, setEmail] = useState("");
@@ -55,4 +55,4 @@ export function ForgotPass() {
     );
 }
 
-export default ForgotPass
+export default ForgotPassword

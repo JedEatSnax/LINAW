@@ -7,8 +7,6 @@ import { MdMenuOpen } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { FaUserCircle } from "react-icons/fa";
-import { TbReportSearch } from "react-icons/tb";
-import { IoLogoBuffer } from "react-icons/io";
 import { IoIosSettings } from "react-icons/io";
 import { FaHistory } from "react-icons/fa";
 const menuItems = [
@@ -19,23 +17,13 @@ const menuItems = [
   },
   {
     icons: <HiOutlinePencilSquare size={25} />,
-    label: 'Query Ledger',
-    to: '/query-ledger'
-  },
-  {
-    icons: <IoLogoBuffer size={25} />,
-    label: 'Submit Transaction',
-    to: '/submit-transaction'
-  },
-  {
-    icons: <TbReportSearch size={25} />,
-    label: 'Chaincode Events',
-    to: '/chaincode-events'
+    label: 'Assets',
+    to: '/assets'
   },
   {
     icons: <FaHistory size={20} />,
-    label: 'Transaction History',
-    to: '/transaction-history'
+    label: 'History',
+    to: '/history'
   },
   {
     icons: <IoIosSettings size={25} />,
