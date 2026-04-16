@@ -20,3 +20,5 @@ NOTES.md
 /*.log
 /*.yaml
 /*.yml
+
+.env

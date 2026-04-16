@@ -35,12 +35,15 @@
     "fabric-contract-api": "^2.5.8",
     "fabric-shim": "^2.5.8",
     "firebase-admin": "^13.7.0",
+    "fs-extra": "^11.3.4",
     "jest": "^30.3.0",
     "joi": "^18.0.2",
+    "js-yaml": "^4.1.1",
     "json-stringify-deterministic": "^1.0.12",
     "knex": "^3.1.0",
     "pg": "^8.19.0",
-    "sort-keys-recursive": "^2.1.10"
+    "sort-keys-recursive": "^2.1.10",
+    "winston": "^3.19.0"
   },
   "overrides": {
     "@tootallnate/once": "^3.0.1"
