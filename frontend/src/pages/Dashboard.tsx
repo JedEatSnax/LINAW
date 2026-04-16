@@ -1,4 +1,3 @@
-"use client";
 import Sidebar from "../components/sidebar";
 import EditableSchemaTable from "../components/tableSchema";
 import { Header } from "../components/header";

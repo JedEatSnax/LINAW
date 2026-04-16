@@ -1,4 +1,3 @@
-"use client";
 import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from "firebase/auth";
 import { useState } from "react";
