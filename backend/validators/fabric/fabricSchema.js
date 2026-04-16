@@ -14,20 +14,35 @@ const channelIdParam = joi.object({
     channel_id: objectIdlike.required()
 }).required()
 
+const orgCreateSchema = joi.object({
+    name: joi.string().alphanum().min(2).max(30).required(),
+    mspId: joi.string().alphanum().min(2).max(30).required(),
+    peerCount: joi.number().integer().min(1).max(5).required(),
+});
+
+const resourceLimitSchema = joi.object({
+    cpus: joi.string()
+        .pattern(/^(0(\.\d+)?|[1-9]\d*(\.\d+)?)$/)
+        .default('0.5'),
+    memory: joi.string()
+        .pattern(/^\d+(B|K|KB|M|MB|G)$/)
+        .default('512M'),
+});
+
 const networkCreateSchema = joi.object({
-    body: joi.object({
+    config: joi.object({
         name: joi.string().trim().min(3).max(100).required(),
-        description: joi.string().trim().max(255).optional(),
-        orgs: joi.array()
-            .items(
-                joi.object({
-                    name: joi.string().trim().min(2).max(100).required(),
-                    msp_ID: joi.string().trim().min(2).max(100).required()
-                })
-            )
-            .min(1)
-            .unique('mspID')
-            .required()
+        orgs: joi.array().items(orgCreateSchema).min(1).unique('mspId').required(),
+        consensus: joi.string().valid('etcdraft', 'solo').default('etcdraft'),
+        channelPolicy: joi.string().valid('MAJORITY', 'ALL', 'ANY').default('MAJORITY'),
+        channelId: joi.string().alphanum().min(3).max(30).default('mychannel'),
+        stateDb: joi.string().valid('couchdb', 'leveldb').default('couchdb'),
+        ordererCount: joi.number().integer().valid(1, 3, 5).default(1),
+        resources: joi.object({
+            peer: resourceLimitSchema.default({ cpus: '0.5', memory: '512M' }),
+            orderer: resourceLimitSchema.default({ cpus: '0.25', memory: '256M' }),
+            ca: resourceLimitSchema.default({ cpus: '0.1', memory: '128M' }),
+        }).default(),
     }).required()
 }).required()
 

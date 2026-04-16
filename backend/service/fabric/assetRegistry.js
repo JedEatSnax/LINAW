@@ -1,9 +1,9 @@
 const AppError = require('../../utils/AppError.js')
-const { getContract } = require ('../../config/fabric/fabricGateway.js')
+const { getContract } = require('../../config/fabric/fabricGateway.js')
 const { TextDecoder } = require('node:util');
 
-function parseBuffer (resultBuffer) {
-	if (!resultBuffer  || resultBuffer.length === 0 ) {
+function parseBuffer(resultBuffer) {
+	if (!resultBuffer || resultBuffer.length === 0) {
 		return null
 	}
 
@@ -17,43 +17,43 @@ function parseBuffer (resultBuffer) {
 }
 
 class assetRegistry {
-	
-	async createAsset ({ id, color, size, owner, appraisedValue, requestedBy }) {
+
+	async createAsset({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
 			const contract = getContract()
 
 			const result = await contract.submitTransaction(
 				'CreateAsset',
-				id, 
+				id,
 				color,
-				String(size), 
+				String(size),
 				owner,
 				String(appraisedValue),
 			)
 
-			return { 
+			return {
 				message: 'Asset Created Succesfully',
 				requested_by: requestedBy,
 				data: parseBuffer(result)
 			}
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to create asset', 500, 'FABRIC_CREATE_ASSSET_ERROR'
+			throw new AppError(error.message || 'Failed to create asset', 500, 'FABRIC_CREATE_ASSSET_ERROR'
 			)
 		}
 	}
-	
-	async assetTransfer ({ id, owner, requestedBy }) {
+
+	async assetTransfer({ id, owner, requestedBy }) {
 		try {
 			const contract = getContract()
 
- 			const commit = await contract.submitAsync('TransferAsset', {
-      			arguments: [id, owner],
-    		});
+			const commit = await contract.submitAsync('TransferAsset', {
+				arguments: [id, owner],
+			});
 
 			const result = commit.getResult()
 
 			const status = await commit.getStatus()
-			if(!status.successful){
+			if (!status.successful) {
 				throw new Error(
 					`Transaction ${status.transactionId} failed to commit with status code ${String(status.code)}`
 				)
@@ -66,11 +66,11 @@ class assetRegistry {
 			}
 
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to transfer asset', 500, 'FABRIC_TRANSFER_ASSET_ERROR')
+			throw new AppError(error.message || 'Failed to transfer asset', 500, 'FABRIC_TRANSFER_ASSET_ERROR')
 		}
 	}
-	
-	async assetUpdate ({ id, color, size, owner, appraisedValue, requestedBy }) {
+
+	async assetUpdate({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
 			const contract = getContract()
 
@@ -89,23 +89,23 @@ class assetRegistry {
 				data: parseBuffer(result)
 			}
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to update asset', 500, 'FABRIC_UPDATE_ASSET_ERROR')
+			throw new AppError(error.message || 'Failed to update asset', 500, 'FABRIC_UPDATE_ASSET_ERROR')
 		}
 	}
 
-	async assetDelete ({ id, requestedBy }) {
+	async assetDelete({ id, requestedBy }) {
 		try {
 			const contract = getContract()
 
 			const commit = await contract.submitAsync(
 				'DeleteAsset',
-				{arguments: [id]}
+				{ arguments: [id] }
 			)
 
 			const result = commit.getResult()
 
 			const status = await commit.getStatus()
-			if(!status.successful){
+			if (!status.successful) {
 				throw new Error(
 					`Transaction ${status.transactionId} failed to commit with status code ${String(status.code)}`
 				)
@@ -118,11 +118,11 @@ class assetRegistry {
 			}
 
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to delete asset', 500, 'FABRIC_DELETE_ASSET_ERROR')
+			throw new AppError(error.message || 'Failed to delete asset', 500, 'FABRIC_DELETE_ASSET_ERROR')
 		}
 	}
 
-	async assetRead ({ id, requestedBy }) {
+	async assetRead({ id, requestedBy }) {
 		try {
 			const contract = getContract()
 
@@ -137,11 +137,11 @@ class assetRegistry {
 				data: parseBuffer(result)
 			}
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to fetch asset', 500, 'FAILED_READ_ASSET_ERROR' )
+			throw new AppError(error.message || 'Failed to fetch asset', 500, 'FAILED_READ_ASSET_ERROR')
 		}
 	}
 
-	async assetReadAll ({ requestedBy }) {
+	async assetReadAll({ requestedBy }) {
 		try {
 			const contract = getContract()
 
@@ -153,7 +153,7 @@ class assetRegistry {
 				data: parseBuffer(result)
 			}
 		} catch (error) {
-			throw new AppError ( error.message || 'Failed to fetch all asset', 500, 'FABRIC_READ_ALL_ASSETS_ERROR'
+			throw new AppError(error.message || 'Failed to fetch all asset', 500, 'FABRIC_READ_ALL_ASSETS_ERROR'
 			)
 		}
 	}
