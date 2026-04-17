@@ -46,8 +46,8 @@ function App() {
           <Route path = "/dashboard" element={<AuthRoute><Dashboard/></AuthRoute>}/>
           <Route path = "/settings" element={<AuthRoute><Settings/></AuthRoute>}/>
           <Route path = "/history" element={<AuthRoute><History/></AuthRoute>}/>
-          <Route path = "/organizations" element=<Organizations/> />
-          <Route path = "/assets" element=<Assets/> />
+          <Route path = "/organizations" element={<Organizations/>} />
+          <Route path = "/assets" element={<Assets/>} />
         </Routes>
       </BrowserRouter>
     </div>

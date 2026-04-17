@@ -1,4 +1,5 @@
 database/
+test-backend
 
 # Hyperledger Fabric
 fabric
