@@ -1,7 +1,7 @@
 import logo from "../assets/react.svg";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { MdMenuOpen } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
 import { TfiWrite } from "react-icons/tfi";
@@ -52,10 +52,12 @@ export default function Sidebar() {
     return () => unsubscribe();
   }, [auth]);
 
+  /*
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/login", { replace: true });
   };
+  */
 
   const handleProfileClick = () => {
     if (!auth.currentUser) {
@@ -112,16 +114,18 @@ export default function Sidebar() {
               <NavLink
                 to={item.to}
                 className={({ isActive }) =>
-                  `px-3 py-2 my-2 rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group ${
+                  `w-full px-3 py-2 my-2 gap-2 rounded-md duration-300 cursor-pointer flex items-center relative group ${
                     isActive
                       ? "bg-blue-500/10 text-blue-300 shadow-sm shadow-blue-950/30"
                       : "hover:bg-slate-900/80 hover:text-white"
                   }`
                 }
               >
-                <div>{item.icons}</div>
+                <div className="w-7 shrink-0 flex items-center justify-center">
+                  {item.icons}
+                </div>
                 <p
-                  className={`${!open && "w-0 translate-x-24"} duration-500 overflow-hidden`}
+                  className={`${open ? "w-28 opacity-100" : "w-0 opacity-0"} shrink-0 overflow-hidden whitespace-nowrap transition-all duration-500`}
                 >
                   {item.label}
                 </p>
@@ -137,6 +141,7 @@ export default function Sidebar() {
           );
         })}
       </ul>
+
       {/* footer */}
       <div className="flex items-center gap-2 px-3 py-2">
         <button
@@ -149,18 +154,18 @@ export default function Sidebar() {
         </button>
 
         <div
-          className={`leading-5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${
+          className={`flex flex-col leading-none overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out ${
             open
               ? "max-w-44 opacity-100 translate-x-0"
               : "max-w-0 opacity-0 translate-x-3"
           }`}
         >
           <p>Current User</p>
-          <span className="text-xs">{userEmail}</span>
+          <span className="text-xs text-slate-400">{userEmail}</span>
         </div>
       </div>
 
-      <div className={`${open ? "px-3 pb-2" : "hidden"}`}>
+      {/* <div className={`${open ? "px-3 pb-2" : "hidden"}`}>
         <button
           type="button"
           onClick={handleLogout}
@@ -168,7 +173,7 @@ export default function Sidebar() {
         >
           Sign Out
         </button>
-      </div>
+      </div> */}
     </nav>
   );
 }

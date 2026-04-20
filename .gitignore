@@ -21,6 +21,7 @@ NOTES.md
 /*.log
 /*.yaml
 /*.yml
+
+# Docker
 docker/.dockerignore
 docker/compose/.env
-backend/.gitignore
