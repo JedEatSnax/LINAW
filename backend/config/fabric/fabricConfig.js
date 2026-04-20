@@ -1,7 +1,5 @@
 'use strict';
 
-'use strict';
-
 function required(name) {
   const value = process.env[name];
 
@@ -26,17 +24,7 @@ const fabricConfig = {
   tls_cert_path: required('FABRIC_TLS_CERT_PATH'),
 };
 
-export default Object.freeze({
-    fabricVersions,
-    networkDefaults,
-    fabricCompose,
-    fabricPaths,
-    organizationPaths,
-    dockerSettings,
-    caScripts,
-    composeArgs,
-    fabricConfig
-});
+module.exports = Object.freeze(fabricConfig);
 
 
 /*
