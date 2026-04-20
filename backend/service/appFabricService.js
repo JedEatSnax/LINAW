@@ -9,7 +9,7 @@ class ValidationError extends Error {
 
 const fabricSchema = require('../validators/fabric/fabricSchema')
 const AppError = require('../utils/AppError')
-const fabricService = require('./fabric/assetRegistry')
+const assetService = require('./fabric/assetRegistry')
 
 class appFabricService {
 
@@ -44,7 +44,7 @@ class appFabricService {
 
       const { name, description, orgs } = validated.body
 
-      return await fabricService.networkCreate({
+      return await assetService.networkCreate({
         name,
         description,
         orgs,
@@ -62,7 +62,7 @@ class appFabricService {
       const { id } = validated.params
       const { name, memberOrgs } = validated.body
 
-      return await fabricService.channelCreate({
+      return await assetService.channelCreate({
         id,
         name,
         memberOrgs,
@@ -79,7 +79,7 @@ class appFabricService {
 
       const { contractType, contractName, version} = validated.body
 
-      return await fabricService.smartContract({
+      return await assetService.smartContract({
         channel_id: validated.params.channel_id,
         contractType,
         contractName,
@@ -91,7 +91,7 @@ class appFabricService {
     async contractReadAll ({params, user}) {
       const validated = this.validate('contractReadAllSchema', { params })
 
-      return await fabricService.contractReadAll({
+      return await assetService.contractReadAll({
         channel_id: validated.params.channel_id,
         requestedBy: user?.uid
       })
@@ -102,7 +102,7 @@ class appFabricService {
 
       const { id, color, size, owner, appraisedValue } = validated.body
 
-      return await fabricService.createAsset({
+      return await assetService.createAsset({
         id,
         color,
         size,
@@ -118,7 +118,7 @@ class appFabricService {
       const { id } = validated.params
       const { owner } = validated.body
 
-      return await fabricService.assetTransfer({
+      return await assetService.assetTransfer({
         id,
         owner,
         requestedBy: user?.uid
@@ -131,7 +131,7 @@ class appFabricService {
       const { id } = validated.params
       const {color, size, owner, appraisedValue} = validated.body
 
-      return await fabricService.assetUpdate({
+      return await assetService.assetUpdate({
         id, 
         color,
         size,
@@ -146,7 +146,7 @@ class appFabricService {
 
       const { id } = validated.params
 
-      return await fabricService.assetDelete({
+      return await assetService.assetDelete({
         id,
         requestedBy: user?.uid
       })
@@ -157,14 +157,14 @@ class appFabricService {
 
       const { id } = validated.params
 
-      return await fabricService.assetRead({
+      return await assetService.assetRead({
         id,
         requestedBy: user?.uid
       })
     }
 
     async assetReadAll ({user}) {
-      return await fabricService.assetReadAll({
+      return await assetService.assetReadAll({
         requestedBy: user?.uid
       })
     }
