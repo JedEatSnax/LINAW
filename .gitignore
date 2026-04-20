@@ -22,4 +22,4 @@ NOTES.md
 /*.yml
 docker/.dockerignore
 docker/compose/.env
-backend/.gitignore
+
