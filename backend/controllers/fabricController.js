@@ -82,23 +82,6 @@ class fabricController {
         }
     }
 
-    async peerNodeStart (req, res, next) {
-        try {
-            const peerStart = await appFabricService.peerNodeStart({
-                body: req.body,
-                user: req.user
-            })
-
-            return res.status(202).json({
-                ok: true,
-                message: 'peer node start launched',
-                ...peerStart
-            })
-        } catch (error) {
-            next(error)
-        }
-    }
-
 
     async createAsset(req,res, next) {
         try {

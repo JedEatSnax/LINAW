@@ -87,12 +87,6 @@ const contractReadAllSchema = joi.object({
     params: channelIdParam
 }).required()
 
-const peerNodeStartSchema = joi.object({
-    body: joi.object({
-        organization: joi.string().trim().lowercase().valid('org1', 'org2').default('org1')
-    }).default({ organization: 'org1' })
-}).required()
-
 const createAssetSchema = joi.object({
     body: joi.object({
         id: joi.string().trim().min(1).max(128).required(),
@@ -137,7 +131,6 @@ module.exports = {
     channelReadSchema,
     smartContractSchema,
     contractReadAllSchema,
-    peerNodeStartSchema,
     createAssetSchema,
     assetTransferSchema,
     assetUpdateSchema,

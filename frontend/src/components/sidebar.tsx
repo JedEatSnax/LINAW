@@ -68,7 +68,7 @@ export default function Sidebar() {
 
   return (
     <nav
-      className={`shadow-md h-full min-h-0 p-2 flex flex-col duration-500 bg-zinc-950 text-slate-300 ${open ? "w-60" : "w-16"} border-r border-slate-500`}
+      className={`shadow-md h-full min-h-0 p-2 flex flex-col duration-500 bg-zinc-950 text-slate-300 ${open ? "w-60" : "w-16"} border-r border-slate-800`}
     >
       {/* Header */}
       <div className="h-20 px-3 py-2 flex items-center justify-between border-b border-slate-800/80">
@@ -114,8 +114,8 @@ export default function Sidebar() {
                 className={({ isActive }) =>
                   `px-3 py-2 my-2 rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group ${
                     isActive
-                      ? "bg-slate-800/80 text-white font-semibold"
-                      : "hover:bg-slate-800/80 hover:text-white"
+                      ? "bg-blue-500/10 text-blue-300 shadow-sm shadow-blue-950/30"
+                      : "hover:bg-slate-900/80 hover:text-white"
                   }`
                 }
               >
