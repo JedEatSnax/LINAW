@@ -14,6 +14,9 @@ router.post('/networks/:id/channels', fabricController.channelCreate)
 router.post('/channel/:channel_id/contracts', fabricController.smartContract)
 router.get ('/channel/:channel_id/contracts', fabricController.contractReadAll)
 
+router.post('/fabric/peer/start', fabricController.peerNodeStart)
+router.post('/v1/fabric/peer/start', fabricController.peerNodeStart)
+
 // transaction
 router.post('/assets', fabricController.createAsset)
 router.post('/assets/:id/transfer', fabricController.assetTransfer)
