@@ -1,9 +1,9 @@
-const appFabricService = require('../service/appFabricService')
+const networkAssetsService = require('../service/application/networkAssetsService')
 
 class fabricController {
     async networkCreate(req, res, next) {
         try {
-            const network = await appFabricService.networkCreate({
+            const network = await networkAssetsService.networkCreate({
                 body: req.body,
                 user: req.user
             })
@@ -16,7 +16,7 @@ class fabricController {
 
     async networkRead (req, res, next) {
         try {
-            const read = await appFabricService.networkRead({
+            const read = await networkAssetsService.networkRead({
                 params: req.params,
                 user: req.user
             })
@@ -30,7 +30,7 @@ class fabricController {
 
     async channelCreate (req, res, next) {
         try {
-            const channel = await appFabricService.channelCreate({
+            const channel = await networkAssetsService.channelCreate({
                 params: req.params,
                 body: req.body,
                 user: req.user
@@ -44,7 +44,7 @@ class fabricController {
 
     async channelRead (req, res, next) {
        try {
-            const read = await appFabricService.channelRead({
+            const read = await networkAssetsService.channelRead({
             params: req.params,
             user: req.user
             })
@@ -57,7 +57,7 @@ class fabricController {
 
     async smartContract (req, res, next) {
         try {
-            const contract = await appFabricService.smartContract({
+            const contract = await networkAssetsService.smartContract({
                 params: req.params,
                 body: req.body,
                 user: req.user
@@ -71,7 +71,7 @@ class fabricController {
 
     async contractReadAll (req, res, next) {
         try {
-            const contracts = await appFabricService.contractReadAll({
+            const contracts = await networkAssetsService.contractReadAll({
                 params: req.params,
                 user: req.user
             })
@@ -85,7 +85,7 @@ class fabricController {
 
     async createAsset(req,res, next) {
         try {
-            const create = await appFabricService.createAsset({
+            const create = await networkAssetsService.createAsset({
                 body: req.body,
                 user: req.user
             })
@@ -98,7 +98,7 @@ class fabricController {
 
     async assetTransfer (req, res, next) {
         try {
-            const transfer = await appFabricService.assetTransfer({
+            const transfer = await networkAssetsService.assetTransfer({
                 params: req.params,
                 body: req.body,
                 user: req.user
@@ -112,7 +112,7 @@ class fabricController {
 
     async assetUpdate (req, res, next) {
         try {
-            const update = await appFabricService.assetUpdate({
+            const update = await networkAssetsService.assetUpdate({
                 params: req.params,
                 body: req.body,
                 user: req.user
@@ -126,7 +126,7 @@ class fabricController {
 
     async assetDelete (req, res, next) {
         try {
-            const deleted = await appFabricService.assetDelete({
+            const deleted = await networkAssetsService.assetDelete({
                 params: req.params,
                 user: req.user
             })
@@ -139,7 +139,7 @@ class fabricController {
 
     async assetRead (req, res, next) {
         try {
-            const read = await appFabricService.assetRead({
+            const read = await networkAssetsService.assetRead({
                 params: req.params,
                 user: req.user
             })
@@ -152,7 +152,7 @@ class fabricController {
 
     async assetReadAll (req, res, next) {
         try {
-            const readAll = await appFabricService.assetReadAll({
+            const readAll = await networkAssetsService.assetReadAll({
                 user: req.user
             })
 

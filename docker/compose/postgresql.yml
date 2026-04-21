@@ -1,3 +1,6 @@
+networks:
+  postgres:
+    driver: bridge
 
 services: 
 
@@ -55,11 +58,6 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-
-
-networks:
-  postgres:
-    driver: bridge
 
 volumes:
   postgres:

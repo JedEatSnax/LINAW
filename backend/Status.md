@@ -75,7 +75,7 @@ Update note: you fixed several of the previously listed crashers (confirmed in g
 
 8. Fabric service transaction flows still contain multiple runtime blockers
 - File: service/assetService.js
-- Problems (examples): assetDelete uses {arguements: ...}, commmit misspelling, missing await on commit.getResult(), assetReadAll ignores owner/limit passed from appFabricService.
+- Problems (examples): assetDelete uses {arguements: ...}, commmit misspelling, missing await on commit.getResult(), assetReadAll ignores owner/limit passed from networkAssetsService.
 - Impact: transfer/delete/read-all endpoints will behave incorrectly or crash under real Fabric.
 
 9. Repo hygiene risk: root .gitignore was deleted

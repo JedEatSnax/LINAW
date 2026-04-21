@@ -8,5 +8,7 @@ const { strictLimiter } = require('../middleware/rateLimiter')
 
 router.post('/signup', strictLimiter,  authenticate.decodeToken, userController.signup) // (create users)
 router.post('/login', strictLimiter, authenticate.decodeToken , userController.login) // (create session/get firebaseUID token  )
+router.post('/logout', strictLimiter, authenticate.decodeToken, userController.signout)
+
 
 module.exports = {router};

@@ -16,7 +16,7 @@ jest.mock('../middleware/authorize', () => ({
   can: jest.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/appFabricService', () => ({
+jest.mock('../service/networkAssetsService', () => ({
   networkCreate: jest.fn(),
   networkRead: jest.fn(),
   channelCreate: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock('../service/appFabricService', () => ({
 
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const appFabricService = require('../service/appFabricService');
+const networkAssetsService = require('../service/networkAssetsService');
 
 function makeApp({ withAuthorize = false } = {}) {
   const { router } = require('../routes/fabricRoute');
@@ -80,7 +80,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('POST /api/networks - success', async () => {
-    appFabricService.networkCreate.mockResolvedValue({ id: 'n1', name: 'net1' });
+    networkAssetsService.networkCreate.mockResolvedValue({ id: 'n1', name: 'net1' });
 
     const app = makeApp();
     const res = await request(app)
@@ -92,7 +92,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('POST /api/networks - 400 validation error (errorHandler format)', async () => {
-    appFabricService.networkCreate.mockImplementation(() => {
+    networkAssetsService.networkCreate.mockImplementation(() => {
       throw validationError(['"name" is required']);
     });
 
@@ -140,7 +140,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('GET /api/networks - 500 internal error (errorHandler format)', async () => {
-    appFabricService.networkRead.mockImplementation(() => {
+    networkAssetsService.networkRead.mockImplementation(() => {
       throw new Error('boom');
     });
 

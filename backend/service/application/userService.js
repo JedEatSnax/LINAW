@@ -9,12 +9,12 @@ class ValidationError extends Error {
 
 class userService {
     constructor() {
-        const { signupSchema, loginSchema } = require('../validators/user');
+        const { signupSchema, loginSchema } = require('../../validators/user');
         this.schemas = {
         signup: signupSchema,
         login: loginSchema,
         };
-        this.userDao = require('../dao/userDao');
+        this.userDao = require('../../dao/userDao');
     }
 
   validate(method, data) {

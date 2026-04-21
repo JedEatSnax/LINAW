@@ -20,7 +20,7 @@ class assetRegistry {
 	
 	async createAsset ({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
 			const result = await contract.submitTransaction(
 				'CreateAsset',
@@ -44,7 +44,7 @@ class assetRegistry {
 	
 	async assetTransfer ({ id, owner, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
  			const commit = await contract.submitAsync('TransferAsset', {
       			arguments: [id, owner],
@@ -72,7 +72,7 @@ class assetRegistry {
 	
 	async assetUpdate ({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
 			const result = await contract.submitTransaction(
 				'UpdateAsset',
@@ -95,7 +95,7 @@ class assetRegistry {
 
 	async assetDelete ({ id, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
 			const commit = await contract.submitAsync(
 				'DeleteAsset',
@@ -124,7 +124,7 @@ class assetRegistry {
 
 	async assetRead ({ id, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
 			const result = await contract.evaluateTransaction(
 				'ReadAsset',
@@ -143,7 +143,7 @@ class assetRegistry {
 
 	async assetReadAll ({ requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContract('assetRegistryContract')
 
 			const result = await contract.evaluateTransaction('GetAllAssets')
 

@@ -7,11 +7,11 @@ class ValidationError extends Error {
   }
 }
 
-const fabricSchema = require('../validators/fabric/fabricSchema')
-const AppError = require('../utils/AppError')
-const assetService = require('./fabric/assetRegistry')
+const fabricSchema = require('../../validators/fabric/fabricSchema')
+const AppError = require('../../utils/AppError')
+const assetService = require('../fabric/assetRegistry')
 
-class appFabricService {
+class networkAssetsService {
 
   constructor() {
     this.schemas = fabricSchema
@@ -171,4 +171,4 @@ class appFabricService {
 
 }
 
-module.exports = new appFabricService();
+module.exports = new networkAssetsService();

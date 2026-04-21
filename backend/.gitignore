@@ -6,6 +6,8 @@
 **/IssuerRevocationPublicKey
 **/tls-cert.pem
 
+#documentation
+progress.md
 
 # Node.js
 node_modules/

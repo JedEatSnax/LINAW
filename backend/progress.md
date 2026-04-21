@@ -76,3 +76,6 @@ bruh respectfully what in the fuck? hahahaha our transaction page in the fronten
 The asset-transfer basic should suffice for our mvp. Though i'll make sure to write another for sure custom chaincode. 
 
 I think the best course of action instead of adding that new shit asap is to finish the mvp first like literally, I'll be finishing everything first before doing that new chaincode cause it'll need a lot of new things endpoints, controllers, service layer and another new validator.
+
+### 04/22/26
+
