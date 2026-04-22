@@ -1,123 +1,215 @@
-'use strict'
+'use strict';
 
-const stringify = require ('json-stringify-deterministic')
-const sortKeysRecursive = require ('sort-keys-recursive')
-const { contract } = require ('fabric-contract-api')
+const stringify = require('json-stringify-deterministic');
+const sortKeysRecursive = require('sort-keys-recursive');
+const { Contract } = require('fabric-contract-api');
 
-class approvalWorkflowContract extends contract {
-    // TODO:    
-    // // createSubmission()
-    // submitForApproval()
-    // approveSubmission()
-    // rejectSubmission()
-    // requestChanges()
-    // resubmitSubmission()
-    // getSubmissionHistory()
-    // deleteSubmission ()
+class ApprovalWorkflowContract extends Contract {
+    constructor() {
+        super('ApprovalWorkflowContract');
+    }
 
-    async createSubmission      (ctx, submissionId, owner, role, status, proposalType, docHash){
+    async submissionExists(ctx, submissionId) {
+        const submissionJSON = await ctx.stub.getState(submissionId);
+        return submissionJSON && submissionJSON.length > 0;
+    }
 
-        // RBAC check organization (MSP id)
+    async _getSubmission(ctx, submissionId) {
+        const submissionJSON = await ctx.stub.getState(submissionId);
 
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic
-
-        const submission = {
-            submissionId: submissionId,
-            Owmer: owner,
-            Role: role,
-            Status: status,
-            ProposalType: proposalType,
-            DocHash: docHash
+        if (!submissionJSON || submissionJSON.length === 0) {
+            throw new Error(`The proposal ${submissionId} does not exist`);
         }
 
-        await ctx.stub.putState( submissionId, Buffer.from(stringify(sortKeysRecursive(submission))))
+        return JSON.parse(submissionJSON.toString());
     }
-    async submitForApproval     (ctx, submissionId){
 
-        // RBAC check organization (MSP id)
-
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic      
-        
-        
+    async readSubmission(ctx, submissionId) {
+        const submission = await this._getSubmission(ctx, submissionId);
+        return JSON.stringify(submission);
     }
-    async approveSubmission     (ctx, submissionId, approver, remarks){
 
-        // RBAC check organization (MSP id)
+    _requireMSP(ctx, allowedMspId) {
+        const mspId = ctx.clientIdentity.getMSPID();
 
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic        
+        if (mspId !== allowedMspId) {
+            throw new Error(
+                `Unauthorized: Only members of ${allowedMspId} can perform this action. Current MSP: ${mspId}`
+            );
+        }
     }
-    async rejectSubmission      (ctx, submissionId, approver, remarks){
 
-        // RBAC check organization (MSP id)
+    _requireAttribute(ctx, attrName, expectedValue) {
+        const ok = ctx.clientIdentity.assertAttributeValue(attrName, expectedValue);
 
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic        
+        if (!ok) {
+            throw new Error(
+                `Unauthorized: Missing required attribute ${attrName}=${expectedValue}`
+            );
+        }
     }
-    async requestChanges        (ctx, submissionId, approver, remarks){
 
-        // RBAC check organization (MSP id)
-
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic        
+    _requireStatus(submission, expectedStatus) {
+        if (submission.status !== expectedStatus) {
+            throw new Error(
+                `Invalid status transition. Expected ${expectedStatus}, current status is ${submission.status}`
+            );
+        }
     }
-    async resubmitSubmission    (ctx, submissionId, owner, newDocuHash){
 
-        // RBAC check organization (MSP id)
-
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic        
+    _requireOwner(submission, owner) {
+        if (submission.owner !== owner) {
+            throw new Error(
+                `Unauthorized: Only ${submission.owner} can perform this action`
+            );
+        }
     }
-    async getSubmissionHistory  (ctx, submissionId){
 
-        // RBAC check organization (MSP id)
-
-
-        // ABAC Check for a custom attribute 'abac.creator' set to 'true'
-        // This attribute is baked into the user's certificate by the Fabric CA
-
-
-         // 3. Dynamic ABAC: Check 'department' attribute
-
-        // business logic        
+    async _putSubmission(ctx, submissionId, submission) {
+        await ctx.stub.putState(
+            submissionId,
+            Buffer.from(stringify(sortKeysRecursive(submission)))
+        );
     }
-    
+
+    async createSubmission(ctx, submissionId, owner, role, status, proposalType, docHash) {
+        const exists = await this.submissionExists(ctx, submissionId);
+
+        if (exists) {
+            throw new Error(`The proposal ${submissionId} already exists`);
+        }
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.member', 'true');
+
+        const submission = {
+            submissionId,
+            owner,
+            role,
+            status,
+            proposalType,
+            docHash
+        };
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async deleteSubmission(ctx, submissionId, owner) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.member', 'true');
+        this._requireOwner(submission, owner);
+
+        await ctx.stub.deleteState(submissionId);
+        return JSON.stringify(submission);
+    }
+
+    async submitForApproval(ctx, submissionId, owner) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.member', 'true');
+        this._requireOwner(submission, owner);
+        this._requireStatus(submission, 'DRAFT');
+
+        submission.status = 'SUBMITTED';
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async approveSubmission(ctx, submissionId, approver, remarks) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.approver', 'true');
+        this._requireStatus(submission, 'SUBMITTED');
+
+        submission.status = 'APPROVED';
+        submission.approver = approver;
+        submission.remarks = remarks;
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async rejectSubmission(ctx, submissionId, approver, remarks) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.approver', 'true');
+        this._requireStatus(submission, 'SUBMITTED');
+
+        submission.status = 'REJECTED';
+        submission.approver = approver;
+        submission.remarks = remarks;
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async requestChanges(ctx, submissionId, approver, remarks) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.approver', 'true');
+        this._requireStatus(submission, 'SUBMITTED');
+
+        submission.status = 'CHANGES_REQUESTED';
+        submission.approver = approver;
+        submission.remarks = remarks;
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async resubmitSubmission(ctx, submissionId, owner, newDocHash) {
+        const submission = await this._getSubmission(ctx, submissionId);
+
+        this._requireMSP(ctx, 'OrgMSP');
+        this._requireAttribute(ctx, 'abac.member', 'true');
+        this._requireOwner(submission, owner);
+        this._requireStatus(submission, 'CHANGES_REQUESTED');
+
+        submission.docHash = newDocHash;
+        submission.status = 'RESUBMITTED';
+
+        await this._putSubmission(ctx, submissionId, submission);
+        return JSON.stringify(submission);
+    }
+
+    async getSubmissionHistory(ctx, submissionId) {
+        const exists = await this.submissionExists(ctx, submissionId);
+
+        if (!exists) {
+            throw new Error(`The proposal ${submissionId} does not exist`);
+        }
+
+        const iterator = await ctx.stub.getHistoryForKey(submissionId);
+        const history = [];
+
+        for await (const record of iterator) {
+            let value = null;
+
+            if (!record.isDelete && record.value && record.value.length > 0) {
+                value = JSON.parse(record.value.toString('utf8'));
+            }
+
+            history.push({
+                txId: record.txId,
+                timestamp: record.timestamp,
+                isDelete: record.isDelete,
+                value
+            });
+        }
+
+        return JSON.stringify({
+            submissionId,
+            history
+        });
+    }
 }
+
+module.exports = ApprovalWorkflowContract;

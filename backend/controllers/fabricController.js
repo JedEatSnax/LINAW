@@ -82,6 +82,101 @@ class fabricController {
         }
     }
 
+    async createSubmission (req, res, next) {
+        try{
+            const submission = await networkAssetsService.createAsset({
+                params: req.params,
+                body: req.body,
+                user: req.user
+            })
+            
+            return res.status(201).json(submission)
+        } catch (error) {
+            next(error)
+        }
+    } 
+
+    async submitForApproval     (req, res, next) {
+        try {
+            const approval = await networkAssetsService.submitForApproval({
+                params: req.params,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async approveSubmission     (req, res, next) {
+    try {
+            const approved = await networkAssetsService.approvedSubmisssion({
+                params: req.params,
+                body: req.body,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async rejectSubmission      (req, res, next) {
+        try {
+            const rejection = await networkAssetsService.rejectSubmission({
+                params: req.params,
+                body: req.body,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async requestChanges        (req, res, next) {
+        try {
+            const request = await networkAssetsService.requestChanges({
+                params: req.params,
+                body: req.body,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async resubmitSubmission    (req, res, next) {
+        try {
+            const resubmit = await networkAssetsService.resubmitSubmission({
+                params: req.params,
+                body: req.body,
+                user: req.user
+            })
+            
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async getSubmissionHistory  (req, res, next) {
+        try {
+            const SubmissionHistory = await networkAssetsService.getSubmissionHistory({
+                params: req.params,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async deleteSubmission      (req, res, next) {
+        try {
+            const deleteSubmission = await networkAssetsService.deleteSubmission({
+                params: req.params,
+                user: req.user
+            })
+        } catch (error) {
+            next(error)
+        }
+    } 
 
     async createAsset(req,res, next) {
         try {

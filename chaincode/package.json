@@ -10,12 +10,15 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "fabric-contract-api": "^2.5.8",
     "fabric-shim": "^2.5.8",
     "json-stringify-deterministic": "^1.0.12",
     "sort-keys-recursive": "^2.1.10"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0"
   }
 }
