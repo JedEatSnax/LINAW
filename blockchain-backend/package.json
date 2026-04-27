@@ -4,11 +4,17 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "dockerode": "4.0.10",
     "express": "^4.21.2"
+  },
+  "overrides": {
+    "dockerode": {
+      "uuid": "14.0.0"
+    }
   }
 }

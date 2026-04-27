@@ -1,29 +1,14 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { exec } from "node:child_process";
-import { randomUUID } from "node:crypto";
 import { promisify } from "node:util";
+import { randomUUID } from "node:crypto";
 
-const backendDir = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(backendDir, "..");
-const fabricSamplesDir =
-  process.env.FABRIC_SAMPLES_DIR ?? path.resolve(repoRoot, "fabric-samples");
-const testNetworkDir =
-  process.env.FABRIC_TEST_NETWORK_DIR ??
-  path.resolve(fabricSamplesDir, "test-network");
-const fabricDockerPeer = process.env.FABRIC_DOCKER_PEER ?? "docker exec";
+import { peerConfig } from "../config/peerConfig.js";
+import { createHttpError } from "../utils/httpError.js";
 
-const provisionedOrganizations = new Map();
 const execAsync = promisify(exec);
-const allowedContainerNames = new Set([
-  "ca_org1",
-  "ca_org2",
-  "ca_orderer",
-  "peer0.org1.example.com",
-  "peer0.org2.example.com",
-  "orderer.example.com",
-]);
+const provisionedOrganizations = new Map();
 
 function buildPeerConfig(organization = "org1") {
   const normalizedOrganization = organization === "org2" ? "org2" : "org1";
@@ -33,7 +18,7 @@ function buildPeerConfig(organization = "org1") {
       : "peer0.org1.example.com";
   const organizationDomain = `${normalizedOrganization}.example.com`;
   const organizationFolder = path.join(
-    testNetworkDir,
+    peerConfig.testNetworkDir,
     "organizations",
     "peerOrganizations",
     organizationDomain,
@@ -41,7 +26,7 @@ function buildPeerConfig(organization = "org1") {
   const peerFolder = path.join(organizationFolder, "peers", peerName);
   const mspDir = path.join(peerFolder, "msp");
   const tlsDir = path.join(peerFolder, "tls");
-  const dockerCommand = `${fabricDockerPeer} -d ${peerName} peer node start`;
+  const dockerCommand = `${peerConfig.fabricDockerPeer} -d ${peerName} peer node start`;
 
   return {
     organization: normalizedOrganization,
@@ -56,21 +41,46 @@ function buildPeerConfig(organization = "org1") {
   };
 }
 
+function normalizeSlug(value) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 32);
+}
+
+function validateContainerName(containerName) {
+  const normalizedContainerName = String(containerName ?? "").trim();
+
+  if (!normalizedContainerName) {
+    throw createHttpError(400, "containerName is required");
+  }
+
+  if (!peerConfig.allowedContainerNames.has(normalizedContainerName)) {
+    throw createHttpError(
+      400,
+      `Unsupported container ${normalizedContainerName}. Use one of: ${Array.from(peerConfig.allowedContainerNames).join(", ")}`,
+    );
+  }
+
+  return normalizedContainerName;
+}
+
 export async function startPeerNode(organization) {
   const config = buildPeerConfig(organization);
 
   for (const requiredPath of config.requiredPaths) {
     if (!existsSync(requiredPath)) {
-      const error = new Error(
+      throw createHttpError(
+        400,
         `Missing Fabric artifacts at ${requiredPath}. Run ./network.sh up first.`,
       );
-      error.statusCode = 400;
-      throw error;
     }
   }
 
   await execAsync(config.dockerCommand, {
-    cwd: testNetworkDir,
+    cwd: peerConfig.testNetworkDir,
     env: process.env,
     maxBuffer: 10 * 1024 * 1024,
   });
@@ -82,34 +92,12 @@ export async function startPeerNode(organization) {
   };
 }
 
-function validateContainerName(containerName) {
-  const normalizedContainerName = String(containerName ?? "").trim();
-
-  if (!normalizedContainerName) {
-    const error = new Error("containerName is required");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (!allowedContainerNames.has(normalizedContainerName)) {
-    const error = new Error(
-      `Unsupported container ${normalizedContainerName}. Use one of: ${Array.from(allowedContainerNames).join(", ")}`,
-    );
-    error.statusCode = 400;
-    throw error;
-  }
-
-  return normalizedContainerName;
-}
-
 export async function runInContainer(containerName, command) {
   const normalizedContainerName = validateContainerName(containerName);
   const normalizedCommand = String(command ?? "").trim();
 
   if (!normalizedCommand) {
-    const error = new Error("command is required");
-    error.statusCode = 400;
-    throw error;
+    throw createHttpError(400, "command is required");
   }
 
   const dockerCmd = `docker exec ${normalizedContainerName} sh -lc ${JSON.stringify(normalizedCommand)}`;
@@ -128,27 +116,19 @@ export async function runInContainer(containerName, command) {
       stderr,
     };
   } catch (error) {
-    const wrappedError = new Error(
+    throw createHttpError(
+      error.code === 125 ? 400 : 500,
       error.stderr?.trim() ||
         error.message ||
         "Unable to run container command",
+      {
+        stdout: error.stdout ?? "",
+        stderr: error.stderr ?? "",
+        exitCode: error.code,
+        dockerCmd,
+      },
     );
-    wrappedError.statusCode = error.code === 125 ? 400 : 500;
-    wrappedError.stdout = error.stdout ?? "";
-    wrappedError.stderr = error.stderr ?? "";
-    wrappedError.exitCode = error.code;
-    wrappedError.dockerCmd = dockerCmd;
-    throw wrappedError;
   }
-}
-
-function normalizeSlug(value) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 32);
 }
 
 export function provisionOrganization(payload) {
@@ -162,34 +142,34 @@ export function provisionOrganization(payload) {
   const channelName = String(payload.channelName ?? "mychannel").trim();
 
   if (!organizationName) {
-    const error = new Error("organizationName is required");
-    error.statusCode = 400;
-    throw error;
+    throw createHttpError(400, "organizationName is required");
   }
 
   if (!adminEmail || !adminEmail.includes("@")) {
-    const error = new Error("adminEmail must be a valid email address");
-    error.statusCode = 400;
-    throw error;
+    throw createHttpError(400, "adminEmail must be a valid email address");
   }
 
   const slug = normalizeSlug(organizationName);
   if (!slug) {
-    const error = new Error("organizationName must contain letters or numbers");
-    error.statusCode = 400;
-    throw error;
+    throw createHttpError(
+      400,
+      "organizationName must contain letters or numbers",
+    );
   }
 
   if (provisionedOrganizations.has(slug)) {
-    const error = new Error(`Organization ${organizationName} already exists`);
-    error.statusCode = 409;
-    throw error;
+    throw createHttpError(
+      409,
+      `Organization ${organizationName} already exists`,
+    );
   }
 
   const domain =
     domainInput.length > 0 ? domainInput : `${slug}.linaw.example.com`;
-  const mspId = `${slug.replace(/(^|-)(\w)/g, (_match, _dash, c) => c.toUpperCase())}MSP`;
-  const now = new Date().toISOString();
+
+  const mspId = `${slug.replace(/(^|-)(\w)/g, (_match, _dash, char) =>
+    char.toUpperCase(),
+  )}MSP`;
 
   const provisioned = {
     id: randomUUID(),
@@ -207,7 +187,7 @@ export function provisionOrganization(payload) {
       channel: channelName || "mychannel",
       status: "requested",
     },
-    createdAt: now,
+    createdAt: new Date().toISOString(),
   };
 
   provisionedOrganizations.set(slug, provisioned);
