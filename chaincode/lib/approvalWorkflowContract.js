@@ -86,7 +86,7 @@ class ApprovalWorkflowContract extends Contract {
             submissionId,
             owner,
             role,
-            status,
+            status: 'DRAFT',
             proposalType,
             docHash
         };
@@ -112,7 +112,7 @@ class ApprovalWorkflowContract extends Contract {
         this._requireMSP(ctx, 'OrgMSP');
         this._requireAttribute(ctx, 'abac.member', 'true');
         this._requireOwner(submission, owner);
-        this._requireStatus(submission, 'DRAFT');
+        this._requireStatus(submission, 'DRAFT', 'RESUBMITTED');
 
         submission.status = 'SUBMITTED';
 
@@ -125,7 +125,7 @@ class ApprovalWorkflowContract extends Contract {
 
         this._requireMSP(ctx, 'OrgMSP');
         this._requireAttribute(ctx, 'abac.approver', 'true');
-        this._requireStatus(submission, 'SUBMITTED');
+        this._requireStatus(submission, 'SUBMITTED', 'RESUBMITTED');
 
         submission.status = 'APPROVED';
         submission.approver = approver;
@@ -140,7 +140,7 @@ class ApprovalWorkflowContract extends Contract {
 
         this._requireMSP(ctx, 'OrgMSP');
         this._requireAttribute(ctx, 'abac.approver', 'true');
-        this._requireStatus(submission, 'SUBMITTED');
+        this._requireStatus(submission, 'SUBMITTED', 'RESUBMITTED');
 
         submission.status = 'REJECTED';
         submission.approver = approver;
@@ -155,7 +155,7 @@ class ApprovalWorkflowContract extends Contract {
 
         this._requireMSP(ctx, 'OrgMSP');
         this._requireAttribute(ctx, 'abac.approver', 'true');
-        this._requireStatus(submission, 'SUBMITTED');
+        this._requireStatus(submission, 'SUBMITTED', 'RESUBMITTED');
 
         submission.status = 'CHANGES_REQUESTED';
         submission.approver = approver;

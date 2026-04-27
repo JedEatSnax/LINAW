@@ -37,6 +37,7 @@ router.patch  ('/submissions/:submissionId/approve', fabricController.approveSub
 router.patch  ('/submissions/:submissionId/reject', fabricController.rejectSubmission)
 router.patch  ('/submissions/:submissionId/request-changes', fabricController.requestChanges)
 router.patch  ('/submissions/:submissionId/resubmit', fabricController.resubmitSubmission)
+router.get    ('/submissions/:submissionId', fabricController.getSubmissionById)
 router.get    ('/submissions/:submissionId/history', fabricController.getSubmissionHistory)
 router.delete ('/submissions/:submissionId', fabricController.deleteSubmission)
 

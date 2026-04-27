@@ -1,4 +1,5 @@
 const networkAssetsService = require('../service/application/networkAssetsService')
+const approvalWorkflowService = require('../service/application/approvalWorkflowService');
 
 class fabricController {
     async networkCreate(req, res, next) {
@@ -84,13 +85,20 @@ class fabricController {
 
     async createSubmission (req, res, next) {
         try{
-            const submission = await networkAssetsService.createAsset({
+            const submission = await approvalWorkflowService.createAsset({
                 params: req.params,
                 body: req.body,
-                user: req.user
+                user: req.user,
+                file: req.file
             })
             
-            return res.status(201).json(submission)
+            return res
+                .status(201)
+                .location(`/submissions/${submission.submissionId}`)
+                .json({
+                    success: true,
+                    data: submission
+                });
         } catch (error) {
             next(error)
         }
@@ -98,10 +106,12 @@ class fabricController {
 
     async submitForApproval     (req, res, next) {
         try {
-            const approval = await networkAssetsService.submitForApproval({
+            const approval = await approvalWorkflowService.submitForApproval({
                 params: req.params,
                 user: req.user
             })
+
+            return res.status(200).json(approval)
         } catch (error) {
             next(error)
         }
@@ -109,11 +119,13 @@ class fabricController {
 
     async approveSubmission     (req, res, next) {
     try {
-            const approved = await networkAssetsService.approvedSubmisssion({
+            const approved = await approvalWorkflowService.approveSubmisssion({
                 params: req.params,
                 body: req.body,
                 user: req.user
             })
+            return res.status(200).json(approved)
+
         } catch (error) {
             next(error)
         }
@@ -121,11 +133,12 @@ class fabricController {
 
     async rejectSubmission      (req, res, next) {
         try {
-            const rejection = await networkAssetsService.rejectSubmission({
+            const rejection = await approvalWorkflowService.rejectSubmission({
                 params: req.params,
                 body: req.body,
                 user: req.user
             })
+            return res.status(200).json(rejection)
         } catch (error) {
             next(error)
         }
@@ -133,11 +146,12 @@ class fabricController {
 
     async requestChanges        (req, res, next) {
         try {
-            const request = await networkAssetsService.requestChanges({
+            const request = await approvalWorkflowService.requestChanges({
                 params: req.params,
                 body: req.body,
                 user: req.user
             })
+            return res.status(200).json(request)
         } catch (error) {
             next(error)
         }
@@ -145,23 +159,43 @@ class fabricController {
 
     async resubmitSubmission    (req, res, next) {
         try {
-            const resubmit = await networkAssetsService.resubmitSubmission({
+            const resubmit = await approvalWorkflowService.resubmitSubmission({
                 params: req.params,
                 body: req.body,
                 user: req.user
             })
-            
+            return res.status(200).json(resubmit)
         } catch (error) {
             next(error)
         }
     }
 
+    async getSubmissionById(req, res, next) {
+        try {
+            const { submissionId } = req.params;
+
+            const result = await approvalWorkflowService.getSubmissionById({
+                submissionId,
+                user: req.user
+            });
+
+            return res.status(200).json({
+            success: true,
+            message: 'Submission retrieved successfully',
+            data: result
+        });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getSubmissionHistory  (req, res, next) {
         try {
-            const SubmissionHistory = await networkAssetsService.getSubmissionHistory({
+            const SubmissionHistory = await approvalWorkflowService.getSubmissionHistory({
                 params: req.params,
                 user: req.user
             })
+            return res.status(200).json(SubmissionHistory)
         } catch (error) {
             next(error)
         }
@@ -169,10 +203,12 @@ class fabricController {
 
     async deleteSubmission      (req, res, next) {
         try {
-            const deleteSubmission = await networkAssetsService.deleteSubmission({
+            const deleteSubmission = await approvalWorkflowService.deleteSubmission({
                 params: req.params,
                 user: req.user
             })
+            return res.status(200).json(deleteSubmission)
+
         } catch (error) {
             next(error)
         }

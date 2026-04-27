@@ -14,13 +14,16 @@ const permission = Object.freeze({
 
 
     ADD_MEMBER: 'add_member',
+    ASSIGN_ROLE: 'assign_role',
+    REMOVE_MEMBER: 'remove_member',
+    VIEW_NETWORK: 'view_network',
     VIEW_CHANNEL: 'view_channel',
-    CREATE_ASSET: 'create_asset',
-    DELETE_ASSET: 'delete_asset',
-    UPDATE_ASSET: 'update_asset',
-    TRANSFER_ASSET: 'transfer_asset',
-    READ_ASSET: 'read_asset',
-    READ_ALL_ASSETS: 'read_all_assets',
+    CREATE: 'create',
+    DELETE: 'delete',
+    UPDATE: 'update',
+    TRANSFER: 'transfer',
+    READ: 'read',
+    READ_ALLS: 'read_all',
 
     DELETE_NETWORK: 'delete_network',
     DELETE_ORGANIZATION: 'delete_organization',

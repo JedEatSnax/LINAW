@@ -1,7 +1,6 @@
 database/
 
 # Hyperledger Fabric
-fabric
 fabric-ca
 /fabric-ca-client
 /fabric-ca-server-tls
