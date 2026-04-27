@@ -16,7 +16,7 @@ jest.mock('../middleware/authorize', () => ({
   can: jest.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/networkAssetsService', () => ({
+jest.mock('../service/application/networkAssetsService', () => ({
   networkCreate: jest.fn(),
   networkRead: jest.fn(),
   channelCreate: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock('../service/networkAssetsService', () => ({
 
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const networkAssetsService = require('../service/networkAssetsService');
+const networkAssetsService = require('../service/application/networkAssetsService');
 
 function makeApp({ withAuthorize = false } = {}) {
   const { router } = require('../routes/fabricRoute');

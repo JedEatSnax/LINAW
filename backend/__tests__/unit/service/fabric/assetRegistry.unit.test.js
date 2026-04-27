@@ -94,4 +94,119 @@ describe('backend/service/fabric/assetRegistry', () => {
         expect(contract.evaluateTransaction).toHaveBeenCalledWith('GetAllAssets');
         expect(result.data).toEqual([{ id: 'asset-1' }]);
     });
+
+    it('assetTransfer calls submitAsync and returns parsed result after successful commit', async () => {
+        const commit = {
+            getResult: jest.fn(() => toBuffer({ id: 'asset-2', owner: 'bob' })),
+            getStatus: jest.fn().mockResolvedValue({ successful: true, transactionId: 'tx-1', code: 0 })
+        };
+        const contract = {
+            submitAsync: jest.fn().mockResolvedValue(commit)
+        };
+        getContract.mockReturnValue(contract);
+
+        const result = await assetRegistry.assetTransfer({
+            id: 'asset-2',
+            owner: 'bob',
+            requestedBy: 'uid-10'
+        });
+
+        expect(contract.submitAsync).toHaveBeenCalledWith('TransferAsset', {
+            arguments: ['asset-2', 'bob']
+        });
+        expect(result).toEqual({
+            message: 'Asset Transferred Successfully',
+            requested_by: 'uid-10',
+            data: { id: 'asset-2', owner: 'bob' }
+        });
+    });
+
+    it('assetTransfer wraps unsuccessful commit status in AppError', async () => {
+        const commit = {
+            getResult: jest.fn(() => toBuffer(null)),
+            getStatus: jest.fn().mockResolvedValue({ successful: false, transactionId: 'tx-2', code: 500 })
+        };
+        const contract = {
+            submitAsync: jest.fn().mockResolvedValue(commit)
+        };
+        getContract.mockReturnValue(contract);
+
+        await expect(
+            assetRegistry.assetTransfer({
+                id: 'asset-2',
+                owner: 'bob',
+                requestedBy: 'uid-10'
+            })
+        ).rejects.toMatchObject({
+            name: AppError.name,
+            statusCode: 500,
+            code: 'FABRIC_TRANSFER_ASSET_ERROR'
+        });
+    });
+
+    it('assetUpdate calls submitTransaction with mapped args', async () => {
+        const contract = {
+            submitTransaction: jest.fn().mockResolvedValue(toBuffer({ id: 'asset-3', color: 'red' }))
+        };
+        getContract.mockReturnValue(contract);
+
+        const result = await assetRegistry.assetUpdate({
+            id: 'asset-3',
+            color: 'red',
+            size: 6,
+            owner: 'alice',
+            appraisedValue: 100,
+            requestedBy: 'uid-11'
+        });
+
+        expect(contract.submitTransaction).toHaveBeenCalledWith(
+            'UpdateAsset',
+            'asset-3',
+            'red',
+            '6',
+            'alice',
+            '100'
+        );
+        expect(result.data).toEqual({ id: 'asset-3', color: 'red' });
+    });
+
+    it('assetDelete calls submitAsync with id and returns parsed result', async () => {
+        const commit = {
+            getResult: jest.fn(() => toBuffer({ id: 'asset-4', deleted: true })),
+            getStatus: jest.fn().mockResolvedValue({ successful: true, transactionId: 'tx-3', code: 0 })
+        };
+        const contract = {
+            submitAsync: jest.fn().mockResolvedValue(commit)
+        };
+        getContract.mockReturnValue(contract);
+
+        const result = await assetRegistry.assetDelete({
+            id: 'asset-4',
+            requestedBy: 'uid-12'
+        });
+
+        expect(contract.submitAsync).toHaveBeenCalledWith('DeleteAsset', {
+            arguments: ['asset-4']
+        });
+        expect(result.data).toEqual({ id: 'asset-4', deleted: true });
+    });
+
+    it('assetRead wraps evaluateTransaction failures as AppError', async () => {
+        const contract = {
+            evaluateTransaction: jest.fn().mockRejectedValue(new Error('fabric read failed'))
+        };
+        getContract.mockReturnValue(contract);
+
+        await expect(
+            assetRegistry.assetRead({
+                id: 'asset-5',
+                requestedBy: 'uid-13'
+            })
+        ).rejects.toMatchObject({
+            name: AppError.name,
+            message: 'fabric read failed',
+            statusCode: 500,
+            code: 'FAILED_READ_ASSET_ERROR'
+        });
+    });
 });

@@ -85,7 +85,7 @@ class fabricController {
 
     async createSubmission (req, res, next) {
         try{
-            const submission = await approvalWorkflowService.createAsset({
+            const submission = await approvalWorkflowService.createSubmission({
                 params: req.params,
                 body: req.body,
                 user: req.user,
@@ -119,7 +119,7 @@ class fabricController {
 
     async approveSubmission     (req, res, next) {
     try {
-            const approved = await approvalWorkflowService.approveSubmisssion({
+            const approved = await approvalWorkflowService.approveSubmission({
                 params: req.params,
                 body: req.body,
                 user: req.user

@@ -2,8 +2,8 @@ const joi = require('joi')
 
 const objectIdlike = joi.string().trim().min(1).max(128).required()
 
-const submissionIdParam = joi.object({
-    id: objectIdlike.required()
+const submissionId = joi.object({
+    submissionId: objectIdlike.required()
 }).required()
 
 const ROLES = ['organization_manager', 'organization_admin']
@@ -17,15 +17,15 @@ const createSubmission = joi.object ({
 }).required()
 
 const deleteSubmission = joi.object ({
-    params: submissionIdParam
+    params: submissionId
 })
 
 const submitForApproval = joi.object ({
-    params: submissionIdParam,
+    params: submissionId,
 }).required()
 
 const approveSubmission = joi.object ({
-    params: submissionIdParam,
+    params: submissionId,
     body: joi.object({
         approver: joi.string().trim().min(3).required(),
         remarks: joi.string().trim().required()
@@ -33,28 +33,28 @@ const approveSubmission = joi.object ({
 }).required()
 
 const requestChanges = joi.object ({
-    params: submissionIdParam,
+    params: submissionId,
     body: joi.object({
         approver: joi.string().trim().min(3).required(),
-        remarks: joi.string.trim().required()
+        remarks: joi.string().trim().required()
     }).required()
 }).required()
 
 const rejectSubmission = joi.object ({
-    params: submissionIdParam,
+    params: submissionId,
     
 }).required()
 
 const resubmitSubmission = joi.object ({
-    params: submissionIdParam,
+    params: submissionId,
 }).required()
 
-const getSubmissionById = Joi.object({
-    params: submissionIdParam
+const getSubmissionById = joi.object({
+    params: submissionId
 });
 
 const getSubmissionHistory = joi.object ({
-    params: submissionIdParam
+    params: submissionId
 })
 
 module.exports = {

@@ -7,7 +7,10 @@
 **/tls-cert.pem
 
 #documentation
-progress.md
+__tests__/bugs.md
+/progress.md
+/Status.md
+
 
 # Node.js
 node_modules/

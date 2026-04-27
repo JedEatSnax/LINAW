@@ -16,14 +16,14 @@ jest.mock('../middleware/authorize', () => ({
   can: jest.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/userService', () => ({
+jest.mock('../service/application/userService', () => ({
   signup: jest.fn(),
   login: jest.fn(),
 }));
 
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const userService = require('../service/userService');
+const userService = require('../service/application/userService');
 
 function makeApp({ withAuthorize = false } = {}) {
   const { router } = require('../routes/usersRoute');
