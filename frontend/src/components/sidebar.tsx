@@ -9,6 +9,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoIosSettings } from "react-icons/io";
 import { GrHistory } from "react-icons/gr";
 import { VscOrganization } from "react-icons/vsc";
+import { FaLink } from "react-icons/fa";
 
 const menuItems = [
   {
@@ -21,6 +22,13 @@ const menuItems = [
     label: "Organizations",
     to: "/organizations",
   },
+
+  {
+    icons: <FaLink size={22.5} />,
+    label: "Chaincode",
+    to: "/chaincode",
+  },
+
   {
     icons: <TfiWrite size={22.5} />,
     label: "Assets",

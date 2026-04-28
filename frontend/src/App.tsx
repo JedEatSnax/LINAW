@@ -12,6 +12,7 @@ import { Settings } from "./pages/Settings"
 import { History } from "./pages/History"
 import { Organizations } from "./pages/Organizations"
 import { Assets } from "./pages/Assets"
+import { Chaincode } from "./pages/Chaincode"
 
 // import { useState, useEffect } from 'react'
 // import axios from "axios"
@@ -43,6 +44,7 @@ function App() {
           <Route path = "/register" element={<AuthRouteReversed><Register/></AuthRouteReversed>}/>
           <Route path = "/forgot-password" element={<AuthRouteReversed><ForgotPassword/></AuthRouteReversed>}/>
 
+          <Route path = "/chaincode" element={<AuthRoute><Chaincode/></AuthRoute>}/>
           <Route path = "/dashboard" element={<AuthRoute><Dashboard/></AuthRoute>}/>
           <Route path = "/settings" element={<AuthRoute><Settings/></AuthRoute>}/>
           <Route path = "/history" element={<AuthRoute><History/></AuthRoute>}/>
