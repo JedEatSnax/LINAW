@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "dockerode": "4.0.10",
+    "dockerode": "^4.0.10",
     "express": "^4.21.2"
   },
   "overrides": {
