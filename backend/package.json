@@ -33,7 +33,7 @@
     "express-rate-limit": "^8.3.1",
     "fabric-contract-api": "^2.5.8",
     "fabric-shim": "^2.5.8",
-    "firebase-admin": "^13.7.0",
+    "firebase-admin": "^13.8.0",
     "fs-extra": "^11.3.4",
     "jest": "^30.3.0",
     "joi": "^18.0.2",
@@ -45,7 +45,9 @@
     "winston": "^3.19.0"
   },
   "overrides": {
-    "@tootallnate/once": "^3.0.1"
+    "@tootallnate/once": "^3.0.1",
+    "fast-xml-parser": "^5.7.0",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "supertest": "^7.2.2"

@@ -72,7 +72,7 @@ FABRIC_VER ?= 3.1.4
 3. Build the Dockerfile
 
 ```bash
-docker build -f linawPeer.dockerfile -t linaw-fabric-peer:latest .
+docker build -f peer.dockerfile -t linaw-fabric-peer:latest .
 ```
 
 4. Sanity check
@@ -104,7 +104,7 @@ FABRIC_VER ?= 3.1.4
 3. Build the Dockerfile
 
 ```bash
-docker build -f linawOrderer.dockerfile -t linaw-fabric-orderer:latest .
+docker build -f orderer.dockerfile -t linaw-fabric-orderer:latest .
 ```
 
 4. Sanity check
@@ -118,6 +118,24 @@ docker run --entrypoint orderer linaw-fabric-orderer:latest version
 #  Commit SHA: 6472f7c60
 #  Go version: go1.26.1
 #  OS/Arch: linux/amd64
+```
+
+## NodeJS Backend Setup
+
+1. Build the Dockerfile
+
+```bash
+docker build -f backend.dockerfile -t linaw-backend:latest .
+```
+
+2. Run a container using the image
+
+```bash
+docker run --rm -p 3000:3000 \
+  --env-file backend/.env \
+  -e FIREBASE_SERVICE_ACCOUNT_PATH=/run/secrets/firebase_service_account.json \
+  -v "$PWD/backend/config/serviceAccount.json:/run/secrets/firebase_service_account.json:ro" \
+  linaw-backend:latest
 ```
 
 ### Aquasec Trivy Docker Image Scanning

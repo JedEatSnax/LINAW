@@ -1,0 +1,4 @@
+backend/config/serviceAccount.json
+backend/.env
+**/.env
+**/.env.*
