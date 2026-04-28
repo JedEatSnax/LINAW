@@ -1,12 +1,5 @@
-jest.mock('../../../../validators/user', () => ({
-    signupSchema: { validate: jest.fn() },
-    loginSchema: { validate: jest.fn() }
-}));
-
-jest.mock('../../../../dao/userDao', () => ({
-    signup: jest.fn(),
-    login: jest.fn()
-}));
+vi.mock('../../../../validators/user');
+vi.mock('../../../../dao/userDao');
 
 const validators = require('../../../../validators/user');
 const userDao = require('../../../../dao/userDao');
@@ -14,9 +7,16 @@ const userService = require('../../../../service/application/userService');
 
 describe('backend/service/application/userService', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
-        validators.signupSchema.validate.mockImplementation((data) => ({ error: null, value: data }));
-        validators.loginSchema.validate.mockImplementation((data) => ({ error: null, value: data }));
+        vi.clearAllMocks();
+        // Set up default mocks
+        validators.signupSchema = {
+            validate: vi.fn().mockReturnValue({ error: null, value: {} })
+        };
+        validators.loginSchema = {
+            validate: vi.fn().mockReturnValue({ error: null, value: {} })
+        };
+        userDao.signup = vi.fn();
+        userDao.login = vi.fn();
     });
 
     it('validate throws for unknown schema key', () => {

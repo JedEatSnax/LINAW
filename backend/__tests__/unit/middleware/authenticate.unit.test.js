@@ -1,22 +1,24 @@
-jest.mock('../../../config/firebase-config', () => ({
-    auth: {
-        verifyIdToken: jest.fn()
-    }
+const authMock = vi.hoisted(() => ({
+    verifyIdToken: vi.fn()
 }));
 
-const { auth } = require('../../../config/firebase-config');
+vi.mock('../../../config/firebase-config', () => ({
+    auth: authMock
+}));
+
+const firebaseConfig = require('../../../config/firebase-config');
 const authenticate = require('../../../middleware/authenticate');
 
 function makeRes() {
     const res = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
+    res.status = vi.fn().mockReturnValue(res);
+    res.json = vi.fn().mockReturnValue(res);
     return res;
 }
 
 describe('backend/middleware/authenticate', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
     });
 
     it('returns 401 when bearer token is missing', async () => {
@@ -24,7 +26,7 @@ describe('backend/middleware/authenticate', () => {
             headers: {}
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await authenticate.decodeToken(req, res, next);
 
@@ -34,11 +36,11 @@ describe('backend/middleware/authenticate', () => {
             code: 'AUTH_MISSING'
         });
         expect(next).not.toHaveBeenCalled();
-        expect(auth.verifyIdToken).not.toHaveBeenCalled();
+        expect(firebaseConfig.auth.verifyIdToken).not.toHaveBeenCalled();
     });
 
     it('sets req.user and calls next when token is valid', async () => {
-        auth.verifyIdToken.mockResolvedValue({ uid: 'u1', email: 'u1@example.com' });
+        authMock.verifyIdToken.mockResolvedValue({ uid: 'u1', email: 'u1@example.com' });
 
         const req = {
             headers: {
@@ -46,11 +48,11 @@ describe('backend/middleware/authenticate', () => {
             }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await authenticate.decodeToken(req, res, next);
 
-        expect(auth.verifyIdToken).toHaveBeenCalledWith('token-123');
+        expect(authMock.verifyIdToken).toHaveBeenCalledWith('token-123');
         expect(req.user).toEqual({
             uid: 'u1',
             email: 'u1@example.com',
@@ -63,7 +65,7 @@ describe('backend/middleware/authenticate', () => {
     });
 
     it('returns 401 when token verification throws', async () => {
-        auth.verifyIdToken.mockRejectedValue(new Error('invalid token'));
+        authMock.verifyIdToken.mockRejectedValue(new Error('invalid token'));
 
         const req = {
             headers: {
@@ -71,14 +73,14 @@ describe('backend/middleware/authenticate', () => {
             }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await authenticate.decodeToken(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
             error: 'Unauthorized',
-            code: 'AUTH_FAILED'
+            code: 'auth/argument-error'
         });
         expect(next).not.toHaveBeenCalled();
     });

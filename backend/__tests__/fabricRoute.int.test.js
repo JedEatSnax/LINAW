@@ -3,31 +3,31 @@ const express = require('express');
 
 const errorHandler = require('../middleware/errorHandler');
 
-jest.mock('../middleware/rateLimiter', () => ({
+vi.mock('../middleware/rateLimiter', () => ({
   strictLimiter: (req, res, next) => next(),
   apiLimiter: (req, res, next) => next(),
 }));
 
-jest.mock('../middleware/authenticate', () => ({
-  decodeToken: jest.fn(),
+vi.mock('../middleware/authenticate', () => ({
+  decodeToken: vi.fn(),
 }));
 
-jest.mock('../middleware/authorize', () => ({
-  can: jest.fn(() => (req, res, next) => next()),
+vi.mock('../middleware/authorize', () => ({
+  can: vi.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/application/networkAssetsService', () => ({
-  networkCreate: jest.fn(),
-  networkRead: jest.fn(),
-  channelCreate: jest.fn(),
-  channelRead: jest.fn(),
-  smartContract: jest.fn(),
-  contractReadAll: jest.fn(),
-  createAsset: jest.fn(),
-  assetTransfer: jest.fn(),
-  assetUpdate: jest.fn(),
-  assetRead: jest.fn(),
-  assestReadAll: jest.fn(),
+vi.mock('../service/application/networkAssetsService', () => ({
+  networkCreate: vi.fn(),
+  networkRead: vi.fn(),
+  channelCreate: vi.fn(),
+  channelRead: vi.fn(),
+  smartContract: vi.fn(),
+  contractReadAll: vi.fn(),
+  createAsset: vi.fn(),
+  assetTransfer: vi.fn(),
+  assetUpdate: vi.fn(),
+  assetRead: vi.fn(),
+  assestReadAll: vi.fn(),
 }));
 
 const authenticate = require('../middleware/authenticate');
@@ -63,7 +63,7 @@ describe('fabricRoute integration', () => {
   let consoleErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterAll(() => {

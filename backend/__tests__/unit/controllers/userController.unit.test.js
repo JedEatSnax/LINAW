@@ -1,21 +1,20 @@
-jest.mock('../../../service/application/userService', () => ({
-    signup: jest.fn(),
-    login: jest.fn()
-}));
+vi.mock('../../../service/application/userService');
 
 const userService = require('../../../service/application/userService');
 const userController = require('../../../controllers/userController');
 
 function makeRes() {
     const res = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
+    res.status = vi.fn().mockReturnValue(res);
+    res.json = vi.fn().mockReturnValue(res);
     return res;
 }
 
 describe('backend/controllers/userController', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        userService.signup = vi.fn();
+        userService.login = vi.fn();
     });
 
     it('signup returns 201 with success payload', async () => {
@@ -23,7 +22,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.signup(req, res, next);
 
@@ -41,7 +40,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.signup(req, res, next);
 
@@ -58,7 +57,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.signup(req, res, next);
 
@@ -70,7 +69,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com', firebase_uid: 'u1' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.login(req, res, next);
 
@@ -91,7 +90,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com', firebase_uid: 'u1' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.login(req, res, next);
 
@@ -108,7 +107,7 @@ describe('backend/controllers/userController', () => {
 
         const req = { body: { email: 'alice@example.com', firebase_uid: 'u1' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await userController.login(req, res, next);
 

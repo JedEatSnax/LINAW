@@ -1,10 +1,10 @@
-jest.mock('../../../controllers/userController', () => ({
-    signup: jest.fn(),
-    login: jest.fn()
+vi.mock('../../../controllers/userController', () => ({
+    signup: vi.fn(),
+    login: vi.fn()
 }));
 
-jest.mock('../../../middleware/rateLimiter', () => ({
-    strictLimiter: jest.fn((req, res, next) => next())
+vi.mock('../../../middleware/rateLimiter', () => ({
+    strictLimiter: vi.fn((req, res, next) => next())
 }));
 
 const userController = require('../../../controllers/userController');

@@ -1,29 +1,5 @@
-jest.mock('../../../service/application/networkAssetsService', () => ({
-    networkCreate: jest.fn(),
-    networkRead: jest.fn(),
-    channelCreate: jest.fn(),
-    channelRead: jest.fn(),
-    smartContract: jest.fn(),
-    contractReadAll: jest.fn(),
-    createAsset: jest.fn(),
-    assetTransfer: jest.fn(),
-    assetUpdate: jest.fn(),
-    assetDelete: jest.fn(),
-    assetRead: jest.fn(),
-    assetReadAll: jest.fn()
-}));
-
-jest.mock('../../../service/application/approvalWorkflowService', () => ({
-    createSubmission: jest.fn(),
-    submitForApproval: jest.fn(),
-    approveSubmission: jest.fn(),
-    rejectSubmission: jest.fn(),
-    requestChanges: jest.fn(),
-    resubmitSubmission: jest.fn(),
-    getSubmissionById: jest.fn(),
-    getSubmissionHistory: jest.fn(),
-    deleteSubmission: jest.fn()
-}));
+vi.mock('../../../service/application/networkAssetsService');
+vi.mock('../../../service/application/approvalWorkflowService');
 
 const networkAssetsService = require('../../../service/application/networkAssetsService');
 const approvalWorkflowService = require('../../../service/application/approvalWorkflowService');
@@ -31,15 +7,38 @@ const fabricController = require('../../../controllers/fabricController');
 
 function makeRes() {
     const res = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
-    res.location = jest.fn().mockReturnValue(res);
+    res.status = vi.fn().mockReturnValue(res);
+    res.json = vi.fn().mockReturnValue(res);
+    res.location = vi.fn().mockReturnValue(res);
     return res;
 }
 
 describe('backend/controllers/fabricController', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        // Set up networkAssetsService mocks
+        networkAssetsService.networkCreate = vi.fn();
+        networkAssetsService.networkRead = vi.fn();
+        networkAssetsService.channelCreate = vi.fn();
+        networkAssetsService.channelRead = vi.fn();
+        networkAssetsService.smartContract = vi.fn();
+        networkAssetsService.contractReadAll = vi.fn();
+        networkAssetsService.createAsset = vi.fn();
+        networkAssetsService.assetTransfer = vi.fn();
+        networkAssetsService.assetUpdate = vi.fn();
+        networkAssetsService.assetDelete = vi.fn();
+        networkAssetsService.assetRead = vi.fn();
+        networkAssetsService.assetReadAll = vi.fn();
+        // Set up approvalWorkflowService mocks
+        approvalWorkflowService.createSubmission = vi.fn();
+        approvalWorkflowService.submitForApproval = vi.fn();
+        approvalWorkflowService.approveSubmission = vi.fn();
+        approvalWorkflowService.rejectSubmission = vi.fn();
+        approvalWorkflowService.requestChanges = vi.fn();
+        approvalWorkflowService.resubmitSubmission = vi.fn();
+        approvalWorkflowService.getSubmissionById = vi.fn();
+        approvalWorkflowService.getSubmissionHistory = vi.fn();
+        approvalWorkflowService.deleteSubmission = vi.fn();
     });
 
     it('networkCreate returns 201 and payload from service', async () => {
@@ -50,7 +49,7 @@ describe('backend/controllers/fabricController', () => {
             user: { uid: 'u1' }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.networkCreate(req, res, next);
 
@@ -68,7 +67,7 @@ describe('backend/controllers/fabricController', () => {
 
         const req = { body: {}, user: { uid: 'u1' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.networkCreate(req, res, next);
 
@@ -80,7 +79,7 @@ describe('backend/controllers/fabricController', () => {
 
         const req = { body: { id: 'asset-1' }, user: { uid: 'u2' } };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.createAsset(req, res, next);
 
@@ -106,7 +105,7 @@ describe('backend/controllers/fabricController', () => {
             file: { originalname: 'proposal.pdf' }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.createSubmission(req, res, next);
 
@@ -136,7 +135,7 @@ describe('backend/controllers/fabricController', () => {
             user: { uid: 'approver-1' }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.approveSubmission(req, res, next);
 
@@ -158,7 +157,7 @@ describe('backend/controllers/fabricController', () => {
             user: { uid: 'u4' }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         await fabricController.getSubmissionById(req, res, next);
 

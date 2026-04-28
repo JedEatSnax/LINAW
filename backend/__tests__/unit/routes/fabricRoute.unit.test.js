@@ -1,36 +1,36 @@
-jest.mock('../../../controllers/fabricController', () => ({
-    networkCreate: jest.fn(),
-    networkRead: jest.fn(),
-    channelCreate: jest.fn(),
-    smartContract: jest.fn(),
-    contractReadAll: jest.fn(),
-    addMember: jest.fn(),
-    updateMemberRole: jest.fn(),
-    getOrganizationMemebrs: jest.fn(),
-    deleteMember: jest.fn(),
-    createAsset: jest.fn(),
-    assetTransfer: jest.fn(),
-    assetUpdate: jest.fn(),
-    assetDelete: jest.fn(),
-    assetRead: jest.fn(),
-    assetReadAll: jest.fn(),
-    createSubmission: jest.fn(),
-    submitForApproval: jest.fn(),
-    approveSubmission: jest.fn(),
-    rejectSubmission: jest.fn(),
-    requestChanges: jest.fn(),
-    resubmitSubmission: jest.fn(),
-    getSubmissionById: jest.fn(),
-    getSubmissionHistory: jest.fn(),
-    deleteSubmission: jest.fn()
+vi.mock('../../../controllers/fabricController', () => ({
+    networkCreate: vi.fn(),
+    networkRead: vi.fn(),
+    channelCreate: vi.fn(),
+    smartContract: vi.fn(),
+    contractReadAll: vi.fn(),
+    addMember: vi.fn(),
+    updateMemberRole: vi.fn(),
+    getOrganizationMemebrs: vi.fn(),
+    deleteMember: vi.fn(),
+    createAsset: vi.fn(),
+    assetTransfer: vi.fn(),
+    assetUpdate: vi.fn(),
+    assetDelete: vi.fn(),
+    assetRead: vi.fn(),
+    assetReadAll: vi.fn(),
+    createSubmission: vi.fn(),
+    submitForApproval: vi.fn(),
+    approveSubmission: vi.fn(),
+    rejectSubmission: vi.fn(),
+    requestChanges: vi.fn(),
+    resubmitSubmission: vi.fn(),
+    getSubmissionById: vi.fn(),
+    getSubmissionHistory: vi.fn(),
+    deleteSubmission: vi.fn()
 }));
 
-jest.mock('../../../middleware/authenticate', () => ({
-    decodeToken: jest.fn((req, res, next) => next())
+vi.mock('../../../middleware/authenticate', () => ({
+    decodeToken: vi.fn((req, res, next) => next())
 }));
 
-jest.mock('../../../middleware/rateLimiter', () => ({
-    apiLimiter: jest.fn((req, res, next) => next())
+vi.mock('../../../middleware/rateLimiter', () => ({
+    apiLimiter: vi.fn((req, res, next) => next())
 }));
 
 const fabricController = require('../../../controllers/fabricController');

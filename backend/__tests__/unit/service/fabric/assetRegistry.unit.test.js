@@ -1,20 +1,42 @@
-jest.mock('../../../../config/fabric/fabricGateway.js', () => ({
-    getContract: jest.fn()
+process.env.FABRIC_MSP_ID ||= 'Org1MSP';
+process.env.FABRIC_CHANNEL_NAME ||= 'test-channel';
+process.env.FABRIC_CHAINCODE_NAME ||= 'test-chaincode';
+process.env.FABRIC_PEER_ENDPOINT ||= 'localhost:7051';
+process.env.FABRIC_PEER_HOST_ALIAS ||= 'peer0.org1.example.com';
+process.env.FABRIC_CERT_PATH ||= '/tmp/cert.pem';
+process.env.FABRIC_KEY_DIRECTORY_PATH ||= '/tmp/keystore';
+process.env.FABRIC_TLS_CERT_PATH ||= '/tmp/tls.pem';
+
+const fabricGateway = require('../../../../config/fabric/fabricGateway.js');
+let getContractMock;
+
+vi.mock('../../../../config/fabric/fabricConfig.js', () => ({
+    msp_id: 'Org1MSP',
+    channel_name: 'test-channel',
+    chaincode_name: 'test-chaincode',
+    peer_endpoint: 'localhost:7051',
+    peer_host_alias: 'peer0.org1.example.com',
+    crypto_path: null,
+    cert_path: '/tmp/cert.pem',
+    key_directory_path: '/tmp/keystore',
+    tls_cert_path: '/tmp/tls.pem'
 }));
 
-const { getContract } = require('../../../../config/fabric/fabricGateway.js');
+let getContract;
 const AppError = require('../../../../utils/AppError.js');
 const assetRegistry = require('../../../../service/fabric/assetRegistry.js');
 const { toBuffer } = require('../../../helpers/fabricResultHelpers.js');
 
 describe('backend/service/fabric/assetRegistry', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        getContractMock = vi.spyOn(fabricGateway, 'getContract');
+        getContract = getContractMock;
     });
 
     it('createAsset calls getContract + submitTransaction with correct arguments', async () => {
         const contract = {
-            submitTransaction: jest.fn().mockResolvedValue(toBuffer({ id: 'asset-1' }))
+            submitTransaction: vi.fn().mockResolvedValue(toBuffer({ id: 'asset-1' }))
         };
         getContract.mockReturnValue(contract);
 
@@ -45,7 +67,7 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('createAsset propagates errors as AppError', async () => {
         const contract = {
-            submitTransaction: jest.fn().mockRejectedValue(new Error('fabric failed'))
+            submitTransaction: vi.fn().mockRejectedValue(new Error('fabric failed'))
         };
         getContract.mockReturnValue(contract);
 
@@ -68,7 +90,7 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetRead calls evaluateTransaction with correct arguments', async () => {
         const contract = {
-            evaluateTransaction: jest.fn().mockResolvedValue(toBuffer({ id: 'asset-1', owner: 'alice' }))
+            evaluateTransaction: vi.fn().mockResolvedValue(toBuffer({ id: 'asset-1', owner: 'alice' }))
         };
         getContract.mockReturnValue(contract);
 
@@ -85,7 +107,7 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetReadAll calls evaluateTransaction with GetAllAssets', async () => {
         const contract = {
-            evaluateTransaction: jest.fn().mockResolvedValue(toBuffer([{ id: 'asset-1' }]))
+            evaluateTransaction: vi.fn().mockResolvedValue(toBuffer([{ id: 'asset-1' }]))
         };
         getContract.mockReturnValue(contract);
 
@@ -97,11 +119,11 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetTransfer calls submitAsync and returns parsed result after successful commit', async () => {
         const commit = {
-            getResult: jest.fn(() => toBuffer({ id: 'asset-2', owner: 'bob' })),
-            getStatus: jest.fn().mockResolvedValue({ successful: true, transactionId: 'tx-1', code: 0 })
+            getResult: vi.fn(() => toBuffer({ id: 'asset-2', owner: 'bob' })),
+            getStatus: vi.fn().mockResolvedValue({ successful: true, transactionId: 'tx-1', code: 0 })
         };
         const contract = {
-            submitAsync: jest.fn().mockResolvedValue(commit)
+            submitAsync: vi.fn().mockResolvedValue(commit)
         };
         getContract.mockReturnValue(contract);
 
@@ -123,11 +145,11 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetTransfer wraps unsuccessful commit status in AppError', async () => {
         const commit = {
-            getResult: jest.fn(() => toBuffer(null)),
-            getStatus: jest.fn().mockResolvedValue({ successful: false, transactionId: 'tx-2', code: 500 })
+            getResult: vi.fn(() => toBuffer(null)),
+            getStatus: vi.fn().mockResolvedValue({ successful: false, transactionId: 'tx-2', code: 500 })
         };
         const contract = {
-            submitAsync: jest.fn().mockResolvedValue(commit)
+            submitAsync: vi.fn().mockResolvedValue(commit)
         };
         getContract.mockReturnValue(contract);
 
@@ -146,7 +168,7 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetUpdate calls submitTransaction with mapped args', async () => {
         const contract = {
-            submitTransaction: jest.fn().mockResolvedValue(toBuffer({ id: 'asset-3', color: 'red' }))
+            submitTransaction: vi.fn().mockResolvedValue(toBuffer({ id: 'asset-3', color: 'red' }))
         };
         getContract.mockReturnValue(contract);
 
@@ -172,13 +194,13 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetDelete calls submitAsync with id and returns parsed result', async () => {
         const commit = {
-            getResult: jest.fn(() => toBuffer({ id: 'asset-4', deleted: true })),
-            getStatus: jest.fn().mockResolvedValue({ successful: true, transactionId: 'tx-3', code: 0 })
+            getResult: vi.fn(() => toBuffer({ id: 'asset-4', deleted: true })),
+            getStatus: vi.fn().mockResolvedValue({ successful: true, transactionId: 'tx-3', code: 0 })
         };
         const contract = {
-            submitAsync: jest.fn().mockResolvedValue(commit)
+            submitAsync: vi.fn().mockResolvedValue(commit)
         };
-        getContract.mockReturnValue(contract);
+        getContractMock.mockReturnValue(contract);
 
         const result = await assetRegistry.assetDelete({
             id: 'asset-4',
@@ -193,9 +215,9 @@ describe('backend/service/fabric/assetRegistry', () => {
 
     it('assetRead wraps evaluateTransaction failures as AppError', async () => {
         const contract = {
-            evaluateTransaction: jest.fn().mockRejectedValue(new Error('fabric read failed'))
+            evaluateTransaction: vi.fn().mockRejectedValue(new Error('fabric read failed'))
         };
-        getContract.mockReturnValue(contract);
+        getContractMock.mockReturnValue(contract);
 
         await expect(
             assetRegistry.assetRead({

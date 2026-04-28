@@ -1,9 +1,9 @@
 const AppError = require('../../utils/AppError.js')
 const { TextDecoder } = require('node:util');
+const fabricGateway = require('../../config/fabric/fabricGateway.js');
 
 function getContractFromGateway(contractName) {
-	// lazy require to avoid throwing on module load when Fabric env is not configured
-	return require('../../config/fabric/fabricGateway.js').getContract(contractName);
+	return fabricGateway.getContract(contractName);
 }
 
 function parseBuffer (resultBuffer) {

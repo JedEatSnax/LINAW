@@ -1,24 +1,5 @@
-jest.mock('../../../../dao/assetRegistryDao', () => ({
-    createAsset: jest.fn(),
-    assetTransfer: jest.fn(),
-    assetUpdate: jest.fn(),
-    assetDelete: jest.fn(),
-    assetRead: jest.fn(),
-    assetReadAll: jest.fn()
-}));
-
-jest.mock('../../../../service/fabric/assetRegistry.js', () => ({
-    networkCreate: jest.fn(),
-    channelCreate: jest.fn(),
-    smartContract: jest.fn(),
-    contractReadAll: jest.fn(),
-    createAsset: jest.fn(),
-    assetTransfer: jest.fn(),
-    assetUpdate: jest.fn(),
-    assetDelete: jest.fn(),
-    assetRead: jest.fn(),
-    assetReadAll: jest.fn()
-}));
+vi.mock('../../../../dao/assetRegistryDao');
+vi.mock('../../../../service/fabric/assetRegistry.js');
 
 const networkAssetsService = require('../../../../service/application/networkAssetsService.js');
 const assetRegistryDao = require('../../../../dao/assetRegistryDao');
@@ -27,7 +8,25 @@ const AppError = require('../../../../utils/AppError.js');
 
 describe('backend/service/application/networkAssetsService', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        // Set up dao mocks
+        assetRegistryDao.createAsset = vi.fn();
+        assetRegistryDao.assetTransfer = vi.fn();
+        assetRegistryDao.assetUpdate = vi.fn();
+        assetRegistryDao.assetDelete = vi.fn();
+        assetRegistryDao.assetRead = vi.fn();
+        assetRegistryDao.assetReadAll = vi.fn();
+        // Set up service mocks
+        assetService.networkCreate = vi.fn();
+        assetService.channelCreate = vi.fn();
+        assetService.smartContract = vi.fn();
+        assetService.contractReadAll = vi.fn();
+        assetService.createAsset = vi.fn();
+        assetService.assetTransfer = vi.fn();
+        assetService.assetUpdate = vi.fn();
+        assetService.assetDelete = vi.fn();
+        assetService.assetRead = vi.fn();
+        assetService.assetReadAll = vi.fn();
     });
 
     it('createAsset validates payload and passes requestedBy through', async () => {

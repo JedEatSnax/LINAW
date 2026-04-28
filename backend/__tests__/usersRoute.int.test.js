@@ -3,22 +3,22 @@ const express = require('express');
 
 const errorHandler = require('../middleware/errorHandler');
 
-jest.mock('../middleware/rateLimiter', () => ({
+vi.mock('../middleware/rateLimiter', () => ({
   strictLimiter: (req, res, next) => next(),
   apiLimiter: (req, res, next) => next(),
 }));
 
-jest.mock('../middleware/authenticate', () => ({
-  decodeToken: jest.fn(),
+vi.mock('../middleware/authenticate', () => ({
+  decodeToken: vi.fn(),
 }));
 
-jest.mock('../middleware/authorize', () => ({
-  can: jest.fn(() => (req, res, next) => next()),
+vi.mock('../middleware/authorize', () => ({
+  can: vi.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/application/userService', () => ({
-  signup: jest.fn(),
-  login: jest.fn(),
+vi.mock('../service/application/userService', () => ({
+  signup: vi.fn(),
+  login: vi.fn(),
 }));
 
 const authenticate = require('../middleware/authenticate');
@@ -54,7 +54,7 @@ describe('usersRoute integration', () => {
   let consoleErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterAll(() => {

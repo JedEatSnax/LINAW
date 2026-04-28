@@ -1,35 +1,25 @@
-jest.mock('../../../config/authorization/authorization', () => ({
-    user: ['view_network'],
-    network_admin: ['manage_network']
-}));
-
-jest.mock('../../../config/authorization/rules', () => ({
-    view_network: jest.fn(() => true),
-    manage_network: jest.fn(() => true)
-}));
-
-const policies = require('../../../config/authorization/rules');
 const authorization = require('../../../middleware/authorize');
+const policies = require('../../../config/authorization/rules');
 
 function makeRes() {
     const res = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.json = jest.fn().mockReturnValue(res);
+    res.status = vi.fn().mockReturnValue(res);
+    res.json = vi.fn().mockReturnValue(res);
     return res;
 }
 
 describe('backend/middleware/authorize', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
-        policies.view_network.mockReturnValue(true);
-        policies.manage_network.mockReturnValue(true);
+        vi.clearAllMocks();
+        policies.create_network = vi.fn(() => true);
+        policies.manage_network = vi.fn(() => true);
     });
 
     it('returns 401 when req.user is missing', () => {
-        const middleware = authorization.can('view_network');
+        const middleware = authorization.can('create_network');
         const req = {};
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         middleware(req, res, next);
 
@@ -46,7 +36,7 @@ describe('backend/middleware/authorize', () => {
             }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         middleware(req, res, next);
 
@@ -56,27 +46,27 @@ describe('backend/middleware/authorize', () => {
     });
 
     it('returns 403 when policy check fails', () => {
-        policies.view_network.mockReturnValue(false);
+        policies.create_network.mockReturnValue(false);
 
-        const middleware = authorization.can('view_network');
+        const middleware = authorization.can('create_network');
         const req = {
             user: {
                 role: 'user'
             }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         middleware(req, res, next);
 
-        expect(policies.view_network).toHaveBeenCalledWith(req.user, req, res);
+        expect(policies.create_network).toHaveBeenCalledWith(req.user, req, res);
         expect(res.status).toHaveBeenCalledWith(403);
         expect(res.json).toHaveBeenCalledWith({ message: 'Policy check failed' });
         expect(next).not.toHaveBeenCalled();
     });
 
     it('calls next when permission and policy checks pass', () => {
-        const middleware = authorization.can('view_network');
+        const middleware = authorization.can('create_network');
         const req = {
             user: {
                 role: 'user',
@@ -84,7 +74,7 @@ describe('backend/middleware/authorize', () => {
             }
         };
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         middleware(req, res, next);
 

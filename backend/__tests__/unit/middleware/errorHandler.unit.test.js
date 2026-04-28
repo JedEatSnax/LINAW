@@ -11,8 +11,8 @@ function makeReq() {
 function makeRes(headersSent = false) {
     const res = {
         headersSent,
-        status: jest.fn(),
-        json: jest.fn()
+        status: vi.fn(),
+        json: vi.fn()
     };
 
     res.status.mockReturnValue(res);
@@ -25,7 +25,7 @@ describe('backend/middleware/errorHandler', () => {
     let consoleSpy;
 
     beforeAll(() => {
-        consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     });
 
     afterAll(() => {
@@ -35,7 +35,7 @@ describe('backend/middleware/errorHandler', () => {
     it('returns AppError payload as-is', () => {
         const req = makeReq();
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         errorHandler(new AppError('Forbidden', 403, 'FORBIDDEN'), req, res, next);
 
@@ -51,7 +51,7 @@ describe('backend/middleware/errorHandler', () => {
     it('normalizes ValidationError shape with details', () => {
         const req = makeReq();
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         errorHandler(
             {
@@ -78,7 +78,7 @@ describe('backend/middleware/errorHandler', () => {
     it('normalizes UNAUTHORIZED errors by message', () => {
         const req = makeReq();
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         errorHandler(new Error('UNAUTHORIZED'), req, res, next);
 
@@ -94,7 +94,7 @@ describe('backend/middleware/errorHandler', () => {
     it('normalizes generic errors to 500 internal error', () => {
         const req = makeReq();
         const res = makeRes();
-        const next = jest.fn();
+        const next = vi.fn();
 
         errorHandler(new Error('boom'), req, res, next);
 
@@ -110,7 +110,7 @@ describe('backend/middleware/errorHandler', () => {
     it('calls next when headers already sent', () => {
         const req = makeReq();
         const res = makeRes(true);
-        const next = jest.fn();
+        const next = vi.fn();
 
         errorHandler(new Error('boom'), req, res, next);
 

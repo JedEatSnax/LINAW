@@ -1,39 +1,7 @@
-jest.mock('../../../../validators/fabric/approvalWorkflowsSchema', () => ({
-    createSubmission: { validate: jest.fn() },
-    deleteSubmission: { validate: jest.fn() },
-    submitForApproval: { validate: jest.fn() },
-    approveSubmission: { validate: jest.fn() },
-    requestChanges: { validate: jest.fn() },
-    rejectSubmission: { validate: jest.fn() },
-    resubmitSubmission: { validate: jest.fn() },
-    getSubmissionById: { validate: jest.fn() },
-    getSubmissionHistory: { validate: jest.fn() }
-}));
-
-jest.mock('../../../../dao/approvalWorkflowDao', () => ({
-    createSubmissionMetadata: jest.fn(),
-    updateSubmission: jest.fn(),
-    getSubmissionById: jest.fn(),
-    deleteSubmission: jest.fn(),
-    getSubmissionHistory: jest.fn()
-}), { virtual: true });
-
-jest.mock('../../../../service/application/fileService', () => ({
-    processSubmissionFile: jest.fn(),
-    deleteSubmissionFile: jest.fn()
-}));
-
-jest.mock('../../../../service/fabric/approvalWorkflow', () => ({
-    createSubmission: jest.fn(),
-    deleteSubmission: jest.fn(),
-    submitForApproval: jest.fn(),
-    approveSubmission: jest.fn(),
-    requestChanges: jest.fn(),
-    rejectSubmission: jest.fn(),
-    resubmitSubmission: jest.fn(),
-    getSubmissionById: jest.fn(),
-    getSubmissionHistory: jest.fn()
-}));
+vi.mock('../../../../validators/fabric/approvalWorkflowsSchema');
+vi.mock('../../../../dao/approvalWorkflowDao');
+vi.mock('../../../../service/application/fileService');
+vi.mock('../../../../service/fabric/approvalWorkflow');
 
 const crypto = require('crypto');
 const schemas = require('../../../../validators/fabric/approvalWorkflowsSchema');
@@ -44,8 +12,42 @@ const approvalWorkflowService = require('../../../../service/application/approva
 
 describe('backend/service/application/approvalWorkflowService', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        
+        // Set up schema mocks
+        schemas.createSubmission = { validate: vi.fn() };
+        schemas.deleteSubmission = { validate: vi.fn() };
+        schemas.submitForApproval = { validate: vi.fn() };
+        schemas.approveSubmission = { validate: vi.fn() };
+        schemas.requestChanges = { validate: vi.fn() };
+        schemas.rejectSubmission = { validate: vi.fn() };
+        schemas.resubmitSubmission = { validate: vi.fn() };
+        schemas.getSubmissionById = { validate: vi.fn() };
+        schemas.getSubmissionHistory = { validate: vi.fn() };
+        
+        // Set up dao mocks
+        submissionDao.createSubmissionMetadata = vi.fn();
+        submissionDao.updateSubmission = vi.fn();
+        submissionDao.getSubmissionById = vi.fn();
+        submissionDao.deleteSubmission = vi.fn();
+        submissionDao.getSubmissionHistory = vi.fn();
+        
+        // Set up file service mocks
+        fileService.processSubmissionFile = vi.fn();
+        fileService.deleteSubmissionFile = vi.fn();
+        
+        // Set up workflow mocks
+        approvalWorkflow.createSubmission = vi.fn();
+        approvalWorkflow.deleteSubmission = vi.fn();
+        approvalWorkflow.submitForApproval = vi.fn();
+        approvalWorkflow.approveSubmission = vi.fn();
+        approvalWorkflow.requestChanges = vi.fn();
+        approvalWorkflow.rejectSubmission = vi.fn();
+        approvalWorkflow.resubmitSubmission = vi.fn();
+        approvalWorkflow.getSubmissionById = vi.fn();
+        approvalWorkflow.getSubmissionHistory = vi.fn();
 
+        // Set default validation implementations
         schemas.createSubmission.validate.mockImplementation((input) => ({ error: null, value: input }));
         schemas.deleteSubmission.validate.mockImplementation((input) => ({ error: null, value: input }));
         schemas.submitForApproval.validate.mockImplementation((input) => ({ error: null, value: input }));
@@ -64,7 +66,7 @@ describe('backend/service/application/approvalWorkflowService', () => {
     });
 
     it('createSubmission validates input and coordinates file + DAO + workflow calls', async () => {
-        jest.spyOn(crypto, 'randomUUID').mockReturnValue('fixed-uuid');
+        vi.spyOn(crypto, 'randomUUID').mockReturnValue('fixed-uuid');
 
         fileService.processSubmissionFile.mockResolvedValue({
             objectKey: 'obj-1',

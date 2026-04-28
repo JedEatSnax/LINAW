@@ -1,6 +1,4 @@
-jest.mock('../../../../dao/r2StorageDao', () => ({
-    upload: jest.fn()
-}), { virtual: true });
+vi.mock('../../../../dao/r2StorageDao');
 
 const crypto = require('crypto');
 const r2StorageDao = require('../../../../dao/r2StorageDao');
@@ -8,7 +6,8 @@ const fileService = require('../../../../service/application/fileService');
 
 describe('backend/service/application/fileService', () => {
     beforeEach(() => {
-        jest.clearAllMocks();
+        vi.clearAllMocks();
+        r2StorageDao.upload = vi.fn();
     });
 
     it('processSubmissionFile uploads supported file and returns metadata', async () => {
