@@ -37,9 +37,9 @@ describe('backend/service/application/fileService', () => {
             buffer: file.buffer,
             contentType: 'application/pdf',
             metadata: {
-                originalName: 'proposal.PDF',
-                submissionId: 'sub-1',
-                tenantId: 'tenant-1'
+                'original-name': 'proposal.PDF',
+                'submission-id': 'sub-1',
+                'tenant-id': 'tenant-1'
             }
         });
 

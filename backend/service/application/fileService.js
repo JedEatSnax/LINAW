@@ -2,6 +2,15 @@ const crypto = require('crypto');
 const path = require('path');
 const r2StorageDao = require('../../dao/r2StorageDao');
 
+function sanitizeFilename(name) {
+    return String(name)
+        .replace(/[\\/\0]/g, '_')
+        .replace(/[<>:"|?*\x00-\x1F]/g, '_')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 255) || 'upload';
+}
+
 class FileService {
     async processSubmissionFile({ file, tenantId, submissionId }) {
         if (!file) {
@@ -27,7 +36,9 @@ class FileService {
             .digest('hex');
 
         const extension = path.extname(file.originalname || '').toLowerCase() || '.bin';
-        const safeOriginalName = path.basename(file.originalname || `upload${extension}`);
+        const safeOriginalName = sanitizeFilename(
+            path.basename(file.originalname || `upload${extension}`)
+        );
 
         const objectKey = this.buildSubmissionObjectKey({
             tenantId,
@@ -40,9 +51,9 @@ class FileService {
             buffer: file.buffer,
             contentType: file.mimetype,
             metadata: {
-                originalName: safeOriginalName,
-                submissionId,
-                tenantId: String(tenantId || '')
+                'original-name': safeOriginalName,
+                'submission-id': String(submissionId),
+                'tenant-id': String(tenantId || '')
             }
         });
 
@@ -65,6 +76,19 @@ class FileService {
         }
 
         return `tenants/${tenantId}/submissions/${submissionId}/proposal${extension}`;
+    }
+
+    async deleteSubmissionFile({ objectKey }) {
+        if (!objectKey) {
+            throw new Error('objectKey is required');
+        }
+
+        await r2StorageDao.delete(objectKey);
+
+        return {
+            objectKey,
+            deleted: true
+        };
     }
 }
 

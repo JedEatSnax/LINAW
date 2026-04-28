@@ -1,37 +1,28 @@
-const signupSchema = require('../../../validators/user/signupModel');
-const loginSchema = require('../../../validators/user/loginModel');
+const { signupSchema, loginSchema } = require('../../../validators/user/userSchema');
 
 describe('backend/validators/user', () => {
     it('signup schema accepts valid email', () => {
-        const { error, value } = signupSchema.validate({ email: 'alice@example.com' });
+        const { error, value } = signupSchema.validate({ body: { email: 'alice@example.com' } });
 
         expect(error).toBeUndefined();
-        expect(value).toEqual({ email: 'alice@example.com' });
+        expect(value).toEqual({ body: { email: 'alice@example.com' } });
     });
 
     it('signup schema rejects missing email', () => {
-        const { error } = signupSchema.validate({});
+        const { error } = signupSchema.validate({ body: {} });
 
         expect(error).toBeDefined();
     });
 
-    it('login schema accepts valid email and firebase_uid', () => {
-        const { error, value } = loginSchema.validate({
-            email: 'alice@example.com',
-            firebase_uid: 'uid-1'
-        });
+    it('login schema accepts valid email', () => {
+        const { error, value } = loginSchema.validate({ body: { email: 'alice@example.com' } });
 
         expect(error).toBeUndefined();
-        expect(value).toEqual({
-            email: 'alice@example.com',
-            firebase_uid: 'uid-1'
-        });
+        expect(value).toEqual({ body: { email: 'alice@example.com' } });
     });
 
-    it('login schema rejects missing firebase_uid', () => {
-        const { error } = loginSchema.validate({
-            email: 'alice@example.com'
-        });
+    it('login schema rejects missing email', () => {
+        const { error } = loginSchema.validate({ body: {} });
 
         expect(error).toBeDefined();
     });

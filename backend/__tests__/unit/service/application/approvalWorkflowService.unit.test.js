@@ -12,11 +12,15 @@ jest.mock('../../../../validators/fabric/approvalWorkflowsSchema', () => ({
 
 jest.mock('../../../../dao/approvalWorkflowDao', () => ({
     createSubmissionMetadata: jest.fn(),
-    updateSubmission: jest.fn()
+    updateSubmission: jest.fn(),
+    getSubmissionById: jest.fn(),
+    deleteSubmission: jest.fn(),
+    getSubmissionHistory: jest.fn()
 }), { virtual: true });
 
 jest.mock('../../../../service/application/fileService', () => ({
-    processSubmissionFile: jest.fn()
+    processSubmissionFile: jest.fn(),
+    deleteSubmissionFile: jest.fn()
 }));
 
 jest.mock('../../../../service/fabric/approvalWorkflow', () => ({
@@ -227,16 +231,21 @@ describe('backend/service/application/approvalWorkflowService', () => {
 
     it('deleteSubmission delegates and returns service response', async () => {
         approvalWorkflow.deleteSubmission.mockResolvedValue({ message: 'deleted' });
+        submissionDao.getSubmissionById.mockResolvedValue({ objectKey: 'obj-4' });
+        fileService.deleteSubmissionFile.mockResolvedValue({ deleted: true });
 
         const result = await approvalWorkflowService.deleteSubmission({
             params: { submissionId: 'sub-4' },
             user: { uid: 'u-4' }
         });
 
+        expect(submissionDao.getSubmissionById).toHaveBeenCalledWith({ submissionId: 'sub-4' });
         expect(approvalWorkflow.deleteSubmission).toHaveBeenCalledWith({
             submissionId: 'sub-4',
             owner: 'u-4'
         });
+        expect(fileService.deleteSubmissionFile).toHaveBeenCalledWith({ objectKey: 'obj-4' });
+        expect(submissionDao.deleteSubmission).toHaveBeenCalledWith({ submissionId: 'sub-4' });
         expect(result).toEqual({ message: 'Deleted Successfully' });
     });
 

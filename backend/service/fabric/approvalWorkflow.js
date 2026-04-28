@@ -1,5 +1,9 @@
 const AppError = require('../../utils/AppError.js');
-const { getContract } = require('../../config/fabric/fabricGateway.js');
+
+function getContractFromGateway(contractName) {
+    // lazy require to avoid throwing on module load when Fabric env is not configured
+    return require('../../config/fabric/fabricGateway.js').getContract(contractName);
+}
 
 function parseBuffer(resultBuffer) {
     if (!resultBuffer || resultBuffer.length === 0) {
@@ -35,7 +39,7 @@ async function submitTransactionAsync(contract, transactionName, args = []) {
 class ApprovalWorkflow {
     async createSubmission({ submissionId, owner, role, proposalType, docHash, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'createSubmission', [
                 submissionId,
@@ -62,7 +66,7 @@ class ApprovalWorkflow {
 
     async deleteSubmission({ submissionId, owner, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'deleteSubmission', [
                 submissionId,
@@ -85,7 +89,7 @@ class ApprovalWorkflow {
 
     async submitForApproval({ submissionId, owner, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'submitForApproval', [
                 submissionId,
@@ -108,7 +112,7 @@ class ApprovalWorkflow {
 
     async approveSubmission({ submissionId, approver, remarks, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'approveSubmission', [
                 submissionId,
@@ -132,7 +136,7 @@ class ApprovalWorkflow {
 
     async rejectSubmission({ submissionId, approver, remarks, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'rejectSubmission', [
                 submissionId,
@@ -156,7 +160,7 @@ class ApprovalWorkflow {
 
     async requestChanges({ submissionId, approver, remarks, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'requestChanges', [
                 submissionId,
@@ -180,7 +184,7 @@ class ApprovalWorkflow {
 
     async resubmitSubmission({ submissionId, owner, newDocHash, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
             const data = await submitTransactionAsync(contract, 'resubmitSubmission', [
                 submissionId,
@@ -204,12 +208,9 @@ class ApprovalWorkflow {
 
     async getSubmissionById({ submissionId, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
-            const result = await contract.evaluateTransaction(
-                'readSubmission',
-                submissionId
-            );
+            const result = await contract.evaluateTransaction('readSubmission', submissionId);
 
             return {
                 message: 'Submission fetched successfully',
@@ -227,12 +228,9 @@ class ApprovalWorkflow {
 
     async getSubmissionHistory({ submissionId, requestedBy }) {
         try {
-            const contract = getContract('approvalWorkflowContract');
+            const contract = getContractFromGateway('approvalWorkflowContract');
 
-            const result = await contract.evaluateTransaction(
-                'getSubmissionHistory',
-                submissionId
-            );
+            const result = await contract.evaluateTransaction('getSubmissionHistory', submissionId);
 
             return {
                 message: 'Submission history fetched successfully',

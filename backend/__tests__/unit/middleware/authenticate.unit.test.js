@@ -30,7 +30,8 @@ describe('backend/middleware/authenticate', () => {
 
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
-            message: 'UNAUTHORIZED: No valid Bearer token'
+            error: 'Authorization header is required',
+            code: 'AUTH_MISSING'
         });
         expect(next).not.toHaveBeenCalled();
         expect(auth.verifyIdToken).not.toHaveBeenCalled();
@@ -50,7 +51,14 @@ describe('backend/middleware/authenticate', () => {
         await authenticate.decodeToken(req, res, next);
 
         expect(auth.verifyIdToken).toHaveBeenCalledWith('token-123');
-        expect(req.user).toEqual({ uid: 'u1', email: 'u1@example.com' });
+        expect(req.user).toEqual({
+            uid: 'u1',
+            email: 'u1@example.com',
+            email_verified: false,
+            role: 'user',
+            tenantId: null,
+            claims: { uid: 'u1', email: 'u1@example.com' }
+        });
         expect(next).toHaveBeenCalledTimes(1);
     });
 
@@ -69,7 +77,8 @@ describe('backend/middleware/authenticate', () => {
 
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
-            message: 'UNAUTHORIZED: Invalid token'
+            error: 'Unauthorized',
+            code: 'AUTH_FAILED'
         });
         expect(next).not.toHaveBeenCalled();
     });

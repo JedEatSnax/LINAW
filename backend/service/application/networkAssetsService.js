@@ -10,7 +10,7 @@ class ValidationError extends Error {
 const fabricSchema = require('../../validators/fabric/fabricSchema')
 const AppError = require('../../utils/AppError')
 const assetService = require('../fabric/assetRegistry')
-
+const assetRegistryDao = require('../../dao/assetRegistryDao')
 class networkAssetsService {
 
   constructor() {
@@ -102,6 +102,15 @@ class networkAssetsService {
 
       const { id, color, size, owner, appraisedValue } = validated.body
 
+      await assetRegistryDao.createAsset({
+        id,
+        color,
+        size,
+        owner,
+        appraisedValue,
+        requestedBy: user?.uid
+      })
+
       return await assetService.createAsset({
         id,
         color,
@@ -118,6 +127,12 @@ class networkAssetsService {
       const { id } = validated.params
       const { owner } = validated.body
 
+      await assetRegistryDao.assetTransfer({
+        id,
+        owner,
+        requestedBy: user?.uid
+      })
+
       return await assetService.assetTransfer({
         id,
         owner,
@@ -130,6 +145,15 @@ class networkAssetsService {
 
       const { id } = validated.params
       const {color, size, owner, appraisedValue} = validated.body
+
+      await assetRegistryDao.assetUpdate({
+        id, 
+        color,
+        size,
+        owner,
+        appraisedValue,
+        requestedBy: user?.uid
+      })
 
       return await assetService.assetUpdate({
         id, 
@@ -145,6 +169,11 @@ class networkAssetsService {
       const validated = this.validate('assetDeleteSchema', {params})
 
       const { id } = validated.params
+
+      await assetRegistryDao.assetDelete({
+        id,
+        requestedBy: user?.uid
+      })
 
       return await assetService.assetDelete({
         id,

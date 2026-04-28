@@ -1,3 +1,12 @@
+jest.mock('../../../../dao/assetRegistryDao', () => ({
+    createAsset: jest.fn(),
+    assetTransfer: jest.fn(),
+    assetUpdate: jest.fn(),
+    assetDelete: jest.fn(),
+    assetRead: jest.fn(),
+    assetReadAll: jest.fn()
+}));
+
 jest.mock('../../../../service/fabric/assetRegistry.js', () => ({
     networkCreate: jest.fn(),
     channelCreate: jest.fn(),
@@ -12,6 +21,7 @@ jest.mock('../../../../service/fabric/assetRegistry.js', () => ({
 }));
 
 const networkAssetsService = require('../../../../service/application/networkAssetsService.js');
+const assetRegistryDao = require('../../../../dao/assetRegistryDao');
 const assetService = require('../../../../service/fabric/assetRegistry.js');
 const AppError = require('../../../../utils/AppError.js');
 
@@ -21,6 +31,7 @@ describe('backend/service/application/networkAssetsService', () => {
     });
 
     it('createAsset validates payload and passes requestedBy through', async () => {
+        assetRegistryDao.createAsset.mockResolvedValue({ id: 'asset-200' });
         assetService.createAsset.mockResolvedValue({ ok: true });
 
         const body = {
@@ -38,6 +49,14 @@ describe('backend/service/application/networkAssetsService', () => {
         });
 
         expect(assetService.createAsset).toHaveBeenCalledWith({
+            id: 'asset-200',
+            color: 'green',
+            size: 42,
+            owner: 'alice',
+            appraisedValue: 1550,
+            requestedBy: 'firebase-uid-1'
+        });
+        expect(assetRegistryDao.createAsset).toHaveBeenCalledWith({
             id: 'asset-200',
             color: 'green',
             size: 42,
@@ -169,6 +188,7 @@ describe('backend/service/application/networkAssetsService', () => {
     });
 
     it('assetTransfer validates and passes mapped values', async () => {
+        assetRegistryDao.assetTransfer.mockResolvedValue({ id: 'asset-1' });
         assetService.assetTransfer.mockResolvedValue({ transferred: true });
 
         const result = await networkAssetsService.assetTransfer({
@@ -182,10 +202,16 @@ describe('backend/service/application/networkAssetsService', () => {
             owner: 'bob',
             requestedBy: 'u5'
         });
+        expect(assetRegistryDao.assetTransfer).toHaveBeenCalledWith({
+            id: 'asset-1',
+            owner: 'bob',
+            requestedBy: 'u5'
+        });
         expect(result).toEqual({ transferred: true });
     });
 
     it('assetUpdate validates and passes mapped values', async () => {
+        assetRegistryDao.assetUpdate.mockResolvedValue({ id: 'asset-2' });
         assetService.assetUpdate.mockResolvedValue({ updated: true });
 
         const result = await networkAssetsService.assetUpdate({
@@ -207,10 +233,19 @@ describe('backend/service/application/networkAssetsService', () => {
             appraisedValue: 750,
             requestedBy: 'u6'
         });
+        expect(assetRegistryDao.assetUpdate).toHaveBeenCalledWith({
+            id: 'asset-2',
+            color: 'black',
+            size: 5,
+            owner: 'eve',
+            appraisedValue: 750,
+            requestedBy: 'u6'
+        });
         expect(result).toEqual({ updated: true });
     });
 
     it('assetDelete validates and passes mapped values', async () => {
+        assetRegistryDao.assetDelete.mockResolvedValue(true);
         assetService.assetDelete.mockResolvedValue({ deleted: true });
 
         const result = await networkAssetsService.assetDelete({
@@ -219,6 +254,10 @@ describe('backend/service/application/networkAssetsService', () => {
         });
 
         expect(assetService.assetDelete).toHaveBeenCalledWith({
+            id: 'asset-3',
+            requestedBy: 'u7'
+        });
+        expect(assetRegistryDao.assetDelete).toHaveBeenCalledWith({
             id: 'asset-3',
             requestedBy: 'u7'
         });

@@ -2,9 +2,9 @@ const db = require('../db/db')
 
 
 class userDao {
-    async signup (userData) {
+    async signup (data) {
         try {
-            const { email, firebase_uid } = userData;
+            const { email, firebase_uid } = data;
             const [users] = await db('users')
             .insert ({
                 email: email,
@@ -20,9 +20,9 @@ class userDao {
         }
     }
 
-    async login (loginData) {
+    async login (data) {
         try {
-            const { email, firebase_uid } = loginData
+            const { email, firebase_uid } = data
     
             const users = await db('users')
                 .where({ 'firebase_uid': firebase_uid }) 

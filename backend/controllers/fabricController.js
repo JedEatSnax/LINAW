@@ -162,7 +162,8 @@ class fabricController {
             const resubmit = await approvalWorkflowService.resubmitSubmission({
                 params: req.params,
                 body: req.body,
-                user: req.user
+                user: req.user,
+                file: req.file
             })
             return res.status(200).json(resubmit)
         } catch (error) {

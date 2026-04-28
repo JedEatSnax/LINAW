@@ -6,7 +6,7 @@ const { Contract } = require('fabric-contract-api');
 
 class ApprovalWorkflowContract extends Contract {
     constructor() {
-        super('ApprovalWorkflowContract');
+        super('approvalWorkflowContract');
     }
 
     async submissionExists(ctx, submissionId) {
@@ -49,11 +49,13 @@ class ApprovalWorkflowContract extends Contract {
         }
     }
 
-    _requireStatus(submission, expectedStatus) {
-        if (submission.status !== expectedStatus) {
-            throw new Error(
-                `Invalid status transition. Expected ${expectedStatus}, current status is ${submission.status}`
-            );
+    _requireStatus(submission, ...expectedStatuses) {
+        if (!expectedStatuses.includes(submission.status)) {
+            const msg = expectedStatuses.length === 1
+                ? `Invalid status transition. Expected ${expectedStatuses[0]}, current status is ${submission.status}`
+                : `Invalid status transition. Expected one of ${expectedStatuses.join(', ')}, current status is ${submission.status}`;
+
+            throw new Error(msg);
         }
     }
 

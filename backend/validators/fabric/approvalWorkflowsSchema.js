@@ -27,7 +27,6 @@ const submitForApproval = joi.object ({
 const approveSubmission = joi.object ({
     params: submissionId,
     body: joi.object({
-        approver: joi.string().trim().min(3).required(),
         remarks: joi.string().trim().required()
     }).required()
 }).required()
@@ -35,14 +34,15 @@ const approveSubmission = joi.object ({
 const requestChanges = joi.object ({
     params: submissionId,
     body: joi.object({
-        approver: joi.string().trim().min(3).required(),
         remarks: joi.string().trim().required()
     }).required()
 }).required()
 
 const rejectSubmission = joi.object ({
     params: submissionId,
-    
+    body: joi.object({
+        remarks: joi.string().trim().required()
+    }).required()
 }).required()
 
 const resubmitSubmission = joi.object ({

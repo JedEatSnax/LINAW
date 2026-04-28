@@ -39,11 +39,13 @@
     "joi": "^18.0.2",
     "json-stringify-deterministic": "^1.0.12",
     "knex": "^3.1.0",
+    "multer": "^2.1.1",
     "pg": "^8.19.0",
     "sort-keys-recursive": "^2.1.10"
   },
   "overrides": {
-    "@tootallnate/once": "^3.0.1"
+    "@tootallnate/once": "^3.0.1",
+    "protobufjs": "7.5.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",

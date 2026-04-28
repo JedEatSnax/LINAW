@@ -20,66 +20,56 @@ describe('backend/service/application/userService', () => {
     });
 
     it('validate throws for unknown schema key', () => {
-        expect(() => userService.validate('unknown', {})).toThrow(
-            'Validation schema not found for method: unknown'
+        expect(() => userService.validate('unknownSchema', {})).toThrow(
+            'Validation schema not found for key: unknownSchema'
         );
     });
 
-    it('signup validates payload and delegates to userDao.signup', () => {
+    it('signup validates payload and delegates to userDao.signup', async () => {
         validators.signupSchema.validate.mockReturnValue({
             error: null,
-            value: { email: 'alice@example.com' }
+            value: { body: { email: 'alice@example.com' } }
         });
-        userDao.signup.mockReturnValue({ email: 'alice@example.com' });
+        userDao.signup.mockResolvedValue({ user_id: 'u1', email: 'alice@example.com' });
 
-        const result = userService.signup({
-            email: 'alice@example.com',
-            ignored: 'x'
-        });
+        const result = await userService.signup({ body: { email: 'alice@example.com' } }, { uid: 'uid-1' });
 
-        expect(userDao.signup).toHaveBeenCalledWith({ email: 'alice@example.com' });
-        expect(result).toEqual({ email: 'alice@example.com' });
+        expect(userDao.signup).toHaveBeenCalledWith({ email: 'alice@example.com', firebase_uid: 'uid-1' });
+        expect(result).toEqual({ user_id: 'u1', email: 'alice@example.com' });
     });
 
-    it('login validates payload and delegates to userDao.login', () => {
+    it('login validates payload and delegates to userDao.login', async () => {
         validators.loginSchema.validate.mockReturnValue({
             error: null,
-            value: { email: 'alice@example.com', firebase_uid: 'uid-1' }
+            value: { body: { email: 'alice@example.com' } }
         });
-        userDao.login.mockReturnValue({ email: 'alice@example.com' });
+        userDao.login.mockResolvedValue({ user_id: 'u1', email: 'alice@example.com' });
 
-        const result = userService.login({
-            email: 'alice@example.com',
-            firebase_uid: 'uid-1',
-            extra: 'ignored'
-        });
+        const result = await userService.login({ body: { email: 'alice@example.com' } }, { uid: 'uid-1' });
 
-        expect(userDao.login).toHaveBeenCalledWith({
-            email: 'alice@example.com',
-            firebase_uid: 'uid-1'
-        });
-        expect(result).toEqual({ email: 'alice@example.com' });
+        expect(userDao.login).toHaveBeenCalledWith({ email: 'alice@example.com', firebase_uid: 'uid-1' });
+        expect(result).toEqual({ user_id: 'u1', email: 'alice@example.com' });
     });
 
-    it('throws ValidationError when signup validation fails', () => {
+    it('throws ValidationError when signup validation fails', async () => {
         validators.signupSchema.validate.mockReturnValue({
             error: {
                 details: [{ message: '"email" is required' }]
             }
         });
 
-        expect(() => userService.signup({})).toThrow('Validation failed');
+        await expect(userService.signup({ body: {} })).rejects.toThrow('Validation failed');
         expect(userDao.signup).not.toHaveBeenCalled();
     });
 
-    it('throws ValidationError when login validation fails', () => {
+    it('throws ValidationError when login validation fails', async () => {
         validators.loginSchema.validate.mockReturnValue({
             error: {
-                details: [{ message: '"firebase_uid" is required' }]
+                details: [{ message: '"email" is required' }]
             }
         });
 
-        expect(() => userService.login({ email: 'alice@example.com' })).toThrow('Validation failed');
+        await expect(userService.login({ body: {} })).rejects.toThrow('Validation failed');
         expect(userDao.login).not.toHaveBeenCalled();
     });
 });

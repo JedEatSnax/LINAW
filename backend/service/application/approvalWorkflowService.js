@@ -83,10 +83,22 @@ class ApprovalWorkflowService {
         const validated = this.validate('deleteSubmission', { params });
         const submissionId = validated.params.submissionId;
 
+        const metadata = await submissionDao.getSubmissionById({ submissionId })
+
         await approvalWorkflow.deleteSubmission({
             submissionId,
             owner: user?.uid
         });
+
+        if (metadata?.objectKey) {
+            await fileService.deleteSubmissionFile({
+                objectKey: metadata.objectKey
+            })
+        }
+
+        await submissionDao.deleteSubmission({
+            submissionId
+        }) 
 
         return {
             message: 'Deleted Successfully'

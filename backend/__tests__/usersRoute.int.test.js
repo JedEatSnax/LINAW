@@ -103,20 +103,18 @@ describe('usersRoute integration', () => {
     });
   });
 
-  test('POST /api/login - 401 unauthenticated (errorHandler format)', async () => {
-    authenticate.decodeToken.mockImplementation((req, res, next) => next(new Error('UNAUTHORIZED')));
+  test('POST /api/login - success', async () => {
+    userService.login.mockResolvedValue({ email: 'alice@example.com' });
 
     const app = makeApp();
     const res = await request(app)
       .post('/api/login')
-      .send({ email: 'alice@example.com', firebase_uid: 'fb1' });
+      .send({ email: 'alice@example.com' });
 
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required',
-      },
+      email: 'alice@example.com',
+      message: 'Login Successful',
     });
   });
 
