@@ -1,31 +1,33 @@
 const express = require("express");
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const path = require("path");
+const cors = require("cors");
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
-require('./db/knex');
-const app = express()
-const errorHandler = require('./middleware/errorHandler')
-const port = process.env.PORT || 3000
+require("./db/knex");
+const app = express();
+const errorHandler = require("./middleware/errorHandler");
+const port = Number(process.env.PORT ?? 3000);
 
+const { router: usersRouter } = require("./routes/usersRoute");
+const { router: fabricRouter } = require("./routes/fabricRoute");
+const { router: peerRouter } = require("./routes/peerRoute");
 
-// Don't delete this. It's the import of the modules for the endpoints 
-const { router: usersRouter } = require('./routes/usersRoute');
-const { router: fabricRouter } = require('./routes/fabricRoute') 
+app.get("/api/v1/", (_request, response) => {
+  response.json({ ok: true, service: "linaw-backend" });
+});
 
-const cors = require("cors") 
-const corsOptions = {
-    origin: ["http://localhost:5173"]
-}
-app.use(cors(corsOptions))
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+  }),
+  express.json(),
+);
 
-app.use(express.json())
-app.use('/api', usersRouter);
-app.use('/api', fabricRouter)
-
-// Centralized error formatting
-app.use(errorHandler)
+app.use("/api/v1", usersRouter);
+app.use("/api/v1", fabricRouter);
+app.use("/api/v1", peerRouter);
+app.use(errorHandler);
 
 app.listen(port, () => {
-    console.log(`🚀 Express running on port ${port}`)
-})
-
+  console.log(`Express running on port ${port}`);
+});

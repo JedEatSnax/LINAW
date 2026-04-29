@@ -44,7 +44,14 @@ function App() {
             }
           />
 
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              <AuthRoute>
+                <Dashboard />
+              </AuthRoute>
+            }
+          />
           <Route
             path="/settings"
             element={
@@ -61,8 +68,22 @@ function App() {
               </AuthRoute>
             }
           />
-          <Route path="/organizations" element={<Organizations />} />
-          <Route path="/assets" element={<Assets />} />
+          <Route
+            path="/organizations"
+            element={
+              <AuthRoute>
+                <Organizations />
+              </AuthRoute>
+            }
+          />
+          <Route
+            path="/assets"
+            element={
+              <AuthRoute>
+                <Assets />
+              </AuthRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

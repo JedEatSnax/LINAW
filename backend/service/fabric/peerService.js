@@ -1,11 +1,11 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
-import { exec } from "node:child_process";
-import { promisify } from "node:util";
-import { randomUUID } from "node:crypto";
+const { existsSync } = require("node:fs");
+const path = require("node:path");
+const { exec } = require("node:child_process");
+const { promisify } = require("node:util");
+const { randomUUID } = require("node:crypto");
 
-import { peerConfig } from "../config/peerConfig.js";
-import { createHttpError } from "../utils/httpError.js";
+const { peerConfig } = require("../../config/peerConfig");
+const { createHttpError } = require("../../utils/httpError");
 
 const execAsync = promisify(exec);
 const provisionedOrganizations = new Map();
@@ -67,7 +67,7 @@ function validateContainerName(containerName) {
   return normalizedContainerName;
 }
 
-export async function startPeerNode(organization) {
+async function startPeerNode(organization) {
   const config = buildPeerConfig(organization);
 
   for (const requiredPath of config.requiredPaths) {
@@ -92,7 +92,7 @@ export async function startPeerNode(organization) {
   };
 }
 
-export async function runInContainer(containerName, command) {
+async function runInContainer(containerName, command) {
   const normalizedContainerName = validateContainerName(containerName);
   const normalizedCommand = String(command ?? "").trim();
 
@@ -131,7 +131,7 @@ export async function runInContainer(containerName, command) {
   }
 }
 
-export function provisionOrganization(payload) {
+function provisionOrganization(payload) {
   const organizationName = String(payload.organizationName ?? "").trim();
   const adminEmail = String(payload.adminEmail ?? "")
     .trim()
@@ -194,3 +194,9 @@ export function provisionOrganization(payload) {
 
   return provisioned;
 }
+
+module.exports = {
+  provisionOrganization,
+  runInContainer,
+  startPeerNode,
+};

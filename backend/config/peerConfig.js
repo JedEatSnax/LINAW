@@ -1,15 +1,13 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+const path = require("node:path");
 
-const configDir = path.dirname(fileURLToPath(import.meta.url));
-const srcDir = path.resolve(configDir, "..");
-const backendDir = path.resolve(srcDir, "..");
+const configDir = __dirname;
+const backendDir = path.resolve(configDir, "..");
 const repoRoot = path.resolve(backendDir, "..");
 
 const fabricSamplesDir =
   process.env.FABRIC_SAMPLES_DIR ?? path.resolve(repoRoot, "fabric-samples");
 
-export const peerConfig = {
+const peerConfig = {
   testNetworkDir:
     process.env.FABRIC_TEST_NETWORK_DIR ??
     path.resolve(fabricSamplesDir, "test-network"),
@@ -23,3 +21,5 @@ export const peerConfig = {
     "orderer.example.com",
   ]),
 };
+
+module.exports = { peerConfig };

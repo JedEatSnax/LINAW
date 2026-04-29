@@ -1,15 +1,16 @@
-import express from "express";
-
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import {
+const express = require("express");
+const authenticate = require("../middleware/authenticate");
+const { apiLimiter } = require("../middleware/rateLimiter");
+const { asyncHandler } = require("../middleware/asyncHandler");
+const {
   provisionOrganization,
   runInContainer,
   startPeerNode,
-} from "../service/peerService.js";
+} = require("../service/fabric/peerService");
 
-export const peerRouter = express.Router();
+const router = express.Router();
 
-peerRouter.post(
+router.post(
   "/peer/start",
   asyncHandler(async (request, response) => {
     const { organization } = request.body ?? {};
@@ -23,7 +24,7 @@ peerRouter.post(
   }),
 );
 
-peerRouter.post("/org/provision", (request, response) => {
+router.post("/org/provision", (request, response) => {
   const provisioned = provisionOrganization(request.body ?? {});
 
   response.status(201).json({
@@ -33,7 +34,7 @@ peerRouter.post("/org/provision", (request, response) => {
   });
 });
 
-peerRouter.post(
+router.post(
   "/container/exec",
   asyncHandler(async (request, response) => {
     const { containerName, command } = request.body ?? {};
@@ -46,3 +47,5 @@ peerRouter.post(
     });
   }),
 );
+
+module.exports = { router };

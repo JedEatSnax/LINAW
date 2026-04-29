@@ -3,49 +3,52 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const fabricConfig = require('./fabricConfig');
+const { loadFabricConfig } = require('./fabricConfig');
 const grpc = require('@grpc/grpc-js');
 const { connect, hash, signers } = require('@hyperledger/fabric-gateway');
-
-const MSP_ID = fabricConfig.msp_id;
-const CHANNEL_NAME = fabricConfig.channel_name;
-const CHAINCODE_NAME = fabricConfig.chaincode_name;
-const KEY_DIRECTORY_PATH = fabricConfig.key_directory_path;
-const CERT_PATH = fabricConfig.cert_path;
-const TLS_CERT_PATH = fabricConfig.tls_cert_path;
-const PEER_ENDPOINT = fabricConfig.peer_endpoint;
-const PEER_HOST_ALIAS = fabricConfig.peer_host_alias;
 
 let gatewayInstance = null;
 let clientInstance = null;
 let networkInstance = null;
+let fabricConfig = null;
+
+function getFabricConfig() {
+  if (!fabricConfig) {
+    fabricConfig = loadFabricConfig();
+  }
+
+  return fabricConfig;
+}
 
 function newGrpcConnection() {
-  const tlsRootCert = fs.readFileSync(TLS_CERT_PATH);
+  const { peer_endpoint: peerEndpoint, peer_host_alias: peerHostAlias, tls_cert_path: tlsCertPath } = getFabricConfig();
+  const tlsRootCert = fs.readFileSync(tlsCertPath);
   const tlsCredentials = grpc.credentials.createSsl(tlsRootCert);
 
-  return new grpc.Client(PEER_ENDPOINT, tlsCredentials, {
-    'grpc.ssl_target_name_override': PEER_HOST_ALIAS,
+  return new grpc.Client(peerEndpoint, tlsCredentials, {
+    'grpc.ssl_target_name_override': peerHostAlias,
   });
 }
 
 function newIdentity() {
-  const credentials = fs.readFileSync(CERT_PATH);
+  const { msp_id: mspId, cert_path: certPath } = getFabricConfig();
+  const credentials = fs.readFileSync(certPath);
 
   return {
-    mspId: MSP_ID,
+    mspId,
     credentials,
   };
 }
 
 function newSigner() {
-  const files = fs.readdirSync(KEY_DIRECTORY_PATH);
+  const { key_directory_path: keyDirectoryPath } = getFabricConfig();
+  const files = fs.readdirSync(keyDirectoryPath);
 
   if (!files.length) {
     throw new Error('No private key found in FABRIC_KEY_DIRECTORY_PATH');
   }
 
-  const privateKeyPath = path.join(KEY_DIRECTORY_PATH, files[0]);
+  const privateKeyPath = path.join(keyDirectoryPath, files[0]);
   const privateKeyPem = fs.readFileSync(privateKeyPath);
   const privateKey = crypto.createPrivateKey(privateKeyPem);
 
@@ -74,7 +77,8 @@ function initGateway() {
     commitStatusOptions: () => ({ deadline: Date.now() + 60000 }),
   });
 
-  networkInstance = gatewayInstance.getNetwork(CHANNEL_NAME);
+  const { channel_name: channelName } = getFabricConfig();
+  networkInstance = gatewayInstance.getNetwork(channelName);
 
   return {
     gateway: gatewayInstance,
@@ -92,7 +96,8 @@ function getContract(contractName) {
     throw new Error('contractName is required');
   }
 
-  return networkInstance.getContract(CHAINCODE_NAME, contractName);
+  const { chaincode_name: chaincodeName } = getFabricConfig();
+  return networkInstance.getContract(chaincodeName, contractName);
 }
 
 function closeGateway() {

@@ -1,0 +1,147 @@
+### Backend REST Client
+### Change `@baseUrl` if your server runs on another port.
+
+@baseUrl = http://localhost:3000
+@api = {{baseUrl}}/api/v1
+@token = replace-with-firebase-id-token
+
+### Health
+GET {{api}}/
+Accept: application/json
+
+### Auth / Users
+POST {{api}}/signup
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "firebase_uid": "firebase-uid-123"
+}
+
+### Login
+POST {{api}}/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "firebase_uid": "firebase-uid-123"
+}
+
+### Fabric: create network
+POST {{api}}/networks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Demo Network",
+  "description": "Example network",
+  "orgs": [
+    {
+      "name": "Org1",
+      "msp_ID": "Org1MSP"
+    }
+  ]
+}
+
+### Fabric: list networks
+GET {{api}}/networks
+Authorization: Bearer {{token}}
+
+### Fabric: create channel
+POST {{api}}/networks/1/channels
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "channelName": "mychannel"
+}
+
+### Fabric: create smart contract
+POST {{api}}/channel/mychannel/contracts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "contractName": "assetRegistryContract"
+}
+
+### Fabric: read contracts
+GET {{api}}/channel/mychannel/contracts
+Authorization: Bearer {{token}}
+
+### Fabric: assets
+POST {{api}}/assets
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": "asset1",
+  "color": "blue",
+  "size": 10,
+  "owner": "Alice",
+  "appraisedValue": 100
+}
+
+GET {{api}}/assets
+Authorization: Bearer {{token}}
+
+GET {{api}}/assets/asset1
+Authorization: Bearer {{token}}
+
+POST {{api}}/assets/asset1/transfer
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "owner": "Bob"
+}
+
+PUT {{api}}/assets/asset1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "color": "red",
+  "size": 12,
+  "owner": "Bob",
+  "appraisedValue": 150
+}
+
+DELETE {{api}}/assets/asset1
+Authorization: Bearer {{token}}
+
+### Fabric: submissions
+POST {{api}}/submissions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Sample submission",
+  "description": "Example payload"
+}
+
+### Peer utilities
+POST {{api}}/fabric/peer/start
+Content-Type: application/json
+
+{
+  "organization": "org1"
+}
+
+POST {{api}}/fabric/org/provision
+Content-Type: application/json
+
+{
+  "organizationName": "Acme Logistics",
+  "adminEmail": "admin@acme.io",
+  "domain": "acme.linaw.example.com",
+  "channelName": "mychannel"
+}
+
+POST {{api}}/fabric/container/exec
+Content-Type: application/json
+
+{
+  "containerName": "cli",
+  "command": "peer version"
+}

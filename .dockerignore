@@ -1,4 +1,7 @@
 backend/config/serviceAccount.json
 backend/.env
+backend/__tests__
+backend/jest.config.js
+backend/vitest.config.js
 **/.env
 **/.env.*

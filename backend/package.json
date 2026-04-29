@@ -33,13 +33,9 @@
     "express-rate-limit": "^8.3.1",
     "fabric-contract-api": "^2.5.8",
     "fabric-shim": "^2.5.8",
-<<<<<<< HEAD
     "firebase-admin": "^13.8.0",
     "fs-extra": "^11.3.4",
     "jest": "^30.3.0",
-=======
-    "firebase-admin": "^13.7.0",
->>>>>>> 29e9e8a2c616e39a149cda3fbd9d28b000a567f2
     "joi": "^18.0.2",
     "js-yaml": "^4.1.1",
     "json-stringify-deterministic": "^1.0.12",
@@ -51,19 +47,12 @@
   },
   "overrides": {
     "@tootallnate/once": "^3.0.1",
-<<<<<<< HEAD
     "fast-xml-parser": "^5.7.0",
     "uuid": "^14.0.0"
   },
   "devDependencies": {
-    "supertest": "^7.2.2"
-=======
-    "protobufjs": "7.5.5"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.14",
     "supertest": "^7.2.2",
+    "protobufjs": "7.5.5",
     "vitest": "^4.1.5"
->>>>>>> 29e9e8a2c616e39a149cda3fbd9d28b000a567f2
   }
 }
