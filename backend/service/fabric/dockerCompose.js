@@ -1,9 +1,8 @@
-const { execAsync } = require('../utils/execAsync')
-const logger = require('../utils/logger')
+const { execAsync } = require('../../utils/execAsync')
+const logger = require('../../utils/logger')
 
 async function composeUp(workspace, userId) {
     logger.info(`[INFO] Starting container for fabric-${userId}...`)
-    // in progress    
     await execAsync(`docker compose -f docker-compose.yml --project-name fabric-${userId} up -d`, { cwd: workspace })
 }
 
@@ -15,10 +14,15 @@ async function composeDown(workspace, userId) {
 }
 
 
-async function composeUpCA(workspace, userId) {
+async function composeUpCA(workspace, userId, config) {
     logger.info(`[INFO] Starting CA container for fabric-${userId}...`)
-    // in progress    
-    await execAsync()
+    const caServices = [
+        `tls-ca-${userId}`,
+        `ca-orderer-${userId}`,
+        ...config.orgs.map(o => `ca-${o.name}-${userId}`),
+    ].join(' ');
+
+    await execAsync(`docker-compose -f docker-compose.yml --project-name fabric-${userId} up -d ${caServices}`, { cwd: workspace });
 }
 
 async function composeDownWithVolumes(workspace, userId) {

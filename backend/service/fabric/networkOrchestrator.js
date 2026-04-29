@@ -1,18 +1,19 @@
 const fs = require('fs-extra');
-const { allocatePorts } = require('../utils/portManager');
-const { initWorkspace, destroyWorkspace, getUserWorkspace } = require('../utils/workspace');
+const { allocatePorts } = require('../../utils/portManager');
+const { initWorkspace, destroyWorkspace, getUserWorkspace } = require('../../utils/workspace');
 const { generateConfigtx, generateDockerCompose } = require('./configGenerator');
 const { composeUp, composeDown, composeUpCA, composeDownWithVolumes } = require('./dockerCompose')
 const { generateCryptoMaterial } = require('./cryptoMaterialGenerator')
 const { createChannel, joinPeersToChannel, updateAnchorPeers } = require('./channelOrchestrator')
 const { generateGenesisBlock } = require('./configtxgen')
-const logger = require(`../utils/logger`);
+const logger = require(`../../utils/logger`);
 
 /*
 NOTE:
 - workspace might get changed if I'm gonna implement vault
 - might change logger since the output should be visible to the client not to the devs (logger is temporary)
 - assignPorts still doesn't work :((
+- potential fix for assignPort is a dynamic port allocation just for mvp
 */
 
 
@@ -25,6 +26,7 @@ function expectedContainerCount(config) {
 async function assignPorts(config) {
   const ordererCount = config.ordererCount;
   const portsNeeded = 2 + ordererCount + config.orgs.reduce((sum) => sum + 2, 0);
+  //
   const ports = await allocatePorts(portsNeeded);
   let idx = 0;
 
@@ -61,12 +63,12 @@ async function provision(userId, rawConfig) {
 
     // start CA only 
     logger.debug('[DEBUG] Starting CA ')
-    await composeUpCA(workspace, userId)
+    await composeUpCA(workspace, userId, config)
 
     // generate all cert using fabric CA (might get changed and use vault instead,
     // it was recommended to use fabric CA for cert generation but imma look)
     logger.debug('[DEBUG] Generating certificates')
-    await generateCryptoMaterial(workspace, config)
+    await generateCryptoMaterial(workspace, config,)
 
     logger.debug('[DEBUG] Generating genesis block')
     await generateGenesisBlock(workspace)

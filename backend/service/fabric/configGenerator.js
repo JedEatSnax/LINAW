@@ -356,7 +356,8 @@ function generateDockerCompose(userId, rawConfig) {
   for (let i = 0; i < ordererCount; i++) {
     const ordererLabel = i === 0 ? 'orderer' : `orderer${i + 1}`;
     const ordererName = `${ordererLabel}-${userId}`;
-    const ordererPort = config.ordererPort + i * 10;
+    // const ordererPort = config.ordererPort + i * 10;
+    const ordererPort = config.ordererPorts[i];
 
     volumes[ordererName] = {};
 
