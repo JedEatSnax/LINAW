@@ -7,11 +7,11 @@ class ValidationError extends Error {
   }
 }
 
-const fabricSchema = require("../validators/fabric/fabricSchema");
-const AppError = require("../utils/AppError");
-const assetService = require("./fabric/assetRegistry");
-
-class appFabricService {
+const fabricSchema = require("../../validators/fabric/fabricSchema");
+const AppError = require("../../utils/AppError");
+const assetService = require("../fabric/assetRegistry");
+const assetRegistryDao = require("../../dao/assetRegistryDao");
+class networkAssetsService {
   constructor() {
     this.schemas = fabricSchema;
   }
@@ -109,6 +109,15 @@ class appFabricService {
 
     const { id, color, size, owner, appraisedValue } = validated.body;
 
+    await assetRegistryDao.createAsset({
+      id,
+      color,
+      size,
+      owner,
+      appraisedValue,
+      requestedBy: user?.uid,
+    });
+
     return await assetService.createAsset({
       id,
       color,
@@ -125,6 +134,12 @@ class appFabricService {
     const { id } = validated.params;
     const { owner } = validated.body;
 
+    await assetRegistryDao.assetTransfer({
+      id,
+      owner,
+      requestedBy: user?.uid,
+    });
+
     return await assetService.assetTransfer({
       id,
       owner,
@@ -137,6 +152,15 @@ class appFabricService {
 
     const { id } = validated.params;
     const { color, size, owner, appraisedValue } = validated.body;
+
+    await assetRegistryDao.assetUpdate({
+      id,
+      color,
+      size,
+      owner,
+      appraisedValue,
+      requestedBy: user?.uid,
+    });
 
     return await assetService.assetUpdate({
       id,
@@ -152,6 +176,11 @@ class appFabricService {
     const validated = this.validate("assetDeleteSchema", { params });
 
     const { id } = validated.params;
+
+    await assetRegistryDao.assetDelete({
+      id,
+      requestedBy: user?.uid,
+    });
 
     return await assetService.assetDelete({
       id,
@@ -177,4 +206,4 @@ class appFabricService {
   }
 }
 
-module.exports = new appFabricService();
+module.exports = new networkAssetsService();

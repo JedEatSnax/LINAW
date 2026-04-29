@@ -1,7 +1,7 @@
 'use strict';
 
-const fs = require ('fs');
-const path = require ('path');
+const fs = require('fs');
+const path = require('path');
 const crypto = require('crypto');
 const fabricConfig = require('./fabricConfig');
 const grpc = require('@grpc/grpc-js');
@@ -16,10 +16,9 @@ const TLS_CERT_PATH = fabricConfig.tls_cert_path;
 const PEER_ENDPOINT = fabricConfig.peer_endpoint;
 const PEER_HOST_ALIAS = fabricConfig.peer_host_alias;
 
-let gatewayInstance = null
-let clientInstance = null
-let networkInstance = null
-let contractInstance = null
+let gatewayInstance = null;
+let clientInstance = null;
+let networkInstance = null;
 
 function newGrpcConnection() {
   const tlsRootCert = fs.readFileSync(TLS_CERT_PATH);
@@ -30,96 +29,84 @@ function newGrpcConnection() {
   });
 }
 
-function newIdentity () {
-    const credentials = fs.readFileSync(CERT_PATH)
+function newIdentity() {
+  const credentials = fs.readFileSync(CERT_PATH);
 
-    return {
-        mspId: MSP_ID,
-        credentials
-    }
+  return {
+    mspId: MSP_ID,
+    credentials,
+  };
 }
 
 function newSigner() {
-    const files = fs.readdirSync(KEY_DIRECTORY_PATH)
+  const files = fs.readdirSync(KEY_DIRECTORY_PATH);
 
-    if (!files.length) {
-        throw new Error('No private key found in FABRIC_KEY_DIRECTORY_PATH')
-    }
+  if (!files.length) {
+    throw new Error('No private key found in FABRIC_KEY_DIRECTORY_PATH');
+  }
 
-    const privateKeyPath = path.join(KEY_DIRECTORY_PATH, file[0])
-    const privateKeyPem = fs.readFileSync(privateKeyPath)
-    const privateKey = crypto.createPrivateKey(privateKeyPem)
-    
-    return signers.newPrivateKeySigner(privateKey)
+  const privateKeyPath = path.join(KEY_DIRECTORY_PATH, files[0]);
+  const privateKeyPem = fs.readFileSync(privateKeyPath);
+  const privateKey = crypto.createPrivateKey(privateKeyPem);
+
+  return signers.newPrivateKeySigner(privateKey);
 }
 
-function initGateway () {
-    if (contractInstance) {
-        return {
-            gateway: gatewayInstance,
-            client: clientInstance,
-            network: networkInstance,
-            contract: contractInstance
-        }
-    }
-
-    clientInstance = newGrpcConnection()
-    
-    gatewayInstance = connect ({
-        client: clientInstance,
-        identity: newIdentity(),
-        signer: newSigner(),
-        hash: hash.sha256,
-
-        // timeout for different grpc calls
-        evaluationOption: () => {
-            return { deadline: Date.now() + 5000}
-        },
-        endorseOption: () => {
-            return { deadline: Date.now() + 1500}
-        },
-        submitOption: () => {
-            return { deadline: Date.now() + 5000}
-        },
-        commitStatusOptions: () => {
-            return { deadline: Date.now() + 60000}
-        }
-
-    })
-
-    networkInstance = gatewayInstance.getNetwork(CHANNEL_NAME)
-    contractInstance = networkInstance.getContract(CHAINCODE_NAME)
-
-
+function initGateway() {
+  if (networkInstance) {
     return {
-        gateway: gatewayInstance,
-        client: clientInstance,
-        network: networkInstance,
-        contract: contractInstance
-    }
+      gateway: gatewayInstance,
+      client: clientInstance,
+      network: networkInstance,
+    };
+  }
+
+  clientInstance = newGrpcConnection();
+
+  gatewayInstance = connect({
+    client: clientInstance,
+    identity: newIdentity(),
+    signer: newSigner(),
+    hash: hash.sha256,
+    evaluateOptions: () => ({ deadline: Date.now() + 5000 }),
+    endorseOptions: () => ({ deadline: Date.now() + 15000 }),
+    submitOptions: () => ({ deadline: Date.now() + 5000 }),
+    commitStatusOptions: () => ({ deadline: Date.now() + 60000 }),
+  });
+
+  networkInstance = gatewayInstance.getNetwork(CHANNEL_NAME);
+
+  return {
+    gateway: gatewayInstance,
+    client: clientInstance,
+    network: networkInstance,
+  };
 }
 
-function getContract () {
-  if (!contractInstance) {
+function getContract(contractName) {
+  if (!networkInstance) {
     initGateway();
   }
 
-  return contractInstance;
+  if (!contractName) {
+    throw new Error('contractName is required');
+  }
+
+  return networkInstance.getContract(CHAINCODE_NAME, contractName);
 }
 
-function closeGateway () {
-    if (gatewayInstance) {
-        gatewayInstance.close()
-        gatewayInstance = null
-    }
+function closeGateway() {
+  if (gatewayInstance) {
+    gatewayInstance.close();
+    gatewayInstance = null;
+  }
 
-    if (clientInstance) {
-        clientInstance.close()
-        clientInstance = null
-    }
+  if (clientInstance) {
+    clientInstance.close();
+    clientInstance = null;
+  }
 
-    networkInstance = null
-    contractInstance = null
+  networkInstance = null;
 }
 
 module.exports = {
@@ -127,8 +114,3 @@ module.exports = {
   getContract,
   closeGateway,
 };
-
-
-/*
-File that handles gRPC connection and Hyperledger Fabric gateway
-*/

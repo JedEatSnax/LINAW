@@ -1,107 +1,107 @@
-'use-strict'
+'use strict';
 
-const stringify = require ('json-stringify-deterministic')
-const sortKeysRecursive = require ('sort-keys-recursive')
-const { contract } = require ('fabric-contract-api')
+const stringify = require('json-stringify-deterministic');
+const sortKeysRecursive = require('sort-keys-recursive');
+const { Contract } = require('fabric-contract-api');
 
-class assetRegistryContract extends contract {
-    async assetExist (ctx, id) {
-        const assetJSON = await ctx.stub.getState(id)
-        return assetJSON && assetJSON.length > 0
+class AssetRegistryContract extends Contract {
+    constructor() {
+        super('assetRegistryContract');
     }
 
-    async createAsset (ctx, id, color, size, owner, appraisedValue) {
-        const exists = await this.AssetExists(ctx, id)
+    async AssetExists(ctx, id) {
+        const assetJSON = await ctx.stub.getState(id);
+        return assetJSON && assetJSON.length > 0;
+    }
+
+    async CreateAsset(ctx, id, color, size, owner, appraisedValue) {
+        const exists = await this.AssetExists(ctx, id);
 
         if (exists) {
-            throw new Error (`The asset ${id} already exists`)
+            throw new Error(`The asset ${id} already exists`);
         }
 
         const asset = {
-            Id: id,
-            Color: color,
-            Size: Number(size),
-            Owner: owner,
-            AppraisedValue: Number(appraisedValue)
-        }
+            id,
+            color,
+            size: Number(size),
+            owner,
+            appraisedValue: Number(appraisedValue)
+        };
 
-        await ctx.stub.putState( id, Buffer.from(stringify(sortKeysRecursive(asset))))
-        return JSON.stringify(asset)
+        await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(asset))));
+        return JSON.stringify(asset);
     }
 
-    async transferAsset (ctx, id, owner) {
-        const assetString = await this.ReadAsset(ctx, id)
-        const asset = JSON.parse(assetString)
-        const oldOwner = asset.Owner
+    async TransferAsset(ctx, id, newOwner) {
+        const assetString = await this.ReadAsset(ctx, id);
+        const asset = JSON.parse(assetString);
+        const oldOwner = asset.owner;
 
-        asset.Owner = newOwner
+        asset.owner = newOwner;
 
-        await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(asset))))
-        return oldOwner
+        await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(asset))));
+        return JSON.stringify({ oldOwner });
     }
 
-    async updateAsset (ctx, id, color, size, owner, appraisedValue) {
-        const exists = await this.AssetExists(ctx, id)
+    async UpdateAsset(ctx, id, color, size, owner, appraisedValue) {
+        const exists = await this.AssetExists(ctx, id);
 
         if (!exists) {
-            throw new Error (`The asset ${id} does not exist`)
+            throw new Error(`The asset ${id} does not exist`);
         }
 
         const updatedAsset = {
-            Id: id,
-            Color: color,
-            Size: Number(size),
-            Owner: owner,
-            AppraisedValue: Number(appraisedValue) 
-        }
+            id,
+            color,
+            size: Number(size),
+            owner,
+            appraisedValue: Number(appraisedValue)
+        };
 
-        return ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(updatedAsset))))
-        
+        await ctx.stub.putState(id, Buffer.from(stringify(sortKeysRecursive(updatedAsset))));
+        return JSON.stringify(updatedAsset);
     }
 
-    async deleteAsset (ctx, id) {
-        const exists = await this.AssetExists (ctx, id)
+    async DeleteAsset(ctx, id) {
+        const exists = await this.AssetExists(ctx, id);
 
         if (!exists) {
-            throw new Error (`The asset ${id} does not exist`)
+            throw new Error(`The asset ${id} does not exist`);
         }
 
-        return ctx.stub.deleteState(id)
+        await ctx.stub.deleteState(id);
+        return JSON.stringify({ deleted: id });
     }
 
-    async readAsset (ctx, id) {
-        const AssetJSON = await ctx.stub.getState(id)
+    async ReadAsset(ctx, id) {
+        const assetJSON = await ctx.stub.getState(id);
 
-        if(!assetJSON || assetJSON.length === 0 ) {
-            throw new Error (`The asset ${id} does not exist`)
+        if (!assetJSON || assetJSON.length === 0) {
+            throw new Error(`The asset ${id} does not exist`);
         }
 
-        return assetJSON.toString()
+        return assetJSON.toString();
     }
 
-    async readAllAsset (ctx) {
-        const allResult = []
-        
-        const iterator = await ctx.stub.getStateByRange('','')
+    async GetAllAssets(ctx) {
+        const allResults = [];
+        const iterator = await ctx.stub.getStateByRange('', '');
 
-        let result = await iterator.next()
-
-        while(!result){
-            const strValue = Buffer.from(result.value.value.toStrirng()).toString('utf8')
-
-            let record
-            try {
-                record = JSON.parse(strValue)
-            } catch (error) {
-                console.log(error)
-                record = strValue
+        for await (const res of iterator) {
+            if (res.value && res.value.value) {
+                const strValue = Buffer.from(res.value.value).toString('utf8');
+                try {
+                    const record = JSON.parse(strValue);
+                    allResults.push(record);
+                } catch (err) {
+                    allResults.push(strValue);
+                }
             }
-
-            allResult.push(record)
-            result = await iterator.next()
         }
+
         return JSON.stringify(allResults);
     }
 }
 
-module.exports = assetRegistryContract
+module.exports = AssetRegistryContract;

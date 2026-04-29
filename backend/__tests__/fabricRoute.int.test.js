@@ -3,36 +3,36 @@ const express = require('express');
 
 const errorHandler = require('../middleware/errorHandler');
 
-jest.mock('../middleware/rateLimiter', () => ({
+vi.mock('../middleware/rateLimiter', () => ({
   strictLimiter: (req, res, next) => next(),
   apiLimiter: (req, res, next) => next(),
 }));
 
-jest.mock('../middleware/authenticate', () => ({
-  decodeToken: jest.fn(),
+vi.mock('../middleware/authenticate', () => ({
+  decodeToken: vi.fn(),
 }));
 
-jest.mock('../middleware/authorize', () => ({
-  can: jest.fn(() => (req, res, next) => next()),
+vi.mock('../middleware/authorize', () => ({
+  can: vi.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/appFabricService', () => ({
-  networkCreate: jest.fn(),
-  networkRead: jest.fn(),
-  channelCreate: jest.fn(),
-  channelRead: jest.fn(),
-  smartContract: jest.fn(),
-  contractReadAll: jest.fn(),
-  createAsset: jest.fn(),
-  assetTransfer: jest.fn(),
-  assetUpdate: jest.fn(),
-  assetRead: jest.fn(),
-  assestReadAll: jest.fn(),
+vi.mock('../service/application/networkAssetsService', () => ({
+  networkCreate: vi.fn(),
+  networkRead: vi.fn(),
+  channelCreate: vi.fn(),
+  channelRead: vi.fn(),
+  smartContract: vi.fn(),
+  contractReadAll: vi.fn(),
+  createAsset: vi.fn(),
+  assetTransfer: vi.fn(),
+  assetUpdate: vi.fn(),
+  assetRead: vi.fn(),
+  assestReadAll: vi.fn(),
 }));
 
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const appFabricService = require('../service/appFabricService');
+const networkAssetsService = require('../service/application/networkAssetsService');
 
 function makeApp({ withAuthorize = false } = {}) {
   const { router } = require('../routes/fabricRoute');
@@ -63,7 +63,7 @@ describe('fabricRoute integration', () => {
   let consoleErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterAll(() => {
@@ -80,7 +80,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('POST /api/networks - success', async () => {
-    appFabricService.networkCreate.mockResolvedValue({ id: 'n1', name: 'net1' });
+    networkAssetsService.networkCreate.mockResolvedValue({ id: 'n1', name: 'net1' });
 
     const app = makeApp();
     const res = await request(app)
@@ -92,7 +92,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('POST /api/networks - 400 validation error (errorHandler format)', async () => {
-    appFabricService.networkCreate.mockImplementation(() => {
+    networkAssetsService.networkCreate.mockImplementation(() => {
       throw validationError(['"name" is required']);
     });
 
@@ -140,7 +140,7 @@ describe('fabricRoute integration', () => {
   });
 
   test('GET /api/networks - 500 internal error (errorHandler format)', async () => {
-    appFabricService.networkRead.mockImplementation(() => {
+    networkAssetsService.networkRead.mockImplementation(() => {
       throw new Error('boom');
     });
 

@@ -1,6 +1,14 @@
 const AppError = require('../../utils/AppError.js')
+<<<<<<< HEAD
 const { getContract } = require('../../config/fabric/fabricGateway.js')
+=======
+>>>>>>> 29e9e8a2c616e39a149cda3fbd9d28b000a567f2
 const { TextDecoder } = require('node:util');
+const fabricGateway = require('../../config/fabric/fabricGateway.js');
+
+function getContractFromGateway(contractName) {
+	return fabricGateway.getContract(contractName);
+}
 
 function parseBuffer(resultBuffer) {
 	if (!resultBuffer || resultBuffer.length === 0) {
@@ -20,7 +28,7 @@ class assetRegistry {
 
 	async createAsset({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
 			const result = await contract.submitTransaction(
 				'CreateAsset',
@@ -28,7 +36,7 @@ class assetRegistry {
 				color,
 				String(size),
 				owner,
-				String(appraisedValue),
+				String(appraisedValue)
 			)
 
 			return {
@@ -44,7 +52,7 @@ class assetRegistry {
 
 	async assetTransfer({ id, owner, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
 			const commit = await contract.submitAsync('TransferAsset', {
 				arguments: [id, owner],
@@ -72,7 +80,7 @@ class assetRegistry {
 
 	async assetUpdate({ id, color, size, owner, appraisedValue, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
 			const result = await contract.submitTransaction(
 				'UpdateAsset',
@@ -95,12 +103,16 @@ class assetRegistry {
 
 	async assetDelete({ id, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
+<<<<<<< HEAD
 			const commit = await contract.submitAsync(
 				'DeleteAsset',
 				{ arguments: [id] }
 			)
+=======
+			const commit = await contract.submitAsync('DeleteAsset', { arguments: [id] })
+>>>>>>> 29e9e8a2c616e39a149cda3fbd9d28b000a567f2
 
 			const result = commit.getResult()
 
@@ -124,12 +136,9 @@ class assetRegistry {
 
 	async assetRead({ id, requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
-			const result = await contract.evaluateTransaction(
-				'ReadAsset',
-				id
-			)
+			const result = await contract.evaluateTransaction('ReadAsset', id)
 
 			return {
 				message: 'Asset fetched successfully',
@@ -143,7 +152,7 @@ class assetRegistry {
 
 	async assetReadAll({ requestedBy }) {
 		try {
-			const contract = getContract()
+			const contract = getContractFromGateway('assetRegistryContract')
 
 			const result = await contract.evaluateTransaction('GetAllAssets')
 

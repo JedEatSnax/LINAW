@@ -1,4 +1,4 @@
-const userService = require('../service/userService')
+const userService = require('../service/application/userService')
 
 class userController {
     async signup (req, res, next) {
@@ -39,4 +39,4 @@ class userController {
     }
 }
 
-module.exports = new userController();
+module.exports = new userController()

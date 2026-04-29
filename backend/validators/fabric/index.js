@@ -1,1 +1,4 @@
-module.exports = { fabricSchema: require('./fabricSchema') }
+module.exports = { 
+    fabricSchema: require('./fabricSchema'),
+    approvalWorkflow: require('./approvalWorkflowsSchema')
+}

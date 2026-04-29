@@ -1,3 +1,7 @@
+networks:
+  postgres:
+    driver: bridge
+
 services:
   backend:
     build:
@@ -53,10 +57,6 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-
-networks:
-  postgres:
-    driver: bridge
 
 volumes:
   postgres:

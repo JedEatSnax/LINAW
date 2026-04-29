@@ -3,27 +3,27 @@ const express = require('express');
 
 const errorHandler = require('../middleware/errorHandler');
 
-jest.mock('../middleware/rateLimiter', () => ({
+vi.mock('../middleware/rateLimiter', () => ({
   strictLimiter: (req, res, next) => next(),
   apiLimiter: (req, res, next) => next(),
 }));
 
-jest.mock('../middleware/authenticate', () => ({
-  decodeToken: jest.fn(),
+vi.mock('../middleware/authenticate', () => ({
+  decodeToken: vi.fn(),
 }));
 
-jest.mock('../middleware/authorize', () => ({
-  can: jest.fn(() => (req, res, next) => next()),
+vi.mock('../middleware/authorize', () => ({
+  can: vi.fn(() => (req, res, next) => next()),
 }));
 
-jest.mock('../service/userService', () => ({
-  signup: jest.fn(),
-  login: jest.fn(),
+vi.mock('../service/application/userService', () => ({
+  signup: vi.fn(),
+  login: vi.fn(),
 }));
 
 const authenticate = require('../middleware/authenticate');
 const authorize = require('../middleware/authorize');
-const userService = require('../service/userService');
+const userService = require('../service/application/userService');
 
 function makeApp({ withAuthorize = false } = {}) {
   const { router } = require('../routes/usersRoute');
@@ -54,7 +54,7 @@ describe('usersRoute integration', () => {
   let consoleErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterAll(() => {
@@ -103,20 +103,18 @@ describe('usersRoute integration', () => {
     });
   });
 
-  test('POST /api/login - 401 unauthenticated (errorHandler format)', async () => {
-    authenticate.decodeToken.mockImplementation((req, res, next) => next(new Error('UNAUTHORIZED')));
+  test('POST /api/login - success', async () => {
+    userService.login.mockResolvedValue({ email: 'alice@example.com' });
 
     const app = makeApp();
     const res = await request(app)
       .post('/api/login')
-      .send({ email: 'alice@example.com', firebase_uid: 'fb1' });
+      .send({ email: 'alice@example.com' });
 
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      error: {
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required',
-      },
+      email: 'alice@example.com',
+      message: 'Login Successful',
     });
   });
 

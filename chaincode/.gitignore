@@ -1,2 +1,7 @@
 node_modules/
 package-lock.json
+/output-master-check.md
+/output-backend-routine-check.md
+/output-operability-check.md
+/output-phase3.md
+/output-phase2.md       

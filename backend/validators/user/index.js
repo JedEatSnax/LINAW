@@ -1,4 +1,1 @@
-module.exports = {
-  signupSchema: require('./signupModel'), 
-  loginSchema: require('./loginModel')
-};
+module.exports = require('./userSchema');

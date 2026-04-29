@@ -1,7 +1,6 @@
 database/
 
 # Hyperledger Fabric
-fabric
 fabric-ca
 /fabric-ca-client
 /fabric-ca-server-tls
@@ -11,9 +10,9 @@ install-fabric.sh
 # Documentation
 progress.md
 TODO.md
-Status.md
 GRYPHEN_DOCS.md
 NOTES.md
+ChainCodeSecurity.md
 
 # Stray Files
 /*.pid
