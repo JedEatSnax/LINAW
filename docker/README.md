@@ -1,7 +1,7 @@
 ## Used Fabric Binary Versions:
 
-1. `fabric-ca-client`: **v1.5.18** from commit [ae6a50d](https://github.com/hyperledger/fabric-ca/commit/ae6a50d41861c109acad2a004d5a48eab734e61c) in repository [hyperledger/fabric-ca](https://github.com/hyperledger/fabric-ca)
-2. `fabric-ca-server`: **v1.5.18** from commit [ae6a50d](https://github.com/hyperledger/fabric-ca/commit/ae6a50d41861c109acad2a004d5a48eab734e61c) in repository [hyperledger/fabric-ca](https://github.com/hyperledger/fabric-ca)
+1. `fabric-ca-client`: **v1.5.19** from package https://github.com/hyperledger/fabric-ca/releases/tag/v1.5.19
+2. `fabric-ca-server`: **v1.5.19** from package https://github.com/hyperledger/fabric-ca/releases/tag/v1.5.19
 3. `peer`: **v3.1.4** from commit [6472f7c](https://github.com/hyperledger/fabric/commit/6472f7c60121ab7f639f32f837223822e9522ef5) in repository [hyperledger/fabric](https://github.com/hyperledger/fabric)
 4. `orderer`: **v3.1.4** from commit [6472f7c](https://github.com/hyperledger/fabric/commit/6472f7c60121ab7f639f32f837223822e9522ef5) in repository [hyperledger/fabric](https://github.com/hyperledger/fabric)
 
@@ -21,33 +21,20 @@
 
 ### Fabric CA Docker Image
 
-1. Clone the Fabric Certificate
+1. Build the Dockerfile
 
 ```bash
-cd docker
-git clone https://github.com/hyperledger/fabric-ca
+docker build -f ca.dockerfile -t linaw-fabric-ca:latest .
 ```
 
-2. Edit the [Makefile](fabric-ca/Makefile#L35) base version to 1.5.18
-
-```make
-BASE_VERSION ?= v1.5.18
-```
-
-3. Build the Dockerfile
-
-```bash
-docker build -f linawCA.dockerfile -t linaw-fabric-ca:latest .
-```
-
-4. Sanity check
+2. Sanity check
 
 ```bash
 docker run --entrypoint fabric-ca-server linaw-fabric-ca:latest version
 
 # Expected Output:
 # fabric-ca-server:
-#  Version: v1.5.18
+#  Version: v1.5.19
 #  Go version: go1.26.1
 #  OS/Arch: linux/amd64
 ```
@@ -56,26 +43,13 @@ docker run --entrypoint fabric-ca-server linaw-fabric-ca:latest version
 
 #### Skip steps 1 and 2 if you tested Fabric Peer Docker Image
 
-1. Clone the Fabric Certificate
-
-```bash
-cd docker
-git clone https://github.com/hyperledger/fabric
-```
-
-2. Edit the [Makefile](fabric/Makefile#L49) base version to 3.1.14
-
-```make
-FABRIC_VER ?= 3.1.4
-```
-
-3. Build the Dockerfile
+1. Build the Dockerfile
 
 ```bash
 docker build -f peer.dockerfile -t linaw-fabric-peer:latest .
 ```
 
-4. Sanity check
+. Sanity check
 
 ```bash
 docker run --entrypoint peer linaw-fabric-peer:latest version
@@ -95,7 +69,7 @@ cd docker
 git clone https://github.com/hyperledger/fabric
 ```
 
-2. Edit the [Makefile](fabric/Makefile#L49) base version to 3.1.14
+2. Edit the [Makefile](fabric/Makefile#L49) base version to 3.1.4
 
 ```make
 FABRIC_VER ?= 3.1.4
