@@ -1,4 +1,5 @@
 const stringify = require('json-stringify-deterministic');
+const { vi } = require('vitest');
 
 function toBuffer(value) {
     if (value === undefined || value === null) {
@@ -37,22 +38,22 @@ function createMockContext(options = {}) {
     const worldState = new Map(Object.entries(state));
 
     const stub = {
-        getState: jest.fn(async (key) => toBuffer(worldState.get(key))),
-        putState: jest.fn(async (key, valueBuffer) => {
+        getState: vi.fn(async (key) => toBuffer(worldState.get(key))),
+        putState: vi.fn(async (key, valueBuffer) => {
             worldState.set(key, JSON.parse(valueBuffer.toString()));
         }),
-        deleteState: jest.fn(async (key) => {
+        deleteState: vi.fn(async (key) => {
             worldState.delete(key);
         }),
-        getHistoryForKey: jest.fn(async (key) => {
+        getHistoryForKey: vi.fn(async (key) => {
             const records = historyByKey[key] || [];
             return createAsyncHistoryIterator(records);
         })
     };
 
     const clientIdentity = {
-        getMSPID: jest.fn(() => mspId),
-        assertAttributeValue: jest.fn((name, expectedValue) => {
+        getMSPID: vi.fn(() => mspId),
+        assertAttributeValue: vi.fn((name, expectedValue) => {
             return attributes[name] === expectedValue;
         })
     };

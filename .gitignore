@@ -8,11 +8,11 @@ fabric-ca
 install-fabric.sh
 
 # Documentation
-progress.md
 TODO.md
 GRYPHEN_DOCS.md
 NOTES.md
 ChainCodeSecurity.md
+solution.md
 
 # Stray Files
 /*.pid
