@@ -99,7 +99,7 @@ docker run --entrypoint orderer linaw-fabric-orderer:latest version
 1. Build the Dockerfile
 
 ```bash
-docker build -f backend.dockerfile -t linaw-backend:latest .
+docker build -f docker/backend.dockerfile -t linaw-backend:latest backend
 ```
 
 2. Run a container using the image

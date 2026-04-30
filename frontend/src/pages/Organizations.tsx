@@ -61,7 +61,7 @@ export function Organizations() {
 
     try {
       const result = await axios.post<PeerStartResponse>(
-        `${backendUrl}/api/v1/fabric/peer/start`,
+        `${backendUrl}/api/v2/fabric/peer/start`,
         {
           organization,
         },
@@ -90,7 +90,7 @@ export function Organizations() {
 
     try {
       const result = await axios.post<ProvisionResponse>(
-        `${backendUrl}/api/v1/fabric/org/provision`,
+        `${backendUrl}/api/v2/fabric/org/provision`,
         {
           organizationName,
           adminEmail,

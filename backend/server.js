@@ -25,7 +25,7 @@ app.use(
 
 app.use("/api/v1", usersRouter);
 app.use("/api/v1", fabricRouter);
-app.use("/api/v1", peerRouter);
+app.use("/api/v2/fabric", peerRouter);
 app.use(errorHandler);
 
 app.listen(port, () => {

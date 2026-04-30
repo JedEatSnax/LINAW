@@ -1,13 +1,13 @@
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
 WORKDIR /backend
-COPY backend/package.json backend/package-lock.json* ./
-RUN npm ci --only=production --silent
+COPY package.json package-lock.json* ./
+RUN npm install --omit=dev --ignore-scripts --silent
 
 
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 WORKDIR /backend
 COPY --from=deps /backend/node_modules ./node_modules
-COPY backend/ ./
+COPY . ./
 RUN if [ -f package.json ] && grep -q "\"build\"" package.json; then npm run build; fi
 
 

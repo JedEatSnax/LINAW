@@ -1,0 +1,13 @@
+node_modules
+.env
+.env.*
+__tests__
+logs
+vault
+*.http
+*.md
+*.config.js
+.gitignore
+TODO.md
+backend_Integration.md
+config/serviceAccount.json
