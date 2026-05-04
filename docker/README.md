@@ -24,13 +24,13 @@
 1. Build the Dockerfile
 
 ```bash
-docker build -f ca.dockerfile -t linaw-fabric-ca:latest .
+docker build --no-cache -f ca.dockerfile -t linaw-ca:latest .
 ```
 
 2. Sanity check
 
 ```bash
-docker run --entrypoint fabric-ca-server linaw-fabric-ca:latest version
+docker run --entrypoint fabric-ca-server linaw-ca:latest version
 
 # Expected Output:
 # fabric-ca-server:
@@ -46,13 +46,13 @@ docker run --entrypoint fabric-ca-server linaw-fabric-ca:latest version
 1. Build the Dockerfile
 
 ```bash
-docker build -f peer.dockerfile -t linaw-fabric-peer:latest .
+docker build -f --no-cache peer.dockerfile -t linaw-peer:latest .
 ```
 
 . Sanity check
 
 ```bash
-docker run --entrypoint peer linaw-fabric-peer:latest version
+docker run --entrypoint peer linaw-peer:latest version
 
 # Expected Output
 # Go version: go1.26.1
@@ -78,13 +78,13 @@ FABRIC_VER ?= 3.1.4
 3. Build the Dockerfile
 
 ```bash
-docker build -f orderer.dockerfile -t linaw-fabric-orderer:latest .
+docker build -f --no-cache orderer.dockerfile -t linaw-orderer:latest .
 ```
 
 4. Sanity check
 
 ```bash
-docker run --entrypoint orderer linaw-fabric-orderer:latest version
+docker run --entrypoint orderer linaw-orderer:latest version
 
 # Expected Output
 # orderer:
@@ -123,7 +123,7 @@ curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/inst
 2. Execute the `trivy` command to see known vulnerabilities and discovered secrets
 
 ```
-trivy image linaw-fabric-ca:latest
+trivy image linaw-ca:latest
 ```
 
 ### Custom Blockchain Setup

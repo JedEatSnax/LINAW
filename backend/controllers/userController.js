@@ -1,42 +1,62 @@
-const userService = require('../service/application/userService')
+const userService = require("../service/application/userService");
+const disposableService = require("../service/disposableEmailService");
 
 class userController {
-    async signup (req, res, next) {
-        try {
-            const user = await userService.signup(req.body)
-            if (!user) {
-                return res.status(400).json({
-                    message: 'Signup failed',
-                })
-            }
+  async signup(req, res, next) {
+    try {
+      const email = req.body?.email;
 
-            return res.status (201).json({
-                email: user.email,
-                message: 'Signup successful',
-            })
-        }catch (err){
-            return next(err)
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Check disposable email
+      try {
+        const check = await disposableService.checkEmail(email);
+        if (check && check.is_disposable) {
+          return res
+            .status(400)
+            .json({ message: "Disposable email addresses are not allowed" });
         }
+      } catch (err) {
+        // If the disposable check fails due to config or network, log and continue
+        console.error("Disposable email check failed:", err.message || err);
+      }
+
+      const user = await userService.signup(req.body);
+      if (!user) {
+        return res.status(400).json({
+          message: "Signup failed",
+        });
+      }
+
+      return res.status(201).json({
+        email: user.email,
+        message: "Signup successful",
+      });
+    } catch (err) {
+      return next(err);
     }
+  }
 
-    async login (req, res, next) {
-        try {
-            const user = await userService.login(req.body)
+  async login(req, res, next) {
+    try {
+      const user = await userService.login(req.body);
 
-            if (!user) {
-                return res.status(400).json({
-                    message: 'login failed'
-                })
-            }
+      if (!user) {
+        return res.status(400).json({
+          message: "login failed",
+        });
+      }
 
-            return res.status(200).json({
-                email: user.email,
-                message: 'Login Successful'
-            })
-        } catch (err){
-            return next(err)
-        }
+      return res.status(200).json({
+        email: user.email,
+        message: "Login Successful",
+      });
+    } catch (err) {
+      return next(err);
     }
+  }
 }
 
-module.exports = new userController()
+module.exports = new userController();

@@ -1,7 +1,7 @@
 import logo from "../assets/react.svg";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { MdMenuOpen } from "react-icons/md";
 import { IoHomeOutline } from "react-icons/io5";
 import { TfiWrite } from "react-icons/tfi";
@@ -52,12 +52,10 @@ export default function Sidebar() {
     return () => unsubscribe();
   }, [auth]);
 
-  /*
   const handleLogout = async () => {
     await signOut(auth);
     navigate("/login", { replace: true });
   };
-  */
 
   const handleProfileClick = () => {
     if (!auth.currentUser) {
@@ -165,7 +163,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* <div className={`${open ? "px-3 pb-2" : "hidden"}`}>
+      <div className={`${open ? "px-3 pb-2" : "hidden"}`}>
         <button
           type="button"
           onClick={handleLogout}
@@ -173,7 +171,7 @@ export default function Sidebar() {
         >
           Sign Out
         </button>
-      </div> */}
+      </div>
     </nav>
   );
 }

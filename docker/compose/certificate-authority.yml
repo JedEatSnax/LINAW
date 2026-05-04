@@ -9,7 +9,7 @@ networks:
 
 services:
   ca_org1:
-    image: hyperledger/fabric-ca:latest
+    image: ca-server:latest
     labels:
       service: hyperledger-fabric
     environment:
@@ -22,9 +22,6 @@ services:
       - "7054:7054"
       - "17054:17054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
-    volumes:
-      - ../organizations/fabric-ca/org1:/etc/hyperledger/fabric-ca-server
-      - ../organizations:/opt/organizations
     container_name: ca_org1
     networks:
       - test

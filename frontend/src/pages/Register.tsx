@@ -17,6 +17,18 @@ export function Register() {
             return;
         }
 
+        // Check disposable email via backend before creating Firebase account
+        try {
+            const resp = await axios.get(`/api/v1/disposable-email/${encodeURIComponent(email)}`);
+            if (resp?.data?.is_disposable) {
+                setError("Disposable email addresses are not allowed");
+                return;
+            }
+        } catch (err: any) {
+            // If backend check fails, log and allow signup to proceed (fail-open)
+            console.error('Disposable email check failed:', err?.message || err);
+        }
+
         createUserWithEmailAndPassword(auth, email, password)
             .then(response => {
                 console.log("User registered:", response.user);
