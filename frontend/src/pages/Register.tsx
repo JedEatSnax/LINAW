@@ -26,8 +26,20 @@ export function Register() {
             navigate("/login");
         } catch (error) {
             const err = error as any;
-            setError("Failed to create account: " + (err.message || "Unknown error"));
-            console.error("Error registering user:", error);
+            switch (err.code) {
+                case "auth/email-already-in-use":
+                    setError("Email is already in use");
+                    break;
+                case "auth/invalid-email":
+                    setError("Invalid email address");
+                    break;
+                case "auth/weak-password":
+                    setError("Password should be at least 6 characters");
+                    break;
+                default:
+                    setError("Failed to create account: " + (err.message || "Unknown error"));
+                    console.error("Error registering user:", error);
+            }
         }
     };
 
