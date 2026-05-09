@@ -75,6 +75,9 @@ class userService {
   }
 
   async addMember () {}
+  async updateMemberRole () {}
+  async getOrganizationMemebrs () {}
+  async deleteMember () {}
 
 }
 

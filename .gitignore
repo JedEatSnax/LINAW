@@ -20,3 +20,4 @@ solution.md
 /*.yaml
 /*.yml
 .env
+/graphify-out

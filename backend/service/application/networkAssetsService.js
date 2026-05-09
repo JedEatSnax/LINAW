@@ -114,13 +114,14 @@ class networkAssetsService {
       tentantId: user?.tenantId,
       color,
       size,
-      owner,
+      owner: user?.uid, 
       appraisedValue,
       requestedBy: user?.uid,
     });
 
     return await assetService.createAsset({
       id,
+      tentantId: user?.tenantId,
       color,
       size,
       owner,
@@ -137,12 +138,14 @@ class networkAssetsService {
 
     await assetRegistryDao.assetTransfer({
       id,
+      tentantId: user?.tenantId,
       owner,
       requestedBy: user?.uid,
     });
 
     return await assetService.assetTransfer({
       id,
+      tenantId: user?.tenantId,
       owner,
       requestedBy: user?.uid,
     });
@@ -156,6 +159,7 @@ class networkAssetsService {
 
     await assetRegistryDao.assetUpdate({
       id,
+      tenantId: user?.tenantId,
       color,
       size,
       owner,
@@ -165,6 +169,7 @@ class networkAssetsService {
 
     return await assetService.assetUpdate({
       id,
+      tenantId: user?.tenantId,
       color,
       size,
       owner,
@@ -180,11 +185,13 @@ class networkAssetsService {
 
     await assetRegistryDao.assetDelete({
       id,
+      tenantId: user?.tenantId,
       requestedBy: user?.uid,
     });
 
     return await assetService.assetDelete({
       id,
+      tenantId: user?.tenantId,
       requestedBy: user?.uid,
     });
   }
@@ -196,12 +203,14 @@ class networkAssetsService {
 
     return await assetService.assetRead({
       id,
+      tenantId: user?.tenantId,
       requestedBy: user?.uid,
     });
   }
 
   async assetReadAll({ user }) {
     return await assetService.assetReadAll({
+      tenantId: user?.tenantId,
       requestedBy: user?.uid,
     });
   }
