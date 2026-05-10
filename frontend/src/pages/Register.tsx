@@ -21,7 +21,7 @@ export function Register() {
             console.log("User registered:", response.user);
             await sendEmailVerification(response.user);
             console.log("Verification email sent");
-            alert("Registration successful! A verification email has been sent to your inbox. Please verify your email before logging in. You are being redirected to the login page.");
+            alert("A verification email has been sent to your inbox. Please verify your email before logging in.");
             await signOut(auth);
             navigate("/login");
         } catch (error) {
