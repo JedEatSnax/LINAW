@@ -8,7 +8,6 @@ Also i remember we're going local right? everything local hosting, so this docke
 
 Furthermore I have learned a way to add some monitoring for the postgres docker and I'll do the immudb kinda last i can't say but for sure it'll be right at the end. 
 
-<<<<<<< HEAD:.github/progress_report.md
 I'll be pushing this progress_report.md but i'll try to not add it to every pr.
 
 
@@ -34,9 +33,6 @@ also I delete the unnecessary api endpoint in server.js
 
 if I made this correct and understand this almost near prod level backend with maintainability in mind 
 
-<<<<<<< HEAD:.github/progress_report.md
->>>>>>> 4e75c51 (setup local postgres docker for more details please refer to docs/progres_report.md):docs/progress_report.md
-=======
 - Routes → Controllers → Services (validate model) → DAOs → DB.
 
 this is the most that I can do i won't be adding middleware and the utils or helpers from what i see it won't be needed as much and this will lessen the thickness of the code for the two of us writing the backend. 
@@ -44,15 +40,12 @@ this is the most that I can do i won't be adding middleware and the utils or hel
 knex.js setup is done, i need to refactor almost everything for knex.js.
 
 I'll finish later the login endpoint idk why it keeps saying users table not defined
-<<<<<<< HEAD:.github/progress_report.md
->>>>>>> 91b6231 (refactors the old database implementation to postgres docker):docs/progress_report.md
-=======
 
 ### studied user based authorization 03/19/26
 
 so the Role based access control is a dynamic role only changing when you are a member of an organization's network and whether you are managing a node or not that's the role based part. so yeah that's the authorization.
 
-in terms of the database it's already done and fully running just needs data and correct schema for it. Some columns are still unknown and I just don't wanna create unecessary columns or a table that lacks a certain column.
+in terms of the database it's already done and fully running just needs data and correct schema for it. Some columns are still unknown and I just don't wanna create unnecessary columns or a table that lacks a certain column.
 
 okay in much more deep dive for the encryption, I won't lie I have been enlightened by many things like the docs of cloudflare, nginx, and apache hahahahhaha. apparently you were right and devops will handle the encryption of the server via nany one of this or something cloudflare, nginx, and apache to make the connection between the front and backend encrypted and secured and on my part is the authentication and authorization which i got it settled just implementing it right about now. 
 
@@ -61,4 +54,3 @@ for now the authorization will take a bit more time dynamic role fucks with me. 
 ### re-created db
 
 so yep i disabled for now the firebase auth. frontend is taking too long to integrate backend but it's okay, re-implementation is easy enough of me that i can do it in 5-15 mins depending on the scale but yeah I created network creation endpoint. btw the part of why there's a separate for organization creation umm when we create a user it doesn't have any organization so yep it needs to create an org first and I tested this it works imma check for further bugs tommorrow night and then i'll write the implementaion of hyperledger fabric. thanks btw for that repo that teaches that in code.
->>>>>>> 440caee (minor revisions and fix data pipeline):docs/progress_report.md
