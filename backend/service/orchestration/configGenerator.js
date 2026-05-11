@@ -1,4 +1,5 @@
 const yaml = require('js-yaml');
+const logger = require('../../utils/logger');
 
 /*
 TODO:
@@ -163,8 +164,14 @@ function generateDockerCompose(userId, rawConfig) {
 
   const fabricVersion = process.env.FABRIC_VERSION || '2.5';
   const fabricCAVersion = process.env.FABRIC_CA_VERSION || '1.5';
-  const useCouchDB = (config.stateDb || 'couchdb' === 'couchdb');
+  // Copilot note: fix operator precedence so `leveldb` correctly disables CouchDB.
+  const useCouchDB = ((config.stateDb || 'couchdb') === 'couchdb');
   const res = config.resources;
+
+  function netWithAliases(aliases = []) {
+
+    return { [net]: { aliases } };
+  }
 
   function resourceLimits(type) {
     const r = res[type];
@@ -326,15 +333,16 @@ function generateDockerCompose(userId, rawConfig) {
       services[peerName] = {
         image: `hyperledger/fabric-peer:${fabricVersion}`,
         container_name: peerName,
+        hostname: `peer${i}.${org.name}`,
         environment: peerEnv,
         depends_on: peerDependsOn,
-        ports: [`${peerPort}:${peerPort}`, `${19443 + i}:9443`],
+        ports: [`${peerPort}:${peerPort}`],
         volumes: [
           `./crypto-config/${org.name}/peers/peer${i}/msp:/etc/hyperledger/fabric/msp`,
           `./crypto-config/${org.name}/peers/peer${i}/tls:/etc/hyperledger/fabric/tls`,
           `${peerName}:/var/hyperledger/production`,
         ],
-        networks: [net],
+        networks: netWithAliases([`peer${i}.${org.name}`]),
         logging: logConfig,
         deploy: { resources: resourceLimits('peer') },
         restart: 'unless-stopped',
@@ -382,14 +390,15 @@ function generateDockerCompose(userId, rawConfig) {
         `FABRIC_LOGGING_SPEC=${process.env.NODE_ENV === 'production' ? 'INFO' : 'INFO'}`,
       ],
       depends_on: caOrdererDeps,
-      ports: [`${ordererPort}:7050`, `${19444 + i}:9444`],
+      ports: [`${ordererPort}:7050`],
       volumes: [
         `./channel-artifacts:/etc/hyperledger/configtx`,
         `./crypto-config/ordererOrg/orderers/${ordererLabel}/msp:/etc/hyperledger/fabric/msp`,
         `./crypto-config/ordererOrg/orderers/${ordererLabel}/tls:/etc/hyperledger/fabric/tls`,
         `${ordererName}:/var/hyperledger/production`,
       ],
-      networks: [net],
+      hostname: ordererLabel,
+      networks: netWithAliases([ordererLabel]),
       logging: logConfig,
       deploy: { resources: resourceLimits('orderer') },
       restart: 'unless-stopped',
