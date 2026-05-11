@@ -1,0 +1,26 @@
+networks:
+  test:
+    name: fabric_test
+
+services:
+  #
+  # Bootstrap Certificate Authority
+  #
+  boot-ca:
+    image: hyperledger/fabric-ca:latest
+    labels:
+      service: hyperledger-fabric
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=boot-ca
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT=8054
+      - FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:18054
+    ports:
+      - "8054:8054"
+      - "18054:18054"
+    container_name: boot-ca
+    # Keep the container alive so .http requests can initialize and start the CA on demand.
+    command: sh -c "tail -f /dev/null"
+    networks:
+      - test

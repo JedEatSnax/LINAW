@@ -1,0 +1,73 @@
+@baseUrl = http://localhost:3000
+@containerName = boot-ca
+
+### Health check for version on local host binary
+GET {{baseUrl}}/api/fabric-ca-server/version
+
+### Version via Docker container
+GET {{baseUrl}}/api/fabric-ca-server/version?useDocker=true&containerName=root-tls-server
+
+### Init CA in Docker container (equivalent to: docker exec <container> fabric-ca-server init -b admin:adminpw)
+POST {{baseUrl}}/api/fabric-ca-server/init
+Content-Type: application/json
+
+{
+  "useDocker": true,
+  "containerName": "{{containerName}}",
+  "bootstrapUser": "admin",
+  "bootstrapPass": "adminpw"
+}
+
+### Init CA in Docker container with TLS disabled and custom home
+POST {{baseUrl}}/api/fabric-ca-server/init
+Content-Type: application/json
+
+{
+  "useDocker": true,
+  "containerName": "{{containerName}}",
+  "bootstrapUser": "admin",
+  "bootstrapPass": "adminpw",
+  "homeDir": "/etc/hyperledger/fabric-ca-server"
+}
+
+### Start CA in Docker container
+POST {{baseUrl}}/api/fabric-ca-server/start
+Content-Type: application/json
+
+{
+  "useDocker": true,
+  "containerName": "{{containerName}}",
+  "bootstrapUser": "admin",
+  "bootstrapPass": "adminpw"
+}
+
+### Start CA from host binary (non-Docker)
+POST {{baseUrl}}/api/fabric-ca-server/start
+Content-Type: application/json
+
+{
+  "useDocker": false,
+  "bootstrapUser": "admin",
+  "bootstrapPass": "adminpw",
+  "homeDir": "/etc/hyperledger/fabric-ca-server"
+}
+
+### Start a non-bootstrap CA organization (no -b bootstrap identity)
+POST {{baseUrl}}/api/fabric-ca-server/start
+Content-Type: application/json
+
+{
+  "useDocker": true,
+  "containerName": "{{containerName}}",
+  "homeDir": "/etc/hyperledger/fabric-ca-server/org2-ca"
+}
+
+### Negative test: useDocker=true without containerName should return 400
+POST {{baseUrl}}/api/fabric-ca-server/init
+Content-Type: application/json
+
+{
+  "useDocker": true,
+  "bootstrapUser": "admin",
+  "bootstrapPass": "adminpw"
+}
