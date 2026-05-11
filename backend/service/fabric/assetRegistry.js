@@ -143,7 +143,7 @@ class assetRegistry {
     try {
       const contract = getContractFromGateway("assetRegistryContract");
 
-      const result = await contract.evaluateTransaction("ReadAsset", id);
+      const result = await contract.evaluateTransaction("ReadAsset", id, tenantId);
 
       return {
         message: "Asset fetched successfully",
@@ -159,11 +159,11 @@ class assetRegistry {
     }
   }
 
-  async assetReadAll({ requestedBy }) {
+  async assetReadAll({ tenantId, requestedBy }) {
     try {
       const contract = getContractFromGateway("assetRegistryContract");
 
-      const result = await contract.evaluateTransaction("GetAllAssets");
+      const result = await contract.evaluateTransaction("GetAllAssets", tenantId);
 
       return {
         message: "Assets fetched successfully",

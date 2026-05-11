@@ -27,6 +27,16 @@ function normalizeError(err) {
     );
   }
 
+  // Handle Multer file upload errors
+  if (err && err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return new AppError('File size exceeds 10MB limit', 400, 'FILE_TOO_LARGE');
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return new AppError('Too many files uploaded', 400, 'TOO_MANY_FILES');
+    }
+  }
+
   if (err && typeof err.message === 'string') {
     if (err.message === 'EMAIL_ALREADY_EXISTS') {
       return new AppError('Email already exists', 409, 'EMAIL_ALREADY_EXISTS');

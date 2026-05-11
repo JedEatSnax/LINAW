@@ -1,5 +1,6 @@
 const winston = require('winston');
-const { nodeEnv } = require('../config/fabric')
+const { nodeEnv } = require('../config/fabric/fabricConfig')
+
 
 // const nodeEnv = "development"
 

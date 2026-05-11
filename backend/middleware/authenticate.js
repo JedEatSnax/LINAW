@@ -1,4 +1,5 @@
 const { auth } = require('../config/firebase-config')
+const AppError = require('../utils/AppError')
 
 class authenticate {
     async decodeToken (req, res, next) {
@@ -6,19 +7,13 @@ class authenticate {
             const authHeader = req.headers.authorization
 
             if (!authHeader || !authHeader.toLowerCase().startsWith('bearer ')){
-                return res.status(401).json({
-                    error: 'Authorization header is required',
-                    code: 'AUTH_MISSING'
-                });
+                return next(new AppError('Authorization header is required', 401, 'AUTH_MISSING'))
             }
 
             const token = authHeader.split(' ')[1]; 
 
             if (!token) {
-                return res.status(401).json({
-                    error: 'Invalid authorization format. Use Bearer <token>',
-                    code: 'AUTH_INVALID_FORMAT'
-                });
+                return next(new AppError('Invalid authorization format. Use Bearer <token>', 401, 'AUTH_INVALID_FORMAT'))
             }
 
             const decodedToken = await auth.verifyIdToken(token)
@@ -29,15 +24,12 @@ class authenticate {
                 email_verified: decodedToken.email_verified || false,
                 role: decodedToken.role || 'user',
                 tenantId: decodedToken.tenantId || null,
-                claims: decodedToken
+                claims: decodedToken    
             }
 
             return next()
         } catch (error) {
-            return res.status(401).json({
-                error: 'Unauthorized',
-                code: error.code || 'AUTH_FAILED'
-            });
+            return next(new AppError('Unauthorized', 401, error.code || 'AUTH_FAILED'))
         }
     }
 }

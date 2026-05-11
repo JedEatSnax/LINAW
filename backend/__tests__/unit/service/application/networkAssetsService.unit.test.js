@@ -1,8 +1,8 @@
-vi.mock('../../../../dao/assetRegistryDao');
+vi.mock('../../../../dao/chaincodeMetadata/assetRegistryDao');
 vi.mock('../../../../service/fabric/assetRegistry.js');
 
 const networkAssetsService = require('../../../../service/application/networkAssetsService.js');
-const assetRegistryDao = require('../../../../dao/assetRegistryDao');
+const assetRegistryDao = require('../../../../dao/chaincodeMetadata/assetRegistryDao');
 const assetService = require('../../../../service/fabric/assetRegistry.js');
 const AppError = require('../../../../utils/AppError.js');
 
@@ -29,7 +29,7 @@ describe('backend/service/application/networkAssetsService', () => {
         assetService.assetReadAll = vi.fn();
     });
 
-    it('createAsset validates payload and passes requestedBy through', async () => {
+    it('createAsset validates payload and passes tenant and requestedBy through', async () => {
         assetRegistryDao.createAsset.mockResolvedValue({ id: 'asset-200' });
         assetService.createAsset.mockResolvedValue({ ok: true });
 
@@ -44,11 +44,12 @@ describe('backend/service/application/networkAssetsService', () => {
 
         const result = await networkAssetsService.createAsset({
             body,
-            user: { uid: 'firebase-uid-1' }
+            user: { uid: 'firebase-uid-1', tenantId: 'tenant-1' }
         });
 
         expect(assetService.createAsset).toHaveBeenCalledWith({
             id: 'asset-200',
+            tenantId: 'tenant-1',
             color: 'green',
             size: 42,
             owner: 'alice',
@@ -57,6 +58,7 @@ describe('backend/service/application/networkAssetsService', () => {
         });
         expect(assetRegistryDao.createAsset).toHaveBeenCalledWith({
             id: 'asset-200',
+            tenantId: 'tenant-1',
             color: 'green',
             size: 42,
             owner: 'alice',
@@ -64,6 +66,25 @@ describe('backend/service/application/networkAssetsService', () => {
             requestedBy: 'firebase-uid-1'
         });
         expect(result).toEqual({ ok: true });
+    });
+
+    it('createAsset rejects missing tenant context', async () => {
+        await expect(
+            networkAssetsService.createAsset({
+                body: {
+                    id: 'asset-200',
+                    color: 'green',
+                    size: 42,
+                    owner: 'alice',
+                    appraisedValue: 1550
+                },
+                user: { uid: 'firebase-uid-1' }
+            })
+        ).rejects.toMatchObject({
+            name: 'AppError',
+            statusCode: 403,
+            code: 'MISSING_TENANT_CONTEXT'
+        });
     });
 
     it('networkCreate validates payload and passes requestedBy through', async () => {
@@ -106,7 +127,7 @@ describe('backend/service/application/networkAssetsService', () => {
                     size: 42,
                     owner: 'alice'
                 },
-                user: { uid: 'firebase-uid-1' }
+                user: { uid: 'firebase-uid-1', tenantId: 'tenant-1' }
             })
         ).rejects.toMatchObject({
             name: 'ValidationError',
@@ -193,16 +214,18 @@ describe('backend/service/application/networkAssetsService', () => {
         const result = await networkAssetsService.assetTransfer({
             params: { id: 'asset-1' },
             body: { owner: 'bob' },
-            user: { uid: 'u5' }
+            user: { uid: 'u5', tenantId: 'tenant-5' }
         });
 
         expect(assetService.assetTransfer).toHaveBeenCalledWith({
             id: 'asset-1',
+            tenantId: 'tenant-5',
             owner: 'bob',
             requestedBy: 'u5'
         });
         expect(assetRegistryDao.assetTransfer).toHaveBeenCalledWith({
             id: 'asset-1',
+            tenantId: 'tenant-5',
             owner: 'bob',
             requestedBy: 'u5'
         });
@@ -221,11 +244,12 @@ describe('backend/service/application/networkAssetsService', () => {
                 owner: 'eve',
                 appraisedValue: 750
             },
-            user: { uid: 'u6' }
+            user: { uid: 'u6', tenantId: 'tenant-6' }
         });
 
         expect(assetService.assetUpdate).toHaveBeenCalledWith({
             id: 'asset-2',
+            tenantId: 'tenant-6',
             color: 'black',
             size: 5,
             owner: 'eve',
@@ -234,6 +258,7 @@ describe('backend/service/application/networkAssetsService', () => {
         });
         expect(assetRegistryDao.assetUpdate).toHaveBeenCalledWith({
             id: 'asset-2',
+            tenantId: 'tenant-6',
             color: 'black',
             size: 5,
             owner: 'eve',
@@ -249,15 +274,17 @@ describe('backend/service/application/networkAssetsService', () => {
 
         const result = await networkAssetsService.assetDelete({
             params: { id: 'asset-3' },
-            user: { uid: 'u7' }
+            user: { uid: 'u7', tenantId: 'tenant-7' }
         });
 
         expect(assetService.assetDelete).toHaveBeenCalledWith({
             id: 'asset-3',
+            tenantId: 'tenant-7',
             requestedBy: 'u7'
         });
         expect(assetRegistryDao.assetDelete).toHaveBeenCalledWith({
             id: 'asset-3',
+            tenantId: 'tenant-7',
             requestedBy: 'u7'
         });
         expect(result).toEqual({ deleted: true });
@@ -268,27 +295,41 @@ describe('backend/service/application/networkAssetsService', () => {
 
         const result = await networkAssetsService.assetRead({
             params: { id: 'asset-4' },
-            user: { uid: 'u8' }
+            user: { uid: 'u8', tenantId: 'tenant-8' }
         });
 
         expect(assetService.assetRead).toHaveBeenCalledWith({
             id: 'asset-4',
+            tenantId: 'tenant-8',
             requestedBy: 'u8'
         });
         expect(result).toEqual({ id: 'asset-4' });
     });
 
-    it('assetReadAll passes requestedBy without additional validation', async () => {
+    it('assetReadAll passes tenant and requestedBy through', async () => {
         assetService.assetReadAll.mockResolvedValue([{ id: 'asset-1' }, { id: 'asset-2' }]);
 
         const result = await networkAssetsService.assetReadAll({
-            user: { uid: 'u9' }
+            user: { uid: 'u9', tenantId: 'tenant-9' }
         });
 
         expect(assetService.assetReadAll).toHaveBeenCalledWith({
+            tenantId: 'tenant-9',
             requestedBy: 'u9'
         });
         expect(result).toEqual([{ id: 'asset-1' }, { id: 'asset-2' }]);
+    });
+
+    it('assetReadAll rejects missing tenant context', async () => {
+        await expect(
+            networkAssetsService.assetReadAll({
+                user: { uid: 'u9' }
+            })
+        ).rejects.toMatchObject({
+            name: 'AppError',
+            statusCode: 403,
+            code: 'MISSING_TENANT_CONTEXT'
+        });
     });
 
     it('validate throws when schema key does not exist', () => {

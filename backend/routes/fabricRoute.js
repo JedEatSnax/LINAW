@@ -1,15 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const fabricController = require("../controllers/blockchainController.js");
-const orgnaitionInvitation = require("../controllers/organizationInvitationController")
+const assetRegistryController = require("../controllers/assetRegistryController.js");
+const approvalWorkflowController = require("../controllers/approvalWorkflowController.js");
+const organizationInviteController = require("../controllers/organizationInviteController");
 const authenticate = require("../middleware/authenticate");
 const { apiLimiter } = require("../middleware/rateLimiter");
 const uploadSubmissionFile = require("../middleware/uploadSubmissionFile.js");
+const db = require("../db/db");
 
 router.use(apiLimiter, authenticate.decodeToken);
 
 // blockchain related routes
-
 
 router.post("/networks", fabricController.networkCreate);
 router.get("/networks", fabricController.networkRead);
@@ -21,52 +23,67 @@ router.get("/channel/:channel_id/contracts", fabricController.contractReadAll);
 
 // member addition
 
-router.post("organizations/:organization_id/invitations", orgnaitionInvitation.invitations)
-router.get("organizations-invitations/:token",orgnaitionInvitation.tokens)
-router.post("organizations-invitations/:token/accept", orgnaitionInvitation.accepted)
+router.post(
+  "/organizations/:organization_id/invitations",
+  organizationInviteController.createInvite,
+);
+router.get(
+  "/organizations-invitations/:token",
+  organizationInviteController.getInviteByToken,
+);
+router.post(
+  "/organizations-invitations/:token/accept",
+  organizationInviteController.acceptInvite,
+);
 
 // asset registry
-router.post("/assets", fabricController.createAsset);
-router.post("/assets/:id/transfer", fabricController.assetTransfer);
-router.put("/assets/:id", fabricController.assetUpdate);
-router.delete("/assets/:id", fabricController.assetDelete);
-router.get("/assets/:id", fabricController.assetRead);
-router.get("/assets", fabricController.assetReadAll);
+router.post("/assets", assetRegistryController.createAsset);
+router.post("/assets/:id/transfer", assetRegistryController.assetTransfer);
+router.put("/assets/:id", assetRegistryController.assetUpdate);
+router.delete("/assets/:id", assetRegistryController.assetDelete);
+router.get("/assets/:id", assetRegistryController.assetRead);
+router.get("/assets", assetRegistryController.assetReadAll);
 
 // approval workflow
 
 router.post(
   "/submissions",
   uploadSubmissionFile.single("file"),
-  fabricController.createSubmission,
+  approvalWorkflowController.createSubmission,
 );
 router.post(
   "/submissions/:submissionId/submit",
-  fabricController.submitForApproval,
+  approvalWorkflowController.submitForApproval,
 );
 router.patch(
   "/submissions/:submissionId/approve",
-  fabricController.approveSubmission,
+  approvalWorkflowController.approveSubmission,
 );
 router.patch(
   "/submissions/:submissionId/reject",
-  fabricController.rejectSubmission,
+  approvalWorkflowController.rejectSubmission,
 );
 router.patch(
   "/submissions/:submissionId/request-changes",
-  fabricController.requestChanges,
+  approvalWorkflowController.requestChanges,
 );
 router.patch(
   "/submissions/:submissionId/resubmit",
   uploadSubmissionFile.single("file"),
-  fabricController.resubmitSubmission,
+  approvalWorkflowController.resubmitSubmission,
 );
-router.get("/submissions/:submissionId", fabricController.getSubmissionById);
+router.get(
+  "/submissions/:submissionId",
+  approvalWorkflowController.getSubmissionById,
+);
 router.get(
   "/submissions/:submissionId/history",
-  fabricController.getSubmissionHistory,
+  approvalWorkflowController.getSubmissionHistory,
 );
-router.delete("/submissions/:submissionId", fabricController.deleteSubmission);
+router.delete(
+  "/submissions/:submissionId",
+  approvalWorkflowController.deleteSubmission,
+);
 
 // accounting contract
 

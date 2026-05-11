@@ -25,6 +25,37 @@ class userController {
     }
   }
 
+  async syncUser(req, res, next) {
+    try {
+      const result = await authSyncService.syncUser({
+        firebase_uid: req.user?.uid,
+        email: req.user?.email,
+      });
+
+      return res.status(result.created ? 201 : 200).json({
+        message: result.created
+          ? "User synced successfully"
+          : "User already exists",
+        data: result.user,
+      });
+
+    } catch (error) {
+      if (error.message === "FIREBASE_UID_REQUIRED") {
+        return res.status(400).json({ message: "Firebase UID is required" });
+      }
+
+      if (error.message === "EMAIL_REQUIRED") {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      if (error.message === "EMAIL_ALREADY_EXISTS") {
+        return res.status(409).json({ message: "Email already exists" });
+      }
+
+      return next(error);
+    }
+  }
+
   async login(req, res, next) {
     try {
       /* 
@@ -33,7 +64,6 @@ class userController {
       */
       const user = await userService.login({
                 body: req.body,
-                user: req.user
             });
 
       if (!user) {

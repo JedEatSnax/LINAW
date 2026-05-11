@@ -1,9 +1,36 @@
-vi.mock('../../../service/application/networkAssetsService');
-vi.mock('../../../service/application/approvalWorkflowService');
+vi.mock('../../../service/application/networkAssetsService', () => ({
+    networkCreate: vi.fn(),
+    networkRead: vi.fn(),
+    channelCreate: vi.fn(),
+    channelRead: vi.fn(),
+    smartContract: vi.fn(),
+    contractReadAll: vi.fn(),
+    createAsset: vi.fn(),
+    assetTransfer: vi.fn(),
+    assetUpdate: vi.fn(),
+    assetDelete: vi.fn(),
+    assetRead: vi.fn(),
+    assetReadAll: vi.fn()
+}));
+vi.mock('../../../service/application/approvalWorkflowService', () => ({
+    createSubmission: vi.fn(),
+    submitForApproval: vi.fn(),
+    approveSubmission: vi.fn(),
+    rejectSubmission: vi.fn(),
+    requestChanges: vi.fn(),
+    resubmitSubmission: vi.fn(),
+    getSubmissionById: vi.fn(),
+    getSubmissionHistory: vi.fn(),
+    deleteSubmission: vi.fn()
+}));
+vi.mock('../../../dao/r2StorageDao', () => ({
+    upload: vi.fn(),
+    deleteObject: vi.fn(),
+    getSignedUrl: vi.fn()
+}));
 
 const networkAssetsService = require('../../../service/application/networkAssetsService');
-const approvalWorkflowService = require('../../../service/application/approvalWorkflowService');
-const fabricController = require('../../../controllers/fabricController');
+const fabricController = require('../../../controllers/blockchainController');
 
 function makeRes() {
     const res = {};
@@ -29,16 +56,6 @@ describe('backend/controllers/fabricController', () => {
         networkAssetsService.assetDelete = vi.fn();
         networkAssetsService.assetRead = vi.fn();
         networkAssetsService.assetReadAll = vi.fn();
-        // Set up approvalWorkflowService mocks
-        approvalWorkflowService.createSubmission = vi.fn();
-        approvalWorkflowService.submitForApproval = vi.fn();
-        approvalWorkflowService.approveSubmission = vi.fn();
-        approvalWorkflowService.rejectSubmission = vi.fn();
-        approvalWorkflowService.requestChanges = vi.fn();
-        approvalWorkflowService.resubmitSubmission = vi.fn();
-        approvalWorkflowService.getSubmissionById = vi.fn();
-        approvalWorkflowService.getSubmissionHistory = vi.fn();
-        approvalWorkflowService.deleteSubmission = vi.fn();
     });
 
     it('networkCreate returns 201 and payload from service', async () => {
@@ -92,100 +109,43 @@ describe('backend/controllers/fabricController', () => {
         expect(next).not.toHaveBeenCalled();
     });
 
-    it('createSubmission uses current approvalWorkflowService call and sets Location header', async () => {
-        approvalWorkflowService.createSubmission.mockResolvedValue({
-            submissionId: 'sub-1',
-            status: 'DRAFT'
-        });
+    it('assetReadAll returns 200 with service payload', async () => {
+        networkAssetsService.assetReadAll.mockResolvedValue([{ id: 'asset-1' }]);
 
-        const req = {
-            params: {},
-            body: { proposalType: 'membership' },
-            user: { uid: 'u3' },
-            file: { originalname: 'proposal.pdf' }
-        };
+        const req = { user: { uid: 'u2', tenantId: 'tenant-1' } };
         const res = makeRes();
         const next = vi.fn();
 
-        await fabricController.createSubmission(req, res, next);
+        await fabricController.assetReadAll(req, res, next);
 
-        expect(approvalWorkflowService.createSubmission).toHaveBeenCalledWith({
-            params: {},
-            body: { proposalType: 'membership' },
-            user: { uid: 'u3' },
-            file: { originalname: 'proposal.pdf' }
-        });
-        expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.location).toHaveBeenCalledWith('/submissions/sub-1');
-        expect(res.json).toHaveBeenCalledWith({
-            success: true,
-            data: {
-                submissionId: 'sub-1',
-                status: 'DRAFT'
-            }
-        });
-    });
-
-    it('approveSubmission uses current approvalWorkflowService method and returns 200', async () => {
-        approvalWorkflowService.approveSubmission.mockResolvedValue({ status: 'APPROVED' });
-
-        const req = {
-            params: { submissionId: 'sub-2' },
-            body: { remarks: 'ok' },
-            user: { uid: 'approver-1' }
-        };
-        const res = makeRes();
-        const next = vi.fn();
-
-        await fabricController.approveSubmission(req, res, next);
-
-        expect(approvalWorkflowService.approveSubmission).toHaveBeenCalledWith({
-            params: { submissionId: 'sub-2' },
-            body: { remarks: 'ok' },
-            user: { uid: 'approver-1' }
+        expect(networkAssetsService.assetReadAll).toHaveBeenCalledWith({
+            user: { uid: 'u2', tenantId: 'tenant-1' }
         });
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({ status: 'APPROVED' });
+        expect(res.json).toHaveBeenCalledWith([{ id: 'asset-1' }]);
         expect(next).not.toHaveBeenCalled();
     });
 
-    it('getSubmissionById wraps service response in success envelope', async () => {
-        approvalWorkflowService.getSubmissionById.mockResolvedValue({ submissionId: 'sub-3' });
+    it('assetTransfer forwards request data to service', async () => {
+        networkAssetsService.assetTransfer.mockResolvedValue({ transferred: true });
 
         const req = {
-            params: { submissionId: 'sub-3' },
-            user: { uid: 'u4' }
+            params: { id: 'asset-1' },
+            body: { owner: 'bob' },
+            user: { uid: 'u3', tenantId: 'tenant-2' }
         };
         const res = makeRes();
         const next = vi.fn();
 
-        await fabricController.getSubmissionById(req, res, next);
+        await fabricController.assetTransfer(req, res, next);
 
-        expect(approvalWorkflowService.getSubmissionById).toHaveBeenCalledWith({
-            submissionId: 'sub-3',
-            user: { uid: 'u4' }
+        expect(networkAssetsService.assetTransfer).toHaveBeenCalledWith({
+            params: { id: 'asset-1' },
+            body: { owner: 'bob' },
+            user: { uid: 'u3', tenantId: 'tenant-2' }
         });
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith({
-            success: true,
-            message: 'Submission retrieved successfully',
-            data: { submissionId: 'sub-3' }
-        });
+        expect(res.json).toHaveBeenCalledWith({ transferred: true });
     });
 
-    it('getSubmissionById forwards service errors to next', async () => {
-        const err = new Error('read failed');
-        approvalWorkflowService.getSubmissionById.mockRejectedValue(err);
-
-        const req = {
-            params: { submissionId: 'sub-4' },
-            user: { uid: 'u4' }
-        };
-        const res = makeRes();
-        const next = jest.fn();
-
-        await fabricController.getSubmissionById(req, res, next);
-
-        expect(next).toHaveBeenCalledWith(err);
-    });
 });

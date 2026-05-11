@@ -1,4 +1,5 @@
 const multer = require('multer');
+const AppError = require('../utils/AppError');
 
 const allowedMimeTypes = [
     'application/pdf',
@@ -13,7 +14,7 @@ const upload = multer({
     },
     fileFilter: (req, file, cb) => {
         if (!allowedMimeTypes.includes(file.mimetype)) {
-            return cb(new Error('Only PDF and DOCX files are allowed'));
+            return cb(new AppError('Only PDF and DOCX files are allowed', 400, 'INVALID_FILE_TYPE'));
         }
 
         cb(null, true);

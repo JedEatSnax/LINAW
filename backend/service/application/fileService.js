@@ -6,7 +6,7 @@
 
 const crypto = require('crypto');
 const path = require('path');
-const r2StorageDao = require('../../dao/r2StorageDao');
+const r2StorageDao = require('../../dao/chaincodeMetadata/r2StorageDao');
 
 function sanitizeFilename(name) {
     return String(name)
@@ -17,7 +17,7 @@ function sanitizeFilename(name) {
         .slice(0, 255) || 'upload';
 }
 
-class FileService {
+class fileService {
     async processSubmissionFile({ file, tenantId, submissionId }) {
         if (!file) {
             throw new Error('No file uploaded');
@@ -98,4 +98,4 @@ class FileService {
     }
 }
 
-module.exports = new FileService();
+module.exports = new fileService();

@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const AppError = require("../utils/AppError");
 
 class UserDao {
   async signup(data) {
@@ -23,7 +24,7 @@ class UserDao {
       return user;
     } catch (err) {
       if (err.code === "23505") {
-        throw new Error("EMAIL_ALREADY_EXISTS");
+        throw new AppError("Email already exists", 409, "EMAIL_ALREADY_EXISTS");
       }
       throw err;
     }

@@ -1,10 +1,7 @@
 const joi = require('joi')
+const assetRegistrySchema = require('./assetRegistrySchema')
 
 const objectIdlike = joi.string().trim().min(1).max(128).required()
-
-const assetIdParam = joi.object({
-    id: joi.string().trim().min(1).max(128).required()
-}).required()
 
 const networkIdParam = joi.object({
     id: objectIdlike.required()
@@ -16,8 +13,7 @@ const channelIdParam = joi.object({
 
 const orgCreateSchema = joi.object({
     name: joi.string().alphanum().min(2).max(30).required(),
-    mspId: joi.string().alphanum().min(2).max(30).required(),
-    peerCount: joi.number().integer().min(1).max(5).required(),
+    msp_ID: joi.string().alphanum().min(2).max(30).required(),
 });
 
 const resourceLimitSchema = joi.object({
@@ -28,6 +24,8 @@ const resourceLimitSchema = joi.object({
         .pattern(/^\d+(B|K|KB|M|MB|G)$/)
         .default('512M'),
 });
+
+// ron I think this part shouldn't be like this i think... cause of client only gives the network a name not the other things.
 
 const networkCreateSchema = joi.object({
     config: joi.object({
@@ -87,47 +85,12 @@ const contractReadAllSchema = joi.object({
     params: channelIdParam
 }).required()
 
-const createAssetSchema = joi.object({
-    body: joi.object({
-        color: joi.string().trim().min(1).max(50).required(),
-        size: joi.number().integer().positive().max(1000000).required(),
-        appraisedValue: joi.number().positive().max(999999999).required()
-    }).required()
-}).required()
-
-const assetTransferSchema = joi.object({
-    params: assetIdParam,
-}).required()
-
-const assetUpdateSchema = joi.object({
-    params: assetIdParam,
-    body: joi.object({
-        color: joi.string().trim().min(1).max(50).required(),
-        size: joi.number().integer().positive().max(1000000).required(),
-        appraisedValue: joi.number().positive().max(999999999).required()
-    }).required()
-}).required()
-
-const assetReadSchema = joi.object({
-    params: assetIdParam
-}).required()
-
-const assetDeleteSchema = joi.object({
-    params: assetIdParam
-}).required()
-
-
-
 module.exports = {
+    ...assetRegistrySchema,
     networkCreateSchema,
     networkReadSchema,
     channelCreateSchema,
     channelReadSchema,
     smartContractSchema,
-    contractReadAllSchema,
-    createAssetSchema,
-    assetTransferSchema,
-    assetUpdateSchema,
-    assetReadSchema,
-    assetDeleteSchema
+    contractReadAllSchema
 }

@@ -25,6 +25,36 @@ vi.mock('../../../controllers/fabricController', () => ({
     deleteSubmission: vi.fn()
 }));
 
+vi.mock('../../../controllers/organizationInviteController', () => ({
+    createInvite: vi.fn(),
+    getInviteByToken: vi.fn(),
+    acceptInvite: vi.fn()
+}));
+vi.mock('../../../controllers/assetRegistryController.js', () => ({
+    createAsset: vi.fn(),
+    assetTransfer: vi.fn(),
+    assetUpdate: vi.fn(),
+    assetDelete: vi.fn(),
+    assetRead: vi.fn(),
+    assetReadAll: vi.fn()
+}));
+vi.mock('../../../controllers/approvalWorkflowController.js', () => ({
+    createSubmission: vi.fn(),
+    submitForApproval: vi.fn(),
+    approveSubmission: vi.fn(),
+    rejectSubmission: vi.fn(),
+    requestChanges: vi.fn(),
+    resubmitSubmission: vi.fn(),
+    getSubmissionById: vi.fn(),
+    getSubmissionHistory: vi.fn(),
+    deleteSubmission: vi.fn()
+}));
+vi.mock('../../../dao/r2StorageDao', () => ({
+    upload: vi.fn(),
+    deleteObject: vi.fn(),
+    getSignedUrl: vi.fn()
+}));
+
 vi.mock('../../../middleware/authenticate', () => ({
     decodeToken: vi.fn((req, res, next) => next())
 }));
@@ -33,7 +63,8 @@ vi.mock('../../../middleware/rateLimiter', () => ({
     apiLimiter: vi.fn((req, res, next) => next())
 }));
 
-const fabricController = require('../../../controllers/fabricController');
+const fabricController = require('../../../controllers/blockchainController');
+const organizationInviteController = require('../../../controllers/organizationInviteController');
 const authenticate = require('../../../middleware/authenticate');
 const { apiLimiter } = require('../../../middleware/rateLimiter');
 const { router } = require('../../../routes/fabricRoute');
@@ -61,10 +92,9 @@ describe('backend/routes/fabricRoute', () => {
     });
 
     it('registers member-management routes with current controller methods', () => {
-        expect(findRoute('/organizations/:organizationId/members', 'post')).toBeUndefined();
-        expect(findRoute('/organizations/:organizationId/members/:userId', 'patch')).toBeUndefined();
-        expect(findRoute('/organizations/:organizationId/members', 'get')).toBeUndefined();
-        expect(findRoute('/organizations/:organizationId/member/:userId', 'delete')).toBeUndefined();
+        expect(findRoute('/organizations/:organization_id/invitations', 'post').route.stack[0].handle).toBe(organizationInviteController.createInvite);
+        expect(findRoute('/organizations-invitations/:token', 'get').route.stack[0].handle).toBe(organizationInviteController.getInviteByToken);
+        expect(findRoute('/organizations-invitations/:token/accept', 'post').route.stack[0].handle).toBe(organizationInviteController.acceptInvite);
     });
 
     it('registers asset registry routes with expected handlers', () => {

@@ -1,4 +1,4 @@
-const { db } = require('../db/knex');
+const { db } = require("../db/knex");
 
 const PORT_RANGE_START = 7100;
 const PORT_RANGE_END = 9900;
@@ -9,24 +9,27 @@ const PORT_RANGE_END = 9900;
  */
 
 async function allocatePorts(count) {
-  const rows = await db('networks')
-    .select('endpoints')
-    .whereNotIn('status', ['stopped', 'failed']
-    );
+  const rows = await db("networks")
+    .select("endpoints")
+    .whereNotIn("status", ["stopped", "failed"]);
 
   const usedPorts = new Set();
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const endpoints = row.endpoints || {};
-    Object.values(endpoints).forEach(port => usedPorts.add(Number(port)));
+    Object.values(endpoints).forEach((port) => usedPorts.add(Number(port)));
   });
 
   const allocated = [];
-  for (let p = PORT_RANGE_START; p <= PORT_RANGE_END && allocated.length < count; p++) {
+  for (
+    let p = PORT_RANGE_START;
+    p <= PORT_RANGE_END && allocated.length < count;
+    p++
+  ) {
     if (!usedPorts.has(p)) allocated.push(p);
   }
 
   if (allocated.length < count) {
-    throw new Error('Not enough free ports available for new network');
+    throw new Error("Not enough free ports available for new network");
   }
 
   return allocated;

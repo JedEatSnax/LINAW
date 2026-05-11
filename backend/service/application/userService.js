@@ -75,37 +75,37 @@ class UserService {
       throw new AppError("Email already exists", 409, "EMAIL_ALREADY_EXISTS");
     }
 
-    return await userDao.syncAuthenticatedUser({
+    return await this.syncAuthenticatedUser({
       email,
       firebase_uid: user.uid,
     });
   }
 
-  async syncAuthenticatedUser(user) {
-    if (!user?.uid) {
+  async syncAuthenticatedUser({ email, firebase_uid }) {
+    if (!firebase_uid) {
       throw new AppError("User not authenticated", 401, "UNAUTHORIZED");
     }
 
-    if (!user?.email) {
+    if (!email) {
       throw new AppError("Email is required", 400, "EMAIL_REQUIRED");
     }
 
-    const existingByFirebaseUid = await userDao.findByFirebaseUid(user.uid);
-    if (existingByFirebaseUid) {
-      return {
-        created: false,
-        user: existingByFirebaseUid,
-      };
-    }
+    const existingByFirebaseUid = await userDao.findByFirebaseUid(firebase_uid);
+      if (existingByFirebaseUid) {
+        return {
+          created: false,
+          user: existingByFirebaseUid,
+        };
+      }
 
-    const existingByEmail = await userDao.findUserByEmail(user.email);
-    if (existingByEmail) {
-      throw new AppError("Email already exists", 409, "EMAIL_ALREADY_EXISTS");
-    }
+    const existingByEmail = await userDao.findUserByEmail(email);
+      if (existingByEmail) {
+        throw new AppError("Email already exists", 409, "EMAIL_ALREADY_EXISTS");
+      }
 
     const createdUser = await userDao.signup({
-      email: user.email,
-      firebase_uid: user.uid,
+      email,
+      firebase_uid,
     });
 
     return {
@@ -129,11 +129,6 @@ class UserService {
 
     return userRow;
   }
-
-  async addMember() {}
-  async updateMemberRole() {}
-  async getOrganizationMemebrs() {}
-  async deleteMember() {}
 }
 
 module.exports = new UserService();
