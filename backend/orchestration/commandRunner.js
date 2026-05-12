@@ -1,6 +1,11 @@
 const { spawn } = require("child_process");
 
-function runCommand({ command, args = [], cwd, env = [] }) {
+function runCommand({ command, args = [], cwd, env = {} }) {
+  // Optional: runtime check for env type
+  if (typeof env !== "object" || Array.isArray(env)) {
+    throw new TypeError("env must be an object.");
+  }
+
   return new Promise((resolve, reject) => {
     const childEnv = { ...process.env, ...env };
 
