@@ -54,7 +54,7 @@ function collectPortsFromValue(value, usedPorts) {
 
   if (typeof value === "string") {
     const n = Number(value);
-    if (!number.isNaN(n)) {
+    if (!Number.isNaN(n)) {
       usedPorts.add(n);
     }
     return;
@@ -68,7 +68,7 @@ function collectPortsFromValue(value, usedPorts) {
   }
 
   if (typeof value === "object") {
-    for (const v of object.values(value)) {
+    for (const v of Object.values(value)) {
       collectPortsFromValue(v, usedPorts);
     }
   }
