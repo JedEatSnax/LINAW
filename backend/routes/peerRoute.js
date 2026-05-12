@@ -7,22 +7,22 @@ const peerController = require("../controllers/peerController");
 
 router.post(
   "/peer/start",
-  authenticate.decodeToken,
   apiLimiter,
+  authenticate.decodeToken,
   peerController.startPeer,
 );
 
 router.post(
   "/org/provision",
-  authenticate.decodeToken,
   apiLimiter,
+  authenticate.decodeToken,
   peerController.provisionOrg,
 );
 
 router.post(
   "/container/exec",
-  authenticate.decodeToken,
   apiLimiter,
+  authenticate.decodeToken,
   peerController.execContainer,
 );
 
