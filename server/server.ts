@@ -1,21 +1,21 @@
 const express = require("express");
 const cors = require("cors");
-const { exec } = require("node:child_process");
+const { execFile } = require("node:child_process");
 
 const app = express();
 const port = Number(process.env["PORT"] ?? 3000);
 
-function shellEscape(value: unknown): string {
-  const text = String(value ?? "");
-  return `'${text.replace(/'/g, `'"'"'`)}'`;
-}
+type FabricCommandSpec = { file: string; args: string[]; display: string };
 
 function runCommand(
-  command: string,
+  file: string,
+  args: string[],
+  display: string,
 ): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    exec(
-      command,
+    execFile(
+      file,
+      args,
       { timeout: 30_000, maxBuffer: 1024 * 1024 },
       (error: any, stdout: string, stderr: string) => {
         if (error) {
@@ -24,7 +24,7 @@ function runCommand(
             code: error.code,
             stdout,
             stderr,
-            command,
+            command: display,
           });
           return;
         }
@@ -44,31 +44,34 @@ function buildFabricCaServerCommand(
     homeDir?: string;
     corsEnabled?: boolean;
   },
-): string {
-  const parts: string[] = [];
+): FabricCommandSpec {
+  const args: string[] = [];
+  let file = "fabric-ca-server";
 
   if (options.useDocker) {
     if (!options.containerName) {
       throw new Error("containerName is required when useDocker=true");
     }
-    parts.push("docker", "exec", shellEscape(options.containerName));
+    file = "docker";
+    args.push("exec", String(options.containerName), "fabric-ca-server");
   }
 
-  parts.push("fabric-ca-server", subCommand);
+  args.push(subCommand);
 
   if (subCommand === "init" || subCommand === "start") {
     if (options.bootstrapUser || options.bootstrapPass) {
       const user = options.bootstrapUser ?? "admin";
       const pass = options.bootstrapPass ?? "adminpw";
-      parts.push("-b", shellEscape(`${user}:${pass}`));
+      args.push("-b", `${user}:${pass}`);
     }
 
     if (options.homeDir) {
-      parts.push("--home", shellEscape(options.homeDir));
+      args.push("--home", String(options.homeDir));
     }
   }
 
-  return parts.join(" ");
+  const display = [file, ...args].join(" ");
+  return { file, args, display };
 }
 
 app.use(
@@ -86,8 +89,8 @@ app.get("/api/fabric-ca-server/version", async (req: any, res: any) => {
       useDocker,
       containerName,
     });
-    const result = await runCommand(command);
-    res.status(200).json({ command, ...result });
+    const result = await runCommand(command.file, command.args, command.display);
+    res.status(200).json({ command: command.display, ...result });
   } catch (error: any) {
     res.status(400).json({
       error: error.message ?? "Failed to run version command",
@@ -114,8 +117,8 @@ app.post("/api/fabric-ca-server/init", async (req: any, res: any) => {
       homeDir,
     });
 
-    const result = await runCommand(command);
-    res.status(200).json({ command, ...result });
+    const result = await runCommand(command.file, command.args, command.display);
+    res.status(200).json({ command: command.display, ...result });
   } catch (error: any) {
     res.status(400).json({
       error: error.message ?? "Failed to run init command",
@@ -142,8 +145,8 @@ app.post("/api/fabric-ca-server/start", async (req: any, res: any) => {
       homeDir,
     });
 
-    const result = await runCommand(command);
-    res.status(200).json({ command, ...result });
+    const result = await runCommand(command.file, command.args, command.display);
+    res.status(200).json({ command: command.display, ...result });
   } catch (error: any) {
     res.status(400).json({
       error: error.message ?? "Failed to run start command",
