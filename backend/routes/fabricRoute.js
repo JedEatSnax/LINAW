@@ -8,7 +8,7 @@ const authenticate = require("../middleware/authenticate");
 const { apiLimiter } = require("../middleware/rateLimiter");
 const uploadSubmissionFile = require("../middleware/uploadSubmissionFile.js");
 
-//router.use(apiLimiter, authenticate.decodeToken);
+router.use(apiLimiter, authenticate.decodeToken);
 
 // blockchain related routes
 
