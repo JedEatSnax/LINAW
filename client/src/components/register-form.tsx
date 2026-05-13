@@ -34,7 +34,7 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
   const regex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]{6,}$/
 
   const registerUser: FormSubmitHandler = async (e) => {
     e.preventDefault()
@@ -45,6 +45,7 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
       setError(
         "Password must be at least 6 characters long and include uppercase letters, lowercase letters, numbers, and special characters."
       )
+      console.log("Password does not meet complexity requirements")
       setAuthorizing(false)
       return
     }
@@ -59,11 +60,15 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
       const resp = await fetch(
         `/api/v1/disposable-email/${encodeURIComponent(email)}`
       )
-      const data = await resp.json()
-      if (data?.is_disposable) {
-        setError("Disposable email addresses are not allowed")
-        setAuthorizing(false)
-        return
+      if (!resp.ok) {
+        console.error("Disposable email check failed with status:", resp.status)
+      } else {
+        const data = await resp.json()
+        if (data?.is_disposable) {
+          setError("Disposable email addresses are not allowed")
+          setAuthorizing(false)
+          return
+        }
       }
     } catch (err: any) {
       console.error("Disposable email check failed:", err?.message || err)
