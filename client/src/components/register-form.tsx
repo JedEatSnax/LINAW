@@ -114,13 +114,13 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
     signInWithPopup(auth, providerGoogle)
       .then((result) => {
         const user = result.user
-        console.log("Signed up with Google:", user)
+        console.log("Registered with Google:", user)
         postRegister(user.email ?? "", user.uid)
         navigate("/dashboard")
       })
       .catch((error) => {
-        console.error("Error signing up with Google:", error)
-        setError("Failed to sign up with Google")
+        console.error("Error registering with Google:", error)
+        setError("Failed to register with Google")
       })
   }
 
@@ -128,13 +128,13 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
     signInWithPopup(auth, providerMicrosoft)
       .then((result) => {
         const user = result.user
-        console.log("Signed up with Microsoft:", user)
+        console.log("Registered with Microsoft:", user)
         postRegister(user.email ?? "", user.uid)
         navigate("/dashboard")
       })
       .catch((error) => {
-        console.error("Error signing up with Microsoft:", error)
-        setError("Failed to sign up with Microsoft")
+        console.error("Error registering with Microsoft:", error)
+        setError("Failed to register with Microsoft")
       })
   }
 
