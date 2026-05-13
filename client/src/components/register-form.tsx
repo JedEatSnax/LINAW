@@ -4,6 +4,9 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signOut,
+  GoogleAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
 } from "firebase/auth"
 import { useState, type ComponentProps } from "react"
 import { cn } from "@/lib/utils"
@@ -16,11 +19,13 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { PasswordInput } from "./password-input"
+import { PasswordInput } from "./ui/password-input"
 
 type FormSubmitHandler = NonNullable<ComponentProps<"form">["onSubmit"]>
 
 export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
+  const providerGoogle = new GoogleAuthProvider()
+  const providerMicrosoft = new OAuthProvider("microsoft.com")
   const auth = getAuth()
   const navigate = useNavigate()
   const [authorizing, setAuthorizing] = useState(false)
@@ -28,11 +33,21 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
+  const regex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
   const registerUser: FormSubmitHandler = async (e) => {
     e.preventDefault()
     setAuthorizing(true)
     setError("")
+
+    if (!regex.test(password)) {
+      setError(
+        "Password must be at least 6 characters long and include uppercase letters, lowercase letters, numbers, and special characters."
+      )
+      setAuthorizing(false)
+      return
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match")
@@ -95,6 +110,34 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
     }
   }
 
+  const googleRegistration = async () => {
+    signInWithPopup(auth, providerGoogle)
+      .then((result) => {
+        const user = result.user
+        console.log("Signed up with Google:", user)
+        postRegister(user.email ?? "", user.uid)
+        navigate("/dashboard")
+      })
+      .catch((error) => {
+        console.error("Error signing up with Google:", error)
+        setError("Failed to sign up with Google")
+      })
+  }
+
+  const microsoftRegistration = async () => {
+    signInWithPopup(auth, providerMicrosoft)
+      .then((result) => {
+        const user = result.user
+        console.log("Signed up with Microsoft:", user)
+        postRegister(user.email ?? "", user.uid)
+        navigate("/dashboard")
+      })
+      .catch((error) => {
+        console.error("Error signing up with Microsoft:", error)
+        setError("Failed to sign up with Microsoft")
+      })
+  }
+
   const postRegister = async (email: string, firebase_uid: string) => {
     try {
       await fetch("/api/login", {
@@ -154,9 +197,9 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
         </Field>
         <Field>
           <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-          <Input
+          <PasswordInput
             id="confirm-password"
-            type="password"
+            name="password"
             required
             className="bg-background"
             value={confirmPassword}
@@ -171,7 +214,7 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
         </Field>
         <FieldSeparator>Or continue with</FieldSeparator>
         <Field>
-          <Button variant="outline" type="button">
+          <Button variant="outline" type="button" onClick={googleRegistration}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
@@ -180,7 +223,11 @@ export function RegisterForm({ className, ...props }: ComponentProps<"form">) {
             </svg>
             Sign up with Google
           </Button>
-          <Button variant="outline" type="button">
+          <Button
+            variant="outline"
+            type="button"
+            onClick={microsoftRegistration}
+          >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M2 3h8v8H2V3zm10 0h8v8h-8V3zM2 13h8v8H2v-8zm10 0h8v8h-8v-8z"
