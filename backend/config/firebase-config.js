@@ -10,12 +10,6 @@ if (process.env.NODE_ENV === 'test') {
   const { initializeApp, cert } = require("firebase-admin/app");
   const { getAuth } = require("firebase-admin/auth");
 
-  function loadServiceAccount() {
-  const jsonFromEnv = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
-  if (jsonFromEnv) {
-    return JSON.parse(jsonFromEnv);
-  }
-
   const serviceAccountPath =
     process.env.FIREBASE_SERVICE_ACCOUNT_PATH ||
     path.resolve(__dirname, "serviceAccount.json");
@@ -35,5 +29,5 @@ if (process.env.NODE_ENV === 'test') {
 
   const auth = getAuth(app);
 
-  module.exports = { app, auth };
-}
+module.exports = { app, auth };
+
