@@ -1,96 +1,82 @@
-const db = require('../db/db')
-<<<<<<< HEAD
-=======
-const knex = require('../db/knex');
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
+const db = require("../db/db");
+const AppError = require("../utils/AppError");
 
-class userDao {
-    async signup (userData) {
-        try {
-<<<<<<< HEAD
-            const { email, firebase_uid } = userData;
-            const [users] = await db('users')
-            .insert ({
-                email,
-                firebase_uid: firebase_uid,
-            })
-            .returning (['id', 'username']);
-            console.log('Inserted users row:', users);
+class UserDao {
+  async signup(data) {
+    try {
+      const { email, firebase_uid, tenant_id } = data;
 
-        return users;
-        } catch (err) {
-            if (err.code == "23505") throw Error("EMAIL_ALREADY_EXISTS")
-            throw err
-        }
+      const insertObj = {
+        user_email: email,
+        firebase_uid,
+        created_at: db.fn.now(),
+        updated_at: db.fn.now(),
+      };
+
+      if (tenant_id) insertObj.tenant_id = tenant_id;
+
+      const [user] = await db("users")
+        .insert(insertObj)
+        .returning([
+          "user_id",
+          "user_email",
+          "firebase_uid",
+          "tenant_id",
+          "created_at",
+          "updated_at",
+        ]);
+
+      return user;
+    } catch (err) {
+      if (err.code === "23505") {
+        throw new AppError("Email already exists", 409, "EMAIL_ALREADY_EXISTS");
+      }
+      throw err;
     }
+  }
 
-    async login (loginData) {
-        try {
-            const { email, firebase_uid } = loginData
-    
-            const users = await db('users')
-                .where({ firebase_uid }) 
-                .orWhere('email', email)
-                .select('id', 'email')
-                .first()
-    
-            return users ? users.email : null;
-        } catch (err) {
-            console.error('DAO login error:', err);
-            throw err;
-        }
+  async login(data) {
+    try {
+      const { email } = data;
+
+      const user = await db("users")
+        .where("user_email", email)
+        .select("user_id", "user_email", "tenant_id", "created_at", "updated_at")
+        .first();
+
+      return user || null;
+    } catch (err) {
+      console.error("DAO login error:", err);
+      throw err;
     }
+  }
 
-    async findByFirebaseUid(firebase_uid) {
-        const users = await knex('users')
-            .where ({ firebase_uid })
-            .select('firebase_uid')
-            .first();
-        return users || null;
-    }
+  async findByFirebaseUid(firebase_uid) {
+    const user = await db("users")
+      .where({ firebase_uid })
+      .select("user_id", "user_email", "firebase_uid", "tenant_id", "created_at", "updated_at")
+      .first();
 
-=======
-            const { email, username, firebaseUID } = userData;
-            console.log('DAO.signup called with:', { email, username, firebaseUID });
-            const [user] = await db('users')
-            .insert ({
-                email,
-                username: username,
-                firebaseUID: firebaseUID,
-            })
-            .returning (['id', 'username']);
-            console.log('Inserted user row:', user);
+    return user || null;
+  }
 
-        return user;
-        } catch (err) {
-            if (err.code == "23505") throw Error("EMAIL_ALREADY_EXISTS")
-        }
-    }
+  async findUserByEmail(email) {
+    const user = await db("users")
+      .where("user_email", email)
+      .select("user_id", "user_email", "firebase_uid", "tenant_id", "created_at", "updated_at")
+      .first();
 
-    async login (email, firebaseUID) {
-        let query = knex('user').where('email', email)
-        if (firebaseUID) query.andWhere('firebaseUID', firebaseUID)
-            .where ({ email, firebaseUID })
-            .select('id', 'email', 'username')
-            .first();
-        return user
-    }
+    return user || null;
+  }
 
-    // async findUserByEmail(email) {
-    //     const user = await knex('users')
-    //         .where ({ email })
-    //         .select('id', 'email', 'username')
-    //         .first();
-    //     return user || null;
-    // }
+  async findById(user_id) {
+    const user = await db("users")
+      .where({ user_id })
+      .select("user_id", "user_email", "firebase_uid", "tenant_id", "created_at", "updated_at")
+      .first();
 
->>>>>>> 5fa4339 (refactors the old database implementation to postgres docker)
-
+    return user || null;
+  }
 }
 
-module.exports = new userDao();
-
-
-
-
-
+module.exports = new UserDao();

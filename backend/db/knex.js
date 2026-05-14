@@ -2,10 +2,11 @@ const knex = require('knex');
 const knexfile = require('./knexfile');
 const env = process.env.NODE_ENV || 'development';
 
-const db = knex(knexfile[env]);
+const config = knexfile[env];
 
-// Test connection
-db.raw('SELECT 1+1 as result')
+const db = knex(config);
+
+db.raw('SELECT 1')
   .then(() => console.log('✅ Connected to Postgres SQL'))
   .catch((err) => console.error('❌ DB connection failed:', err));
 

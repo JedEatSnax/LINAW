@@ -1,21 +1,24 @@
 # Security Policy
 
-## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
-
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please do not open public issues for security vulnerabilities.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+To report a vulnerability, email: **victoria.335343[@]pasay-edsa.sti.edu.ph** or the other [authors](AUTHORS.md).
+
+Include the following details when possible:
+- A clear description of the issue
+- Steps to reproduce
+- Impact and affected components
+- Any suggested mitigation
+
+We will acknowledge your report within 3 business days and share updates as we validate and remediate the issue.
+
+## Supported Versions
+
+Security fixes are provided for the latest default branch.
+
+## Disclosure Policy
+
+Please allow us reasonable time to investigate and release a fix before public disclosure.
+

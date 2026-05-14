@@ -1,30 +1,34 @@
-const authorize = require('../config/authorization/authorization')
+const authorizeConfig = require('../config/authorization/authorization')
 const policies = require('../config/authorization/rules')
+const AppError = require('../utils/AppError')
 
 const authorization = {
     can(requiredPermission) {
-        return (req,res,next) => {
+        return (req, res, next) => {
             const user = req.user
 
-            if(!user) {
-                return res.status(401).json({message: 'UNAUTHORIZED'})
+            if (!user) {
+                return next(new AppError('Unauthorized', 401, 'UNAUTHORIZED'))
             }
 
             const userRole = user.role
+            const rolePermissions = authorizeConfig[userRole] || []
 
-            const rolePermisions = authorize[userRole] || []
-
-            if(!rolePermisions.includes(requiredPermission)) {
-                return res.status(403).json({message: 'FORBIDDEN'})
+            if (!rolePermissions.includes(requiredPermission)) {
+                return next(new AppError('Insufficient permissions', 403, 'FORBIDDEN'))
             }
 
             const policyFn = policies[requiredPermission]
 
-            if(policyFn && !policyFn(req.user, req, res)){
-                return res.status(403).json({message:'Policy check failed'})
+            try {
+                if (policyFn && !policyFn(req.user, req, res)) {
+                    return next(new AppError('Policy check failed', 403, 'FORBIDDEN'))
+                }
+            } catch (err) {
+                return next(err)
             }
 
-            next()
+            return next()
         }
     }
 }

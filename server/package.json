@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "module": "server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot run server.ts"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "latest",
+    "@types/express": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@hyperledger/fabric-gateway": "^1.11.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "fabric-contract-api": "^2.5.8",
+    "fabric-shim": "^2.5.8"
+  }
+}

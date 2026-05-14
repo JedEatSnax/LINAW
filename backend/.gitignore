@@ -1,19 +1,9 @@
-# Fabric CA
-**/ca-cert.pem
-**/fabric-ca-server.db
-**/keystore/
-**/IssuerPublicKey
-**/IssuerRevocationPublicKey
-**/tls-cert.pem
-
-
-# Node.js
-node_modules/
-package-lock.json/
-application/database
-application/backend/db/knexfile.js
-application/backend/config/serviceAcccount.json
-.npm/
+node_modules
+package-lock.json
+../database/
+config/serviceAccount.json
+db/knexfile.js
+.npm
 .env*
 logs/
 .cache/
@@ -23,3 +13,12 @@ logs/
 .yarn/
 .serverless/
 .pnp.*   
+/graphify-out
+.md
+.pem
+.db
+IssuerPublicKey
+IssuerRevocationPublicKey
+keystore
+msp
+docs
