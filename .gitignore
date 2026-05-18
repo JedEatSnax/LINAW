@@ -8,7 +8,8 @@ TODO.md
 GRYPHEN_DOCS.md
 NOTES.md
 ChainCodeSecurity.md
-database/
+database
+tenants
 /*.pid
 /*.log
 /*.yaml

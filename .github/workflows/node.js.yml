@@ -69,3 +69,23 @@ jobs:
       - name: Client Build
         run: bun run build
         working-directory: client
+
+  server:
+    name: server (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [24.x]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Server Install
+        run: bun ci
+        working-directory: server
+      - name: Server Build
+        run: bun run build
+        working-directory: server

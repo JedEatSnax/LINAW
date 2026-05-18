@@ -1,0 +1,59 @@
+version: "3.8"
+
+networks:
+  fabric-{TENANT_ID}:
+    name: fabric_{TENANT_ID}
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+
+services:
+  # TLS Certificate Authority for {TENANT_NAME}
+  tls-ca-{TENANT_ID}:
+    image: hyperledger/fabric-ca:latest
+    labels:
+      service: hyperledger-fabric
+      tenant: "{TENANT_ID}"
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME={TLS_CA_NAME}
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT={TLS_CA_PORT}
+      - FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:{TLS_CA_OPS_PORT}
+      - FABRIC_CA_SERVER_CORS_ENABLED=true
+    ports:
+      - "127.0.0.1:{TLS_CA_PORT}:{TLS_CA_PORT}"
+      - "127.0.0.1:{TLS_CA_OPS_PORT}:{TLS_CA_OPS_PORT}"
+    container_name: tls-ca-{TENANT_ID}
+    command: sh -c 'fabric-ca-server start -b {TLS_ADMIN_USER}:{TLS_ADMIN_PASSWORD}'
+    volumes:
+      - ./{TENANT_ID}/tls-ca:/etc/hyperledger/fabric-ca-server
+    networks:
+      - fabric-{TENANT_ID}
+    restart: unless-stopped
+
+  # Organization (Identity) Certificate Authority for {TENANT_NAME}
+  org-ca-{TENANT_ID}:
+    image: hyperledger/fabric-ca:latest
+    labels:
+      service: hyperledger-fabric
+      tenant: "{TENANT_ID}"
+    environment:
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME={ORG_CA_NAME}
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_PORT={ORG_CA_PORT}
+      - FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:{ORG_CA_OPS_PORT}
+      - FABRIC_CA_SERVER_CORS_ENABLED=true
+      - FABRIC_CA_CLIENT_HOME=/etc/hyperledger/fabric-ca-client
+    ports:
+      - "127.0.0.1:{ORG_CA_PORT}:{ORG_CA_PORT}"
+      - "127.0.0.1:{ORG_CA_OPS_PORT}:{ORG_CA_OPS_PORT}"
+    container_name: org-ca-{TENANT_ID}
+    command: sh -c 'fabric-ca-server start -b {ORG_ADMIN_USER}:{ORG_ADMIN_PASSWORD}'
+    volumes:
+      - ./{TENANT_ID}/org-ca:/etc/hyperledger/fabric-ca-server
+      - ./{TENANT_ID}/org-ca-client:/etc/hyperledger/fabric-ca-client
+    networks:
+      - fabric-{TENANT_ID}
+    restart: unless-stopped

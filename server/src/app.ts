@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { caServerRouter } from "./routes/caServerRoutes";
+import { tenantRouter } from "./routes/tenantRoutes";
 import { errorHandler } from "./middleware/errorHandler.ts";
 
 export function createApp(): express.Express {
@@ -13,7 +13,7 @@ export function createApp(): express.Express {
   );
   app.use(express.json());
 
-  app.use("/api/fabric-ca-server", caServerRouter);
+  app.use("/api/tenants", tenantRouter);
   app.use(errorHandler);
 
   return app;

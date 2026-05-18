@@ -59,6 +59,7 @@ export function ForgotPassForm({
               {success && (
                 <p className="p-2 text-center text-sm text-green-600">
                   Password reset email sent successfully!
+                  <br /> Check your Spam if the email isn't visible
                 </p>
               )}
             </FieldDescription>
