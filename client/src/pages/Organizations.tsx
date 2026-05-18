@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { type CSSProperties, useEffect, useState } from "react"
+import { type CSSProperties, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,66 +16,60 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Trash2 } from "lucide-react"
-import BadgeReady from "@/components/ui/badge-ready"
-import BadgePending from "@/components/ui/badge-pending"
-import BadgeError from "@/components/ui/badge-error"
+import OrganizationsDataTable, {
+  type TenantRow,
+} from "@/components/ui/organizations-data-table"
 
-interface Tenant {
-  tenantId: string
-  tenantName: string
-  tlsCaName: string
-  orgCaName: string
-  status: "initializing" | "ready" | "error"
-  createdAt: string
+interface Tenant extends TenantRow {
   errorMessage?: string
 }
 
 export default function Organizations() {
-  // Form state
   const [tenantName, setTenantName] = useState("")
   const [tlsAdminUser, setTlsAdminUser] = useState("")
   const [tlsAdminPassword, setTlsAdminPassword] = useState("")
   const [orgAdminUser, setOrgAdminUser] = useState("")
   const [orgAdminPassword, setOrgAdminPassword] = useState("")
 
-  // UI state
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [loadingTenants, setLoadingTenants] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [deletingTenantId, setDeletingTenantId] = useState<string | null>(null)
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:3000"
+  const tenantsSignatureRef = useRef("")
 
-  // Load tenants on mount and periodically
   useEffect(() => {
-    const loadTenants = async () => {
+    const loadTenants = async (options?: { silent?: boolean }) => {
+      const silent = options?.silent ?? false
       try {
-        setLoadingTenants(true)
+        if (!silent) {
+          setLoadingTenants(true)
+        }
+
         const response = await fetch(`${backendUrl}/api/tenants`)
         if (response.ok) {
           const data = (await response.json()) as { tenants: Tenant[] }
-          setTenants(data.tenants)
+          const nextSignature = JSON.stringify(data.tenants)
+          if (nextSignature !== tenantsSignatureRef.current) {
+            tenantsSignatureRef.current = nextSignature
+            setTenants(data.tenants)
+          }
         }
       } catch (err) {
         console.error("Failed to load tenants:", err)
       } finally {
-        setLoadingTenants(false)
+        if (!silent) {
+          setLoadingTenants(false)
+        }
       }
     }
 
     loadTenants()
-    const interval = setInterval(loadTenants, 5000) // Poll every 5s
+    const interval = setInterval(() => {
+      void loadTenants({ silent: true })
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [backendUrl])
@@ -141,7 +135,6 @@ export default function Organizations() {
         return
       }
 
-      // Clear form and close dialog
       setTenantName("")
       setTlsAdminUser("")
       setTlsAdminPassword("")
@@ -149,10 +142,10 @@ export default function Organizations() {
       setOrgAdminPassword("")
       setIsDialogOpen(false)
 
-      // Reload tenants
       const listResponse = await fetch(`${backendUrl}/api/tenants`)
       if (listResponse.ok) {
         const data = (await listResponse.json()) as { tenants: Tenant[] }
+        tenantsSignatureRef.current = JSON.stringify(data.tenants)
         setTenants(data.tenants)
       }
     } catch (err) {
@@ -172,7 +165,6 @@ export default function Organizations() {
       return
     }
 
-    setDeletingTenantId(tenantId)
     try {
       const response = await fetch(`${backendUrl}/api/tenants/${tenantId}`, {
         method: "DELETE",
@@ -193,17 +185,15 @@ export default function Organizations() {
         return
       }
 
-      // Reload tenants
       const listResponse = await fetch(`${backendUrl}/api/tenants`)
       if (listResponse.ok) {
         const data = (await listResponse.json()) as { tenants: Tenant[] }
+        tenantsSignatureRef.current = JSON.stringify(data.tenants)
         setTenants(data.tenants)
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Network error"
       alert(`Delete failed: ${message}`)
-    } finally {
-      setDeletingTenantId(null)
     }
   }
 
@@ -222,7 +212,6 @@ export default function Organizations() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 px-4 py-4 md:gap-6 md:px-6 md:py-6">
-              {/* Create Tenant Button */}
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button type="button" variant="outline">
@@ -334,92 +323,15 @@ export default function Organizations() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tenants Table */}
-              <div className="rounded-lg border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Tenant Name</TableHead>
-                      <TableHead>TLS ID</TableHead>
-                      <TableHead>Org/Signing ID</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {loadingTenants ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          className="py-8 text-center text-gray-500"
-                        >
-                          Loading tenants...
-                        </TableCell>
-                      </TableRow>
-                    ) : tenants.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          colSpan={6}
-                          className="py-8 text-center text-gray-500"
-                        >
-                          No tenants created yet
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      tenants.map((tenant) => (
-                        <TableRow key={tenant.tenantId}>
-                          <TableCell className="font-medium">
-                            {tenant.tenantName}
-                          </TableCell>
-                          <TableCell className="text-sm text-gray-600">
-                            {tenant.tlsCaName}
-                          </TableCell>
-                          <TableCell className="text-sm text-gray-600">
-                            {tenant.orgCaName}
-                          </TableCell>
-                          <TableCell>
-                            {tenant.status === "ready" ? (
-                              <BadgeReady />
-                            ) : tenant.status === "error" ? (
-                              <BadgeError />
-                            ) : (
-                              <BadgePending />
-                            )}
-                          </TableCell>
-                          <TableCell className="text-sm text-gray-600">
-                            {new Date(tenant.createdAt).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "2-digit",
-                                day: "2-digit",
-                              }
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteTenant(tenant.tenantId)
-                              }
-                              disabled={deletingTenantId === tenant.tenantId}
-                              className="h-8 w-8 p-0 text-red-600 hover:bg-red-50 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
+              <OrganizationsDataTable
+                tenants={tenants}
+                loadingTenants={loadingTenants}
+                onDeleteTenant={handleDeleteTenant}
+              />
 
               {tenants.length > 0 && (
-                <div className="text-sm text-gray-600">
-                  Total tenants: {tenants.length}
+                <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
+                  Total Certificate Authorities: {tenants.length}
                 </div>
               )}
             </div>
