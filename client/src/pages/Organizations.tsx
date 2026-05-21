@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { PageHero } from "@/components/page-hero"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { type CSSProperties, useEffect, useRef, useState } from "react"
@@ -20,6 +21,7 @@ import { Label } from "@/components/ui/label"
 import OrganizationsDataTable, {
   type TenantRow,
 } from "@/components/ui/organizations-data-table"
+import { Plus } from "lucide-react"
 
 const INVALID_CHARACTER_RULES = [
   { character: ":", label: "colon" },
@@ -263,16 +265,22 @@ export default function Organizations() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader title="Organizations" />
-        <main>
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-4 px-4 py-4 md:gap-6 md:px-6 md:py-6">
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button type="button" variant="outline">
-                      Create Certificate Authority
-                    </Button>
-                  </DialogTrigger>
+        <main className="flex flex-1 flex-col gap-6 px-4 py-4 md:px-6 md:py-6">
+          <PageHero
+            title="Organizations"
+            description="Manage certificate authorities and tenant provisioning"
+            actions={
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="bg-white text-slate-950 hover:bg-white/90"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Certificate Authority
+                  </Button>
+                </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleSubmit} noValidate>
                       <DialogHeader>
@@ -404,22 +412,21 @@ export default function Organizations() {
                       </DialogFooter>
                     </form>
                   </DialogContent>
-                </Dialog>
+              </Dialog>
+            }
+          />
 
-                <OrganizationsDataTable
-                  tenants={tenants}
-                  loadingTenants={loadingTenants}
-                  onDeleteTenant={handleDeleteTenant}
-                />
+          <OrganizationsDataTable
+            tenants={tenants}
+            loadingTenants={loadingTenants}
+            onDeleteTenant={handleDeleteTenant}
+          />
 
-                {tenants.length > 0 && (
-                  <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
-                    Total Certificate Authorities: {tenants.length}
-                  </div>
-                )}
-              </div>
+          {tenants.length > 0 && (
+            <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
+              Total Certificate Authorities: {tenants.length}
             </div>
-          </div>
+          )}
         </main>
       </SidebarInset>
     </SidebarProvider>

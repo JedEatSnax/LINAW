@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { PageHero } from "@/components/page-hero"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { useEffect, useState, type CSSProperties } from "react"
@@ -220,34 +221,32 @@ export default function AssetRegistry() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader title="Assets" />
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Assets</h1>
-              <p className="mt-1 text-muted-foreground">
-                Manage and track your blockchain assets
-              </p>
-            </div>
-
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setEditingAsset(null)
-                    setFormData({
-                      id: "",
-                      color: "",
-                      size: 0,
-                      owner: "",
-                      appraisedValue: 0,
-                    })
-                  }}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Asset
-                </Button>
-              </DialogTrigger>
+        <main className="flex flex-1 flex-col gap-6 px-4 py-4 md:px-6 md:py-6">
+          <PageHero
+            title="Assets"
+            description="Manage and track your blockchain assets"
+            actions={
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="bg-white text-slate-950 hover:bg-white/90"
+                    onClick={() => {
+                      setEditingAsset(null)
+                      setFormData({
+                        id: "",
+                        color: "",
+                        size: 0,
+                        owner: "",
+                        appraisedValue: 0,
+                      })
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Asset
+                  </Button>
+                </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
                 <form
@@ -368,8 +367,9 @@ export default function AssetRegistry() {
                   </DialogFooter>
                 </form>
               </DialogContent>
-            </Dialog>
-          </div>
+              </Dialog>
+            }
+          />
 
           {error && !isDialogOpen && (
             <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">

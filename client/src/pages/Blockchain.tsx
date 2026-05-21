@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { PageHero } from "@/components/page-hero"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { useEffect, useState, type CSSProperties } from "react"
@@ -205,22 +206,22 @@ export default function BlockchainNetworks() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader title="Blockchain Networks" />
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Blockchain Networks</h1>
-              <p className="mt-1 text-muted-foreground">
-                Manage Hyperledger Fabric networks and infrastructure
-              </p>
-            </div>
-
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Network
-                </Button>
-              </DialogTrigger>
+        <main className="flex flex-1 flex-col gap-6 px-4 py-4 md:px-6 md:py-6">
+          <PageHero
+            title="Blockchain Networks"
+            description="Manage Hyperledger Fabric networks and infrastructure"
+            actions={
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="bg-white text-slate-950 hover:bg-white/90"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Network
+                  </Button>
+                </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
                 <form
@@ -394,8 +395,9 @@ export default function BlockchainNetworks() {
                   </DialogFooter>
                 </form>
               </DialogContent>
-            </Dialog>
-          </div>
+              </Dialog>
+            }
+          />
 
           {error && !isDialogOpen && (
             <div className="rounded-lg border border-destructive/20 bg-destructive/10 px-4 py-3 text-sm text-destructive">

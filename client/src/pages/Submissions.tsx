@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar"
+import { PageHero } from "@/components/page-hero"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { useEffect, useState, type CSSProperties } from "react"
@@ -268,22 +269,22 @@ export default function ApprovalWorkflow() {
       <AppSidebar variant="inset" />
       <SidebarInset>
         <SiteHeader title="Approval Workflow" />
-        <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Approval Workflow</h1>
-              <p className="mt-1 text-muted-foreground">
-                Manage document submissions and approvals
-              </p>
-            </div>
-
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Submission
-                </Button>
-              </DialogTrigger>
+        <main className="flex flex-1 flex-col gap-6 px-4 py-4 md:px-6 md:py-6">
+          <PageHero
+            title="Approval Workflow"
+            description="Manage document submissions and approvals"
+            actions={
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="bg-white text-slate-950 hover:bg-white/90"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Submission
+                  </Button>
+                </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
                 <form
@@ -362,8 +363,9 @@ export default function ApprovalWorkflow() {
                   </DialogFooter>
                 </form>
               </DialogContent>
-            </Dialog>
-          </div>
+              </Dialog>
+            }
+          />
 
           {error && !isDialogOpen && (
             <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700">

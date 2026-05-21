@@ -407,7 +407,7 @@ export default function AddUser() {
         <SiteHeader title="Members" />
         <main className="flex flex-1 flex-col gap-6 px-4 py-4 md:px-6 md:py-6">
           <div className="relative overflow-hidden rounded-2xl border bg-linear-to-br from-slate-950 via-slate-900 to-slate-800 text-white shadow-sm">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(34,197,94,0.16),transparent_30%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.14),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(6,182,212,0.12),transparent_35%)]" />
             <div className="relative flex flex-col gap-4 p-6 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl space-y-2">
                 <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
