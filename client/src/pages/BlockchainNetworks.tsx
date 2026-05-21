@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type CSSProperties } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -182,10 +182,17 @@ export default function BlockchainNetworks() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader title="Blockchain Networks" />
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center justify-between">
             <div>
@@ -197,21 +204,20 @@ export default function BlockchainNetworks() {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Network
                 </Button>
               </DialogTrigger>
 
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Create New Blockchain Network</DialogTitle>
-                  <DialogDescription>
-                    Configure and deploy a new Hyperledger Fabric network
-                  </DialogDescription>
-                </DialogHeader>
+              <DialogContent className="sm:max-w-md">
+                <form onSubmit={(e) => { e.preventDefault(); void handleCreateNetwork(); }} noValidate>
+                  <DialogHeader>
+                    <DialogTitle>Create New Blockchain Network</DialogTitle>
+                    <DialogDescription>Configure and deploy a new Hyperledger Fabric network</DialogDescription>
+                  </DialogHeader>
 
-                <FieldGroup className="space-y-4">
+                  <FieldGroup className="gap-4 py-4">
                   <Field>
                     <Label htmlFor="network-name">Network Name *</Label>
                     <Input
@@ -331,15 +337,18 @@ export default function BlockchainNetworks() {
                     </FieldDescription>
                   </Field>
 
-                  {error && <div className="text-sm text-red-500">{error}</div>}
-                </FieldGroup>
+                    {error ? (
+                      <div className="max-h-28 overflow-y-auto rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm whitespace-pre-wrap text-red-700">{error}</div>
+                    ) : null}
+                  </FieldGroup>
 
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button onClick={handleCreateNetwork}>Create Network</Button>
-                </DialogFooter>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit">Create Network</Button>
+                  </DialogFooter>
+                </form>
               </DialogContent>
             </Dialog>
           </div>
@@ -348,7 +357,7 @@ export default function BlockchainNetworks() {
             <div className="rounded-lg bg-red-50 p-4 text-red-700 text-sm">{error}</div>
           )}
 
-          <div className="rounded-lg border bg-white">
+          <div className="rounded-lg border bg-card text-card-foreground">
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <p className="text-muted-foreground">Loading networks...</p>

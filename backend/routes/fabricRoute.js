@@ -23,7 +23,14 @@ router.get("/channel/:channel_id/contracts", fabricController.contractReadAll);
 
 // member addition
 
+
+router.get("/organizations", organizationInviteController.listOrganizations)
+router.get("/organizations/:organization_id/invitations", organizationInviteController.listInvites)
 router.post("/organizations/:organization_id/invitations", organizationInviteController.createInvite)
+router.post("/organizations/:organization_id/invitations/:invite_id/resend", organizationInviteController.resendInvite)
+router.delete("/organizations/:organization_id/invitations/:invite_id", organizationInviteController.cancelInvite)
+router.get("/organizations/:organization_id/members", organizationInviteController.listMembers)
+router.delete("/organizations/:organization_id/members/:user_id", organizationInviteController.removeMember)
 router.get("/organizations-invitations/:token",organizationInviteController.getInviteByToken)
 router.post("/organizations-invitations/:token/accept", organizationInviteController.acceptInvite)
 

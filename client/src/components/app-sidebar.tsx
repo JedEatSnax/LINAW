@@ -34,6 +34,11 @@ const navMainData = [
     icon: <UsersIcon />,
   },
   {
+    title: "Members",
+    url: "/members",
+    icon: <UsersIcon />,
+  },
+  {
     title: "Smart Contracts",
     url: "/smart-contracts",
     icon: <ScrollText />,

@@ -1,4 +1,5 @@
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import { lazy, Suspense } from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
@@ -22,10 +23,12 @@ const Submissions = lazy(() => import("./pages/ApprovalWorkflow"))
 const Blockchain = lazy(() => import("./pages/BlockchainNetworks"))
 const Account = lazy(() => import("./pages/Account"))
 const Settings = lazy(() => import("./pages/Settings"))
+const Members = lazy(() => import("./pages/AddUser"))
 
 export function App() {
   return (
     <TooltipProvider>
+      <Toaster />
       <Suspense fallback={<Skeleton />}>
         <BrowserRouter>
           <Routes>
@@ -123,6 +126,22 @@ export function App() {
               element={
                 <AuthenticationRoute>
                   <Settings />
+                </AuthenticationRoute>
+              }
+            />
+            <Route
+              path="/members"
+              element={
+                <AuthenticationRoute>
+                  <Members />
+                </AuthenticationRoute>
+              }
+            />
+            <Route
+              path="/add-user"
+              element={
+                <AuthenticationRoute>
+                  <Members />
                 </AuthenticationRoute>
               }
             />

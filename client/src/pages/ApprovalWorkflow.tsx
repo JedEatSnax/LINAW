@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type CSSProperties } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -217,10 +217,17 @@ export default function ApprovalWorkflow() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
       <SidebarInset>
-        <SiteHeader />
+        <SiteHeader title="Approval Workflow" />
         <main className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex items-center justify-between">
             <div>
@@ -232,62 +239,54 @@ export default function ApprovalWorkflow() {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button variant="outline">
                   <Plus className="mr-2 h-4 w-4" />
                   New Submission
                 </Button>
               </DialogTrigger>
 
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Submission</DialogTitle>
-                  <DialogDescription>
-                    Create a new proposal or document for approval
-                  </DialogDescription>
-                </DialogHeader>
+              <DialogContent className="sm:max-w-md">
+                <form onSubmit={(e) => { e.preventDefault(); void handleCreateSubmission(); }} noValidate>
+                  <DialogHeader>
+                    <DialogTitle>Create New Submission</DialogTitle>
+                    <DialogDescription>Create a new proposal or document for approval</DialogDescription>
+                  </DialogHeader>
 
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="proposal-type">Proposal Type *</Label>
-                    <Select
-                      value={formData.proposalType}
-                      onValueChange={(value) =>
-                        setFormData({ ...formData, proposalType: value })
-                      }
-                    >
-                      <SelectTrigger id="proposal-type">
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="capex-request">Capital Expenditure Request</SelectItem>
-                        <SelectItem value="budget-allocation">Budget Allocation</SelectItem>
-                        <SelectItem value="vendor-onboarding">Vendor Onboarding</SelectItem>
-                        <SelectItem value="policy-update">Policy Update</SelectItem>
-                        <SelectItem value="contract-review">Contract Review</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </Field>
+                  <FieldGroup className="gap-4 py-4">
+                    <Field>
+                      <Label htmlFor="proposal-type">Proposal Type *</Label>
+                      <Select value={formData.proposalType} onValueChange={(value) => setFormData({ ...formData, proposalType: value })}>
+                        <SelectTrigger id="proposal-type">
+                          <SelectValue placeholder="Select a type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="capex-request">Capital Expenditure Request</SelectItem>
+                          <SelectItem value="budget-allocation">Budget Allocation</SelectItem>
+                          <SelectItem value="vendor-onboarding">Vendor Onboarding</SelectItem>
+                          <SelectItem value="policy-update">Policy Update</SelectItem>
+                          <SelectItem value="contract-review">Contract Review</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
 
-                  <Field>
-                    <Label htmlFor="file-name">File Name (Optional)</Label>
-                    <Input
-                      id="file-name"
-                      placeholder="proposal.pdf"
-                      value={formData.fileName}
-                      onChange={(e) => setFormData({ ...formData, fileName: e.target.value })}
-                    />
-                  </Field>
+                    <Field>
+                      <Label htmlFor="file-name">File Name (Optional)</Label>
+                      <Input id="file-name" placeholder="proposal.pdf" value={formData.fileName} onChange={(e) => setFormData({ ...formData, fileName: e.target.value })} />
+                    </Field>
 
-                  {error && <div className="text-sm text-red-500 mt-2">{error}</div>}
-                </FieldGroup>
+                    {error ? (
+                      <div className="max-h-28 overflow-y-auto rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm whitespace-pre-wrap text-red-700">{error}</div>
+                    ) : null}
+                  </FieldGroup>
 
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button onClick={handleCreateSubmission}>Create Submission</Button>
-                </DialogFooter>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button">Cancel</Button>
+                    </DialogClose>
+                    <Button type="submit">Create Submission</Button>
+                  </DialogFooter>
+                </form>
               </DialogContent>
             </Dialog>
           </div>
@@ -296,7 +295,7 @@ export default function ApprovalWorkflow() {
             <div className="rounded-lg bg-red-50 p-4 text-red-700 text-sm">{error}</div>
           )}
 
-          <div className="rounded-lg border bg-white">
+          <div className="rounded-lg border bg-card text-card-foreground">
             {loading ? (
               <div className="flex items-center justify-center p-8">
                 <p className="text-muted-foreground">Loading submissions...</p>

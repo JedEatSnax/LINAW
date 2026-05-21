@@ -6,7 +6,110 @@ const organizationUserDao = require("../../dao/organizations/organziationUserDao
 const organizationInviteDao = require("../../dao/organizations/organizationInviteDao");
 const userDao = require("../../dao/userDao");
 
+function buildInviteLink(rawToken) {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+    return `${frontendUrl}/invitations/accept?token=${rawToken}`
+}
+
+function toIsoDate(value) {
+    if (!value) return null
+    const date = value instanceof Date ? value : new Date(value)
+    return Number.isNaN(date.getTime()) ? null : date.toISOString()
+}
+
+function formatInvite(invite) {
+    if (!invite) return null
+
+    return {
+        id: invite.invite_id,
+        organizationId: invite.organization_id,
+        tenantId: invite.tenant_id,
+        email: invite.invited_email,
+        role: invite.role,
+        status: invite.status,
+        sentAt: toIsoDate(invite.created_at),
+        expiresAt: toIsoDate(invite.expires_at),
+        acceptedAt: toIsoDate(invite.accepted_at),
+        acceptedBy: invite.accepted_by || null,
+        invitedBy: invite.invited_by || null,
+        inviteLink: null,
+        inviteLinkStatus:
+            invite.status === 'pending' && (!invite.expires_at || new Date(invite.expires_at) > new Date())
+                ? 'available'
+                : invite.status === 'accepted'
+                    ? 'accepted'
+                    : 'expired',
+    }
+}
+
+function formatMember(member) {
+    if (!member) return null
+
+    const joinedAt = member.accepted_at || member.user_created_at || null
+    const email = member.user_email || null
+
+    return {
+        id: member.user_id,
+        userId: member.user_id,
+        name: email ? email.split('@')[0] : 'Member',
+        email,
+        role: member.role,
+        joinedAt: toIsoDate(joinedAt),
+        status: 'active',
+        organizationId: member.organization_id,
+        tenantId: member.tenant_id,
+    }
+}
+
 class organizationInviteService {
+    async assertManageAccess({ organization_id, tenant_id, firebaseUid }) {
+        if (!firebaseUid) {
+            throw new AppError('Authentication required', 401, 'UNAUTHORIZED')
+        }
+
+        const dbUser = await userDao.findByFirebaseUid(firebaseUid)
+        if (!dbUser) {
+            throw new AppError('Authenticated user not found in database', 404, 'USER_NOT_FOUND')
+        }
+
+        const membership = await organizationUserDao.findByOrganizationAndUser({
+            organization_id,
+            user_id: dbUser.user_id,
+            tenant_id,
+        })
+
+        if (!membership) {
+            throw new AppError('You are not a member of this organization', 403, 'NOT_ORGANIZATION_MEMBER')
+        }
+
+        return { dbUser, membership }
+    }
+
+    async listOrganizations({ tenant_id, firebaseUid }) {
+        if (!firebaseUid) {
+            throw new AppError('Authentication required', 401, 'UNAUTHORIZED')
+        }
+
+        const dbUser = await userDao.findByFirebaseUid(firebaseUid)
+        if (!dbUser) {
+            throw new AppError('Authenticated user not found in database', 404, 'USER_NOT_FOUND')
+        }
+
+        const organizations = await organizationDao.getOrganizationsByTenant(tenant_id)
+
+        return {
+            success: true,
+            data: organizations.map((organization) => ({
+                organization_id: organization.organization_id,
+                organization_name: organization.organization_name,
+                tenant_id: organization.tenant_id,
+                msp_id: organization.msp_id,
+                created_at: organization.created_at,
+                updated_at: organization.updated_at,
+            })),
+        }
+    }
+
     async createInvite ({ organization_id, invitedEmail, role, invitedByUserId, tenant_id}){
         const normalizedEmail = String(invitedEmail).trim().toLowerCase()
         const normalizedRole = String(role).trim().toLowerCase()

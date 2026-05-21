@@ -3,6 +3,56 @@ const userDao = require('../dao/userDao')
 const AppError = require('../utils/AppError')
 
 class organizationInviteController {
+    async listInvites(req, res, next) {
+        try {
+            const organization_id = req.params?.organization_id
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const invites = await organizationInviteService.listInvites({
+                organization_id,
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(invites)
+        } catch (error) {
+            next(error)
+        }
+    }
+    async listOrganizations(req, res, next) {
+        try {
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const organizations = await organizationInviteService.listOrganizations({
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(organizations)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async listMembers(req, res, next) {
+        try {
+            const organization_id = req.params?.organization_id
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const members = await organizationInviteService.listMembers({
+                organization_id,
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(members)
+        } catch (error) {
+            next(error)
+        }
+    }
 
     async createInvite(req, res, next) {
         try {
@@ -33,6 +83,66 @@ class organizationInviteController {
             })
 
             return res.status(201).json(invite)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async resendInvite(req, res, next) {
+        try {
+            const organization_id = req.params?.organization_id
+            const invite_id = req.params?.invite_id
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const invite = await organizationInviteService.resendInvite({
+                organization_id,
+                invite_id,
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(invite)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async cancelInvite(req, res, next) {
+        try {
+            const organization_id = req.params?.organization_id
+            const invite_id = req.params?.invite_id
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const invite = await organizationInviteService.cancelInvite({
+                organization_id,
+                invite_id,
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(invite)
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    async removeMember(req, res, next) {
+        try {
+            const organization_id = req.params?.organization_id
+            const user_id = req.params?.user_id
+            const tenant_id = req.user?.tenantId
+            const firebaseUid = req.user?.uid
+
+            const removed = await organizationInviteService.removeMember({
+                organization_id,
+                user_id,
+                tenant_id,
+                firebaseUid,
+            })
+
+            return res.status(200).json(removed)
         } catch (error) {
             next(error)
         }
