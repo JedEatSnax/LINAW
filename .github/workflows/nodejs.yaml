@@ -1,0 +1,34 @@
+name: Node.js Continuous Integration
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  push:
+  pull_request:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  server:
+    name: LINAW-Server (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-slim
+    strategy:
+      matrix:
+        node-version: [24.x]
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@8912a9102ac27614460f54aedde9e1e7f9aec20d # v6.0.5
+        with:
+          version: 11
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Build
+        run: pnpm ci

@@ -8,14 +8,14 @@ Closes #
 
 ## Changes Made
 
-- 
-- 
+-
+-
 
 ## How to Test
 
-1. 
-2. 
-3. 
+1.
+2.
+3.
 
 ## Checklist
 
