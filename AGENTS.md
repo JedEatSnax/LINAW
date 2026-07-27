@@ -1,3 +1,7 @@
+## Skills
+
+- All skills are located at `.github/skills`.
+
 ## Issue and PR Guidelines
 
 - Never create an issue.

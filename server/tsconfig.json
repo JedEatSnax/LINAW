@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "esnext",
+    "target": "es2023",
+    "strict": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "types": ["node", "mocha"],
+    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler"
+  }
+}
