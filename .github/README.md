@@ -12,3 +12,7 @@ LINAW is an undergraduate thesis of computer science students from Systems Techn
 ### Contributing
 
 Read [CONTRIBUTING](CONTRIBUTING.md) for the full guidelines.
+
+### License
+
+This project is licensed under AGPL-3.0. See [LICENSE](../LICENSE) for more information.

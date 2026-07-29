@@ -12,7 +12,7 @@ A full guide on how to contribute to LINAW.
 
 Copy and paste the [client](../client/.env.example) and [server](../server/.env.example) example environemt variables into your own `client/.env.local` and `server/.env.local` files.
 
-### Client Local Testing
+### Client Development
 
 ```shell
 cd client
@@ -20,7 +20,9 @@ pnpm install
 pnpm run dev
 ```
 
-### Server Local Testing
+---
+
+### Server Development
 
 #### Installation
 
