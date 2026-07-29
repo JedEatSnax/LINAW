@@ -46,7 +46,7 @@ export function NavProcurements({
             key={item.title}
             defaultOpen={item.isActive}
             className="group/collapsible"
-            render={<SidebarMenuItem />}
+            render={<SidebarMenuItem className="[&_svg]:size-5!" />}
           >
             <CollapsibleTrigger
               render={<SidebarMenuButton tooltip={item.title} />}

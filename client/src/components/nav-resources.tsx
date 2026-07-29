@@ -29,12 +29,16 @@ export function NavResources({
 }) {
   const { isMobile } = useSidebar()
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>Resources</SidebarGroupLabel>
       <SidebarMenu>
         {resources.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton render={<a href={item.url} />}>
+            <SidebarMenuButton
+              tooltip={item.name}
+              render={<a href={item.url} />}
+              className="[&_svg]:size-5!"
+            >
               {item.icon}
               <span>{item.name}</span>
             </SidebarMenuButton>
