@@ -7,7 +7,8 @@
     "dev": "node --env-file=.env.local --watch server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "trace": "rm -rf dist; pnpm tsc; node --trace-warnings --env-file=.env dist/src/server.js"
+    "trace": "rm -rf dist; pnpm tsc; node --trace-warnings --env-file=.env dist/src/server.js",
+    "build": "tsc -b"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -38,6 +39,7 @@
     "@prisma/client": "^7.9.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
+    "elliptic": "6.6.1",
     "express": "^5.2.1",
     "pg": "^8.22.0"
   }

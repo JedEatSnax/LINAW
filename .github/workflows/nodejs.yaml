@@ -31,7 +31,17 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: client/pnpm-lock.yaml
       - name: Install
+        run: pnpm install --frozen-lockfile
+        working-directory: client
+      - name: Build
         run: pnpm run build
+        working-directory: client
+      - name: Lint
+        run: pnpm run lint
+        working-directory: client
+
+      - name: Typecheck
+        run: pnpm run typecheck
         working-directory: client
   server:
     name: Server (Node ${{ matrix.node-version }})
@@ -51,6 +61,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
           cache-dependency-path: server/pnpm-lock.yaml
+      - name: Install
+        run: pnpm install --frozen-lockfile
+        working-directory: server
       - name: Build
-        run: pnpm ci
+        run: pnpm run build
+        working-directory: server
+      - name: Lint
+        run: pnpm run lint
+        working-directory: server
+      - name: Typecheck
+        run: pnpm run typecheck
         working-directory: server
