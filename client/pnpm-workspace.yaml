@@ -3,3 +3,32 @@ packages: []
 allowBuilds:
   esbuild: true
   msw: false
+
+minimumReleaseAgeExclude:
+  - xlsx@0.19.3 || 0.20.2
+  - '@hono/node-server@2.0.5'
+  - fast-uri@3.1.4 || 3.1.5
+  - react-router@8.3.0
+  - brace-expansion@1.1.17 || 1.1.18 || 5.0.8 || 5.0.9
+  - postcss@8.5.23
+  - undici@7.29.0
+  - ip-address@10.2.1 || 10.2.2 || 10.3.1
+  - hono@4.12.34
+
+overrides:
+  '@hono/node-server@<2.0.5': ^2.0.5
+  brace-expansion@<1.1.17: ^1.1.17
+  brace-expansion@<1.1.18: ^1.1.18
+  brace-expansion@>=4.0.0 <5.0.8: ^5.0.8
+  brace-expansion@>=4.0.0 <5.0.9: ^5.0.9
+  fast-uri@>=3.0.0 <3.1.5: ^3.1.5
+  fast-uri@>=3.0.0 <=3.1.3: ^3.1.4
+  hono@<4.12.34: ^4.12.34
+  ip-address@<=10.3.0: ^10.3.1
+  ip-address@>=10.1.1 <=10.2.0: ^10.2.1
+  ip-address@>=10.1.1 <=10.2.1: ^10.2.2
+  postcss@<=8.5.22: ^8.5.23
+  react-router@>=7.12.0 <8.3.0: ^8.3.0
+  undici@>=7.0.0 <7.29.0: ^7.29.0
+  xlsx@<0.19.3: ^0.19.3
+  xlsx@<0.20.2: ^0.20.2

@@ -22,7 +22,14 @@ const mochaGlobals = {
 
 export default [
   {
-    ignores: ["dist", "artifacts", "cache", "**/node_modules/", ".git/"],
+    ignores: [
+      "dist",
+      "artifacts",
+      "cache",
+      "**/node_modules/",
+      ".git/",
+      "types",
+    ],
   },
   {
     files: ["**/*.{ts,tsx}"],
