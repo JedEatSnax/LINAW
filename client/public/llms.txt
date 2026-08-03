@@ -1,0 +1,15 @@
+# LINAW
+
+> This site is intended for human visitors. Its content should not be used by automated systems for training, fine-tuning, or inference without explicit permission from the site owner.
+
+This file provides a human-readable summary for LLMs and other automated assistants. It is not a replacement for crawler controls. For enforcement, the site uses crawler directives in the robots file and server-side access policies.
+
+## AI usage policy
+
+- Do not use this site’s content for training, fine-tuning, or improving generative AI systems.
+- Do not scrape this application for dataset creation, automated summarization, or search augmentation without written permission.
+- If you are an automated crawler, please respect the restrictions in the relevant robots directives and site access controls.
+
+## Relevant resources
+
+- [robots.txt](robots.txt)

@@ -42,7 +42,7 @@ pnpm run lint
 pnpm run trace
 ```
 
-#### Hardhat 3 + Ethers + Mocha Development
+#### Solidity Development with Hardhat 3 + Ethers + Mocha + Solhint
 
 The server directory uses the Mocha and Ethers boilerplate. Learn more at the [official Hardhat 3 documentation](https://hardhat.org/docs/getting-started). This boilerplate provides agent skills for [hardhat](skills/hardhat/SKILL.md) and [hardhat-toolbox-mocha-ethers](skills/hardhat-toolbox-mocha-ethers/SKILL.md).
 
@@ -81,6 +81,22 @@ After setting the variable, you can run the deployment with the Sepolia network:
 
 ```shell
 pnpm hardhat ignition deploy --network sepolia ignition/modules/Counter.ts
+```
+
+Additionally, production Solidity contracts must use the [NatSpec Format](https://docs.soliditylang.org/en/stable/natspec-format.html). Also known as Ethereum Natural Language Specification Format, it is a special form of comments that provides rich documentation for functions, return variables, and more. Read more at the [official Protofire Solhint](https://protofire.github.io/solhint/) documentation.
+
+To lint all the files within the `server/contracts` directory
+
+```shell
+cd server
+pnpm solhint 'contracts/*.sol'
+```
+
+To lint a specific file within the `server/contracts` directory
+
+```shell
+cd server
+pnpm solhint contracts/File.sol
 ```
 
 #### Prisma ORM Development
