@@ -30,6 +30,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
           cache-dependency-path: client/pnpm-lock.yaml
+      - name: Lint
+        run: pnpm run lint
+        working-directory: client
+
+      - name: Typecheck
+        run: pnpm run typecheck
+        working-directory: client
       - name: Install
         run: pnpm run build
         working-directory: client
@@ -51,6 +58,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
           cache-dependency-path: server/pnpm-lock.yaml
+
+      - name: Lint
+        run: pnpm run lint
+        working-directory: server
+      - name: Typecheck
+        run: pnpm run typecheck
+        working-directory: server
       - name: Build
         run: pnpm ci
         working-directory: server
