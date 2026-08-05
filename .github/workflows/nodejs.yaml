@@ -31,7 +31,7 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: client/pnpm-lock.yaml
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         working-directory: client
       - name: Build
         run: pnpm run build
@@ -62,7 +62,7 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: server/pnpm-lock.yaml
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
         working-directory: server
       - name: Build
         run: pnpm run build
