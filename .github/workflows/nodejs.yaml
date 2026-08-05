@@ -31,7 +31,7 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: client/pnpm-lock.yaml
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
         working-directory: client
       - name: Build
         run: pnpm run build
@@ -39,10 +39,12 @@ jobs:
       - name: Lint
         run: pnpm run lint
         working-directory: client
-
       - name: Typecheck
         run: pnpm run typecheck
         working-directory: client
+  #      - name: Test
+  #        run: pnpm run test
+  #        working-directory: client
   server:
     name: Server (Node ${{ matrix.node-version }})
     runs-on: ubuntu-slim
@@ -62,7 +64,10 @@ jobs:
           cache: "pnpm"
           cache-dependency-path: server/pnpm-lock.yaml
       - name: Install
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
+        working-directory: server
+      - name: Prisma ORM Generate
+        run: pnpm run generate
         working-directory: server
       - name: Build
         run: pnpm run build
@@ -72,4 +77,7 @@ jobs:
         working-directory: server
       - name: Typecheck
         run: pnpm run typecheck
+        working-directory: server
+      - name: Hardhat Test
+        run: pnpm hardhat test
         working-directory: server

@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "trace": "rm -rf dist; pnpm tsc; node --trace-warnings --env-file=.env dist/src/server.js",
-    "build": "tsc -b"
+    "build": "tsc -b",
+    "generate": "prisma generate"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -25,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
     "chai": "^6.2.2",
+    "eslint": "^10.8.0",
     "ethers": "^6.17.0",
     "forge-std": "github:foundry-rs/forge-std#v1.9.4",
     "hardhat": "^3.11.0",

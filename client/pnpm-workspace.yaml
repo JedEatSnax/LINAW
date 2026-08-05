@@ -6,7 +6,7 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - xlsx@0.19.3 || 0.20.2
-  - '@hono/node-server@2.0.5'
+  - "@hono/node-server@2.0.5"
   - fast-uri@3.1.4 || 3.1.5
   - react-router@8.3.0
   - brace-expansion@1.1.17 || 1.1.18 || 5.0.8 || 5.0.9
@@ -16,7 +16,7 @@ minimumReleaseAgeExclude:
   - hono@4.12.34
 
 overrides:
-  '@hono/node-server@<2.0.5': ^2.0.5
+  "@hono/node-server@<2.0.5": ^2.0.5
   brace-expansion@<1.1.17: ^1.1.17
   brace-expansion@<1.1.18: ^1.1.18
   brace-expansion@>=4.0.0 <5.0.8: ^5.0.8
@@ -30,5 +30,3 @@ overrides:
   postcss@<=8.5.22: ^8.5.23
   react-router@>=7.12.0 <8.3.0: ^8.3.0
   undici@>=7.0.0 <7.29.0: ^7.29.0
-  xlsx@<0.19.3: ^0.19.3
-  xlsx@<0.20.2: ^0.20.2

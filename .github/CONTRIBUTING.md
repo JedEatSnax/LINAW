@@ -101,4 +101,10 @@ pnpm solhint contracts/File.sol
 
 #### Prisma ORM Development
 
+To get started with Prisma ORM development while using the existing schema:
+
+```shell
+pnpm run generate
+```
+
 **_Unfinished_**
