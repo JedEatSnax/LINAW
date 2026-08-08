@@ -34,26 +34,19 @@ export function LoginForm({
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                />
+                <Input id="email" type="email" required />
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <a
                     href="/forgot-password"
-                    className="ml-auto inline-block text-xs underline-offset-4 hover:underline text-sm"
+                    className="ml-auto inline-block text-xs underline-offset-4 hover:underline"
                   >
                     Forgot your password?
                   </a>
                 </div>
-                <PasswordInput 
-		  id="password" 
-		  name="password" 
-		  required />
+                <PasswordInput id="password" name="password" required />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>

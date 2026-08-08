@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
   // Server options only affects Vite dev server, not production
@@ -21,8 +21,6 @@ export default defineConfig({
       "X-XSS-Protection": "1; mode=block",
       "X-Frame-Options": "DENY",
       "X-Content-Type-Options": "nosniff",
-      "Content-Security-Policy":
-        "default-src 'self'; img-src 'self' https://linaw.tech https://*.linaw.tech",
     },
   },
 })
