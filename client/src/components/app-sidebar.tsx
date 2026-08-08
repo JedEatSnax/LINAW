@@ -11,9 +11,11 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar"
 import {
+  LayoutDashboard,
   HandCoinsIcon,
   ShoppingCartIcon,
   MonitorSmartphoneIcon,
@@ -139,7 +141,16 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader>
+        <SidebarMenuButton
+          className="font-bold"
+          tooltip={"Dashboard"}
+          render={<a href="/dashboard" />}
+        >
+          <LayoutDashboard />
+          Dashboard
+        </SidebarMenuButton>
+      </SidebarHeader>
       <SidebarContent>
         <NavProcurements procurements={data.procurements} />
         <NavResources resources={data.resources} />

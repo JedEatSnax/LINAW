@@ -13,9 +13,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import DataTable10 from "@/components/data-table10"
+import DataTable8 from "@/components/data-table8"
 
-export default function Chatbot() {
+export default function Assets() {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -46,7 +46,7 @@ export default function Chatbot() {
           </div>
         </header>
         <div className="flex min-h-0 flex-1 flex-col gap-4 p-4 pt-0">
-          <DataTable10 />
+          <DataTable8 />
         </div>
       </SidebarInset>
     </SidebarProvider>

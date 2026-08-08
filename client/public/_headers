@@ -1,6 +1,0 @@
-/*
-  Strict-Transport-Security: max-age=86400; includeSubDomains
-  X-XSS-Protection: 1; mode=block
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  Content-Security-Policy: default-src 'self'; img-src 'self' https://linaw.tech https://*.linaw.tech

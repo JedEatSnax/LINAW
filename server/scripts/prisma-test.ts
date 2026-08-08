@@ -9,18 +9,17 @@ async function main() {
   // Create a new user with a post
   const user = await prisma.user.create({
     data: {
-      name: "Test",
-      email: "test@prisma.io",
-      posts: {
+      name: "Test2",
+      email: "test2@prisma.io",
+      occupation: "Bum",
+      status: "Bored",
+      license: {
         create: {
-          title: "My World",
-          content: "This is my 100th post!",
-          published: true,
+          name: "Office",
+          product_key: "0x123456789",
+          manufacturer: "Microsoft",
         },
       },
-    },
-    include: {
-      posts: true,
     },
   });
   console.log("Created user:", user);
@@ -28,7 +27,7 @@ async function main() {
   // Fetch all users with their posts
   const allUsers = await prisma.user.findMany({
     include: {
-      posts: true,
+      license: true,
     },
   });
   console.log("All users:", JSON.stringify(allUsers, null, 2));

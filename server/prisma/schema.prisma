@@ -13,17 +13,25 @@ datasource db {
 }
 
 // Test Schema Below
-model User { 
-  id    Int     @id @default(autoincrement()) 
-  email String  @unique
-  name  String?
-  posts Post[]
-} 
-model Post { 
-  id        Int     @id @default(autoincrement()) 
-  title     String
-  content   String?
-  published Boolean @default(false) 
-  author    User    @relation(fields: [authorId], references: [id]) 
-  authorId  Int
-} 
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  name       String
+  occupation String
+  status     String
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  license    License[]
+}
+
+model License {
+  id               Int       @id @default(autoincrement())
+  name             String
+  product_key      String
+  expiration_date  DateTime?
+  licensedTo       User      @relation(fields: [licensedToEmail], references: [email])
+  licensedToEmail  String
+  manufacturer     String
+  minimum_quantity Int?
+}
