@@ -31,3 +31,6 @@
 /snapshots
 
 /generated/prisma
+
+.wrangler
+.pnpm-store

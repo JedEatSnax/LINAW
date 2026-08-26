@@ -3,7 +3,8 @@
 // Only for testing purposes.
 //
 
-import { prisma } from "../lib/prisma";
+import { getPrisma } from "../lib/prisma";
+const prisma = getPrisma(process.env.DATABASE_URL);
 
 async function main() {
   // Create a new user with a post

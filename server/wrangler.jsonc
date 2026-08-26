@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "linaw-server-worker",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-08-26",
+  "workers_dev": false,
+  "minify": true,
+  "secrets": {
+    // ONLY APPLIES TO PRODUCTION
+    "required": [
+      "ALLOWED_ORIGIN",
+      "RPC_API_KEY",
+      "WALLET_ADDRESS",
+      "DATABASE_URL",
+      "DATABASE_URL_UNPOOLED",
+    ],
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1, // 10% of requests are logged
+  },
+  "routes": [
+    {
+      "pattern": "api.linaw.tech/*",
+      "zone_name": "linaw.tech",
+    },
+  ],
+  "env": {
+    //ONLY APPLIES TO SPECIFIED ENVIRONMENTS
+    "local": {
+      "secrets": {
+        "required": [
+          "ALLOWED_ORIGIN",
+          "RPC_API_KEY",
+          "WALLET_ADDRESS",
+          "DATABASE_URL",
+          "DATABASE_URL_UNPOOLED",
+        ],
+      },
+    },
+    "staging": {
+      "secrets": {
+        "required": [
+          "ALLOWED_ORIGIN",
+          "RPC_API_KEY",
+          "WALLET_ADDRESS",
+          "DATABASE_URL",
+          "DATABASE_URL_UNPOOLED",
+        ],
+      },
+    },
+  },
+}

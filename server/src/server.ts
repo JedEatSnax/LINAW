@@ -1,26 +1,36 @@
-import express from "express";
-import cors from "cors";
-import { network } from "hardhat";
-const { ethers } = await network.create();
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { prettyJSON } from "hono/pretty-json";
+import { poweredBy } from "hono/powered-by";
+import { secureHeaders } from "hono/secure-headers";
 
-const app = express();
-const PORT = Number(process.env.PORT ?? 3000);
-const URL = `https://eth-sepolia.g.alchemy.com/v2/${process.env.RPC_API_KEY}`;
-const ADDRESS = process.env.WALLET_ADDRESS;
+import userRoutes from "./routes/users.js";
+import licenseRoutes from "./routes/licenses.js";
+import ethersRoutes from "./routes/ethers.js";
 
-app.listen(PORT, () => {
-  console.log(`Express running on port ${PORT}`);
-});
+const app = new Hono<{ Bindings: CloudflareBindings }>();
+
+app.use("*", poweredBy());
+app.use(secureHeaders());
+app.use(prettyJSON());
 
 app.use(
+  "*",
   cors({
-    origin: process.env.ALLOWED_ORIGIN ?? ["http://localhost:5173"],
+    origin: (_origin, c) => c.env.ALLOWED_ORIGIN || "*",
+  }),
+  secureHeaders({
+    xFrameOptions: "SAMEORIGIN",
+    xXssProtection: "1",
   }),
 );
 
-const provider = new ethers.JsonRpcProvider(URL);
-if (!ADDRESS) {
-  throw new Error("Wallet address not set");
-}
-const balance = await provider.getBalance(ADDRESS);
-console.log(ethers.formatUnits(balance, 18));
+app.get("/", (c) => c.text("LINAW API"));
+
+app.route("/users", userRoutes);
+app.route("/licenses", licenseRoutes);
+app.route("/ethers", ethersRoutes);
+
+app.notFound((c) => c.json({ message: "Not Found", ok: false }, 404));
+
+export default app;
