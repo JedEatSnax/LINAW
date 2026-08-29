@@ -10,7 +10,7 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "trace": "rm -rf dist; pnpm tsc; node --trace-warnings --env-file=.env dist/src/server.js",
-    "build": "tsc -b && pnpm prisma generate",
+    "build": "pnpm prisma generate && tsc -b",
     "generate": "prisma generate",
     "format": "prisma format"
   },
@@ -41,6 +41,7 @@
     "@openzeppelin/contracts": "^5.6.1",
     "@prisma/adapter-neon": "^7.10.0",
     "@prisma/client": "^7.10.0",
+    "dotenv": "^17.4.2",
     "hono": "^4.13.5",
     "zod": "^4.4.3"
   }
