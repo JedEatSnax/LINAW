@@ -9,7 +9,6 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "types": ["node", "mocha"],
-    "ignoreDeprecations": "6.0",
     "moduleResolution": "bundler"
   }
 }

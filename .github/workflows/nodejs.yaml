@@ -14,7 +14,7 @@ env:
 jobs:
   client:
     name: Client (Node ${{ matrix.node-version }})
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [24.x]
@@ -47,7 +47,7 @@ jobs:
   #        working-directory: client
   server:
     name: Server (Node ${{ matrix.node-version }})
-    runs-on: ubuntu-slim
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [24.x]
@@ -66,9 +66,6 @@ jobs:
       - name: Install
         run: pnpm install
         working-directory: server
-      - name: Prisma ORM Generate
-        run: pnpm run generate
-        working-directory: server
       - name: Build
         run: pnpm run build
         working-directory: server
@@ -78,6 +75,6 @@ jobs:
       - name: Typecheck
         run: pnpm run typecheck
         working-directory: server
-      - name: Hardhat Test
+      - name: Test
         run: pnpm hardhat test
         working-directory: server

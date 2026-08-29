@@ -3,8 +3,9 @@ import { getPrisma } from "../../lib/prisma.js";
 
 const router = new Hono<{ Bindings: CloudflareBindings }>();
 
+const prisma = getPrisma();
+
 router.get("/", async (c) => {
-  const prisma = getPrisma(c.env.DATABASE_URL);
   try {
     const users = await prisma.user.findMany({
       select: {

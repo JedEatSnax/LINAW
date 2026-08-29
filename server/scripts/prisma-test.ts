@@ -4,7 +4,7 @@
 //
 
 import { getPrisma } from "../lib/prisma";
-const prisma = getPrisma(process.env.DATABASE_URL);
+const prisma = getPrisma();
 
 async function main() {
   // Create a new user with a post

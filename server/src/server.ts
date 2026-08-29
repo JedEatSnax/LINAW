@@ -8,7 +8,7 @@ import userRoutes from "./routes/users.js";
 import licenseRoutes from "./routes/licenses.js";
 import ethersRoutes from "./routes/ethers.js";
 
-const app = new Hono<{ Bindings: CloudflareBindings }>();
+const app = new Hono<{ Bindings: CloudflareBindings }>().basePath("/api");
 
 app.use("*", poweredBy());
 app.use(secureHeaders());

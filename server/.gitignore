@@ -30,7 +30,8 @@
 # Snapshot cheatcodes output
 /snapshots
 
-/generated/prisma
+prisma/generated
+src/generated
 
 .wrangler
 .pnpm-store

@@ -2,7 +2,7 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "linaw-server-worker",
   "main": "src/server.ts",
-  "compatibility_date": "2026-08-26",
+  "compatibility_date": "2026-08-28",
   "workers_dev": false,
   "minify": true,
   "secrets": {
@@ -16,12 +16,19 @@
     ],
   },
   "observability": {
-    "enabled": true,
-    "head_sampling_rate": 0.1, // 10% of requests are logged
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 0.1, // 10% of requests are logged
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1, // 10% of requests are logged
+    },
   },
   "routes": [
     {
-      "pattern": "api.linaw.tech/*",
+      "pattern": "linaw.tech/*",
       "zone_name": "linaw.tech",
     },
   ],
