@@ -10,7 +10,7 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "trace": "rm -rf dist; pnpm tsc; node --trace-warnings --env-file=.env dist/src/server.js",
-    "build": "pnpm prisma generate && tsc -b",
+    "build": "tsc -b && pnpm prisma generate",
     "generate": "prisma generate",
     "format": "prisma format"
   },
