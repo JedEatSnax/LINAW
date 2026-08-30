@@ -26,6 +26,9 @@
       "head_sampling_rate": 0.1, // 10% of requests are logged
     },
   },
+  "placement": {
+    "mode": "smart",
+  },
   "routes": [
     {
       "pattern": "linaw.tech/*",

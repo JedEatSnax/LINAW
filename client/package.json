@@ -4,13 +4,14 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "cf-typegen": "wrangler types",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
-    "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "typecheck": "wrangler types --check && tsc --noEmit",
+    "preview": "pnpm run build && vite preview"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -36,6 +37,7 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.1.2",
     "@types/node": "^26.3.0",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.18",
@@ -47,6 +49,7 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "wrangler": "^4.127.1"
   }
 }

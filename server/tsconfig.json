@@ -4,11 +4,25 @@
     "module": "esnext",
     "target": "es2023",
     "strict": true,
+    "alwaysStrict": true,
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "types": ["node", "mocha"],
-    "moduleResolution": "bundler"
+    "types": ["node"],
+    "moduleResolution": "bundler",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
   }
 }
