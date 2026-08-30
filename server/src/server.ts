@@ -4,6 +4,7 @@ import { prettyJSON } from "hono/pretty-json";
 import { poweredBy } from "hono/powered-by";
 import { secureHeaders } from "hono/secure-headers";
 
+import { globalErrorHandler } from "./middlewares/errorHandler.js";
 import userRoutes from "./routes/users.js";
 import licenseRoutes from "./routes/licenses.js";
 import ethersRoutes from "./routes/ethers.js";
@@ -25,8 +26,9 @@ app.use(
   }),
 );
 
-app.get("/", (c) => c.text("LINAW API"));
+app.onError(globalErrorHandler);
 
+app.get("/", (c) => c.text("LINAW API"));
 app.route("/users", userRoutes);
 app.route("/licenses", licenseRoutes);
 app.route("/ethers", ethersRoutes);
