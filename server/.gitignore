@@ -20,6 +20,8 @@
 .env
 .env.*
 !.env.example
+.dev.vars*
+!.dev.vars.example
 
 # Hardhat coverage reports
 /coverage

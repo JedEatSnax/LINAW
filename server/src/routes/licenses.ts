@@ -1,8 +1,8 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { getPrisma } from "../../lib/prisma.js";
 import { Prisma } from "../generated/prisma/client.js";
 import { zValidator } from "@hono/zod-validator";
-import { LicenseUncheckedCreateInputObjectZodSchema } from "../../prisma/generated/schemas/index.js";
 
 const licenseSelect = {
   id: true,
@@ -15,11 +15,14 @@ const licenseSelect = {
   minimum_quantity: true,
 } satisfies Prisma.LicenseSelect;
 
-const LicenseCreateBodySchema = LicenseUncheckedCreateInputObjectZodSchema.omit(
-  {
-    id: true,
-  },
-);
+const LicenseCreateBodySchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  product_key: z.string().min(1, "Product key is required"),
+  expiration_date: z.coerce.date().optional(),
+  licensedToEmail: z.email("Valid email is required"),
+  manufacturer: z.string().min(1, "Manufacturer is required"),
+  minimum_quantity: z.number().int().positive().optional(),
+});
 
 const router = new Hono<{ Bindings: CloudflareBindings }>();
 

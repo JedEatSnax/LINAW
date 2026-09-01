@@ -13,6 +13,8 @@
       "WALLET_ADDRESS",
       "DATABASE_URL",
       "DATABASE_URL_UNPOOLED",
+      "BETTER_AUTH_SECRET",
+      "BETTER_AUTH_URL",
     ],
   },
   "observability": {
@@ -31,13 +33,19 @@
   },
   "routes": [
     {
-      "pattern": "linaw.tech/*",
+      "pattern": "linaw.tech/api/*",
       "zone_name": "linaw.tech",
     },
   ],
   "env": {
     //ONLY APPLIES TO SPECIFIED ENVIRONMENTS
     "local": {
+      "routes": [
+        {
+          "pattern": "http://localhost:8787/api",
+          "zone_name": "http://localhost:8787/api",
+        },
+      ],
       "secrets": {
         "required": [
           "ALLOWED_ORIGIN",
@@ -45,6 +53,8 @@
           "WALLET_ADDRESS",
           "DATABASE_URL",
           "DATABASE_URL_UNPOOLED",
+          "BETTER_AUTH_SECRET",
+          "BETTER_AUTH_URL",
         ],
       },
     },
@@ -56,6 +66,8 @@
           "WALLET_ADDRESS",
           "DATABASE_URL",
           "DATABASE_URL_UNPOOLED",
+          "BETTER_AUTH_SECRET",
+          "BETTER_AUTH_URL",
         ],
       },
     },
