@@ -1,7 +1,22 @@
 {
   "name": "LINAW-Server",
+  "private": false,
   "version": "1.0.0",
   "type": "module",
+  "author": "Wiii-1 (https://github.com/Wiii-1)",
+  "contributors": [
+    "Lead Frontend Deveveloper, Backend Deveveloper, DevOps",
+    {
+      "name": "JedEatSnax",
+      "url": "https://github.com/JedEatSnax"
+    },
+    "Lead Thesis Author, Software Quality Assurance",
+    {
+      "name": "GrypenBrigade",
+      "url": "https://github.com/GrypenBrigade"
+    }
+  ],
+  "license": "AGPL-3.0-only",
   "scripts": {
     "cf-typegen": "wrangler types --env-interface CloudflareBindings",
     "dev": "wrangler dev --env local",

@@ -6,6 +6,7 @@ import { secureHeaders } from "hono/secure-headers";
 
 import type { AuthType } from "../lib/auth.js";
 import { globalErrorHandler } from "./middlewares/errorHandler.js";
+import { sessionMiddleware } from "./middlewares/session.js";
 import auth from "./routes/auth.js";
 import ethersRoutes from "./routes/ethers.js";
 import licenseRoutes from "./routes/licenses.js";
@@ -34,6 +35,20 @@ app.use(
 app.onError(globalErrorHandler);
 
 app.route("/auth", auth);
+app.use("/ethers/*", sessionMiddleware);
+app.use("/licenses/*", sessionMiddleware);
+app.use("/ethers", async (c, next) => {
+  if (!c.get("session")) {
+    return c.json({ message: "Unauthorized" }, 401);
+  }
+  return await next();
+});
+app.use("/licenses", async (c, next) => {
+  if (!c.get("session")) {
+    return c.json({ message: "Unauthorized" }, 401);
+  }
+  return await next();
+});
 app.route("/ethers", ethersRoutes);
 app.route("/licenses", licenseRoutes);
 

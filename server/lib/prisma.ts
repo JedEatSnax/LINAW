@@ -1,14 +1,16 @@
 import { env } from "cloudflare:workers";
 import { PrismaClient } from "../src/generated/prisma/client.js";
-import { PrismaNeon } from "@prisma/adapter-neon";
+import { PrismaNeonHttp } from "@prisma/adapter-neon";
 
 export function getPrisma() {
-  const adapter = new PrismaNeon({
-    connectionString: env.DATABASE_URL!,
+  const adapter = new PrismaNeonHttp(env.DATABASE_URL!, {
+    fetchOptions: {
+      cache: "no-store",
+    },
   });
   return new PrismaClient({
     adapter,
-    errorFormat: "pretty",
+    errorFormat: "minimal",
     log: [
       {
         emit: "stdout",

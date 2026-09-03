@@ -18,7 +18,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  lincens       License[]
+  license       License[]
 
   @@unique([email])
   @@map("user")
@@ -85,4 +85,16 @@ model License {
   minimum_quantity Int?
 
   @@map("license")
+}
+
+model Jwks {
+  id         String    @id
+  publicKey  String
+  privateKey String
+  createdAt  DateTime
+  expiresAt  DateTime?
+  alg        String?
+  crv        String?
+
+  @@map("jwks")
 }

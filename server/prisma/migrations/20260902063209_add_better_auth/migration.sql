@@ -70,6 +70,19 @@ CREATE TABLE "license" (
     CONSTRAINT "license_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "jwks" (
+    "id" TEXT NOT NULL,
+    "publicKey" TEXT NOT NULL,
+    "privateKey" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "expiresAt" TIMESTAMP(3),
+    "alg" TEXT,
+    "crv" TEXT,
+
+    CONSTRAINT "jwks_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 

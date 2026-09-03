@@ -1,10 +1,26 @@
 import { useState } from "react"
+import type { FormEvent } from "react"
 import { motion, type Variants } from "motion/react"
 import { User, Mail, Lock, Eye, EyeOff } from "lucide-react"
 import signupBg from "@/assets/signup.avif"
+import { authClient } from "@/lib/auth-client"
+import { z } from "zod"
+import { useNavigate } from "react-router-dom"
+
+const signupSchema = z.object({
+  name: z.string().trim().min(1, "Username is required"),
+  email: z.email("Enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+})
 
 export default function SignupForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const navigate = useNavigate()
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -15,6 +31,35 @@ export default function SignupForm() {
         delayChildren: 0.1,
       },
     },
+  }
+
+  const signupSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setError(null)
+
+    const result = signupSchema.safeParse({ name, email, password })
+    if (!result.success) {
+      setError(result.error.issues[0]?.message ?? "Check your account details")
+      return
+    }
+
+    setIsSubmitting(true)
+    const { error: signUpError } = await authClient.signUp.email({
+      name: result.data.name,
+      email: result.data.email,
+      password: result.data.password,
+    })
+    setIsSubmitting(false)
+
+    if (signUpError) {
+      setError(signUpError.message || "Unable to create your account")
+      return
+    }
+
+    navigate("/login", {
+      replace: true,
+      state: { signupSuccess: "Account created. You can now sign in." },
+    })
   }
 
   const itemVariants: Variants = {
@@ -67,7 +112,11 @@ export default function SignupForm() {
           className="w-full max-w-md md:max-w-lg xl:max-w-xl"
         >
           {/* Form */}
-          <form className="flex flex-col gap-5">
+          <form
+            className="flex flex-col gap-5"
+            onSubmit={signupSubmit}
+            noValidate
+          >
             {/* Username */}
             <motion.div variants={itemVariants} className="flex flex-col gap-2">
               <label
@@ -82,8 +131,12 @@ export default function SignupForm() {
                 </div>
                 <input
                   id="username"
+                  name="name"
                   type="text"
                   placeholder="Username"
+                  required
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
                   className="w-full rounded-lg border border-transparent bg-[#111111] py-3.5 pr-4 pl-11 text-sm text-white placeholder:text-neutral-600 focus:border-neutral-700 focus:bg-[#161616] focus:ring-1 focus:ring-neutral-700 focus:outline-none"
                 />
               </div>
@@ -103,8 +156,12 @@ export default function SignupForm() {
                 </div>
                 <input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="Email"
+                  required
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   className="w-full rounded-lg border border-transparent bg-[#111111] py-3.5 pr-4 pl-11 text-sm text-white placeholder:text-neutral-600 focus:border-neutral-700 focus:bg-[#161616] focus:ring-1 focus:ring-neutral-700 focus:outline-none"
                 />
               </div>
@@ -125,7 +182,12 @@ export default function SignupForm() {
                 <input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
                   placeholder="Password"
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
                   className="w-full rounded-lg border border-transparent bg-[#111111] py-3.5 pr-11 pl-11 text-sm text-white placeholder:text-neutral-600 focus:border-neutral-700 focus:bg-[#161616] focus:ring-1 focus:ring-neutral-700 focus:outline-none"
                 />
                 <button
@@ -150,10 +212,19 @@ export default function SignupForm() {
             <motion.div variants={itemVariants} className="mt-4">
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full rounded-lg bg-[#DC2626] py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#b91c1c] active:scale-[0.98]"
               >
-                Sign Up
+                {isSubmitting ? "Creating account..." : "Sign Up"}
               </button>
+              {error && (
+                <p
+                  role="alert"
+                  className="mt-3 text-center text-sm text-red-400"
+                >
+                  {error}
+                </p>
+              )}
             </motion.div>
           </form>
 

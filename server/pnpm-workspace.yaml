@@ -2,13 +2,10 @@ packages:
   - "."
 allowBuilds:
   "@prisma/engines": true
-  bufferutil: set this to true or false
-  es5-ext: set this to true or false
   esbuild: true
   msgpackr-extract: true
   prisma: true
   prisma-zod-generator: true
-  utf-8-validate: set this to true or false
   workerd: true
 minimumReleaseAgeExclude:
   - miniflare@5.20260826.0-alpha

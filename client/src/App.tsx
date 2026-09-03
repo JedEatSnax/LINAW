@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import ErrorBoundary from "@/components/error-boundary"
+import { ProtectedRoute } from "@/components/protected-route"
 
 const Hero = lazy(() => import("@/pages/Hero"))
 const Login = lazy(() => import("@/pages/Login"))
@@ -26,12 +27,15 @@ export function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/assets" element={<Assets />} />
-              <Route path="/chatbot" element={<Chatbot />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
               <Route path="*" element={<NotFound />} />
+
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/assets" element={<Assets />} />
+                <Route path="/chatbot" element={<Chatbot />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         </Suspense>
