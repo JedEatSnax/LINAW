@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SmartLink } from "@/components/smart-link"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -36,7 +37,7 @@ export function NavResources({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               tooltip={item.name}
-              render={<a href={item.url} />}
+              render={<SmartLink to={item.url} />}
               className="[&_svg]:size-5!"
             >
               {item.icon}

@@ -23,7 +23,8 @@ app.use(prettyJSON());
 app.use(
   "*",
   cors({
-    origin: (_origin, c) => c.env.ALLOWED_ORIGIN || "*",
+    origin: (origin, c) =>
+      origin === c.env.ALLOWED_ORIGIN ? c.env.ALLOWED_ORIGIN : "",
     credentials: true,
   }),
   secureHeaders({

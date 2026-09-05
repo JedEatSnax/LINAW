@@ -7,6 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { SmartLink } from "@/components/smart-link"
 
 export function NavMiscellaneous({
   miscellaneous,
@@ -25,7 +26,7 @@ export function NavMiscellaneous({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton
               tooltip={item.name}
-              render={<a href={item.url} />}
+              render={<SmartLink to={item.url} />}
               className="[&_svg]:size-5!"
             >
               {item.icon}

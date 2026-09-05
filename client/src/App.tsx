@@ -1,40 +1,65 @@
-import { lazy, Suspense } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Suspense } from "react"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import ErrorBoundary from "@/components/error-boundary"
 import { ProtectedRoute } from "@/components/protected-route"
+import { lazyRoutes } from "@/routes.config"
 
-const Hero = lazy(() => import("@/pages/Hero"))
-const Login = lazy(() => import("@/pages/Login"))
-const Signup = lazy(() => import("@/pages/Signup"))
-const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"))
-const Dashboard = lazy(() => import("@/pages/Dashboard"))
-const Assets = lazy(() => import("@/pages/Assets"))
-const Chatbot = lazy(() => import("@/pages/Chatbot"))
-const NotFound = lazy(() => import("@/pages/NotFound"))
-const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"))
-const TermsOfService = lazy(() => import("@/pages/TermsOfService"))
+const publicRoutes = [
+  ["/", lazyRoutes["/"]],
+  ["/login", lazyRoutes["/login"]],
+  ["/signup", lazyRoutes["/signup"]],
+  ["/forgot-password", lazyRoutes["/forgot-password"]],
+  ["/privacy-policy", lazyRoutes["/privacy-policy"]],
+  ["/terms-of-service", lazyRoutes["/terms-of-service"]],
+  ["*", lazyRoutes["/not-found"]],
+] as const
+
+const protectedRoutes = [
+  ["/dashboard", lazyRoutes["/dashboard"]],
+  ["/assets", lazyRoutes["/assets"]],
+  ["/chatbot", lazyRoutes["/chatbot"]],
+] as const
+
+function AppLoadingFallback() {
+  return (
+    <main
+      className="flex min-h-svh items-center justify-center overflow-hidden bg-[#050505]"
+      aria-busy="true"
+      aria-label="Loading application"
+    >
+      <div className="relative flex h-14 w-14 items-center justify-center">
+        <div className="absolute inset-0 rounded-full border border-white/10 bg-white/3" />
+        <div className="absolute inset-0 animate-pulse rounded-full bg-white/5" />
+        <div className="h-2.5 w-2.5 rounded-full bg-white/90 shadow-[0_0_18px_rgba(255,255,255,0.65)]" />
+      </div>
+    </main>
+  )
+}
 
 export function App() {
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        <Suspense fallback={<Skeleton />}>
+        <Suspense fallback={<AppLoadingFallback />}>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Hero />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="*" element={<NotFound />} />
+              {publicRoutes.map(([path, Component]) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={Component ? <Component /> : null}
+                />
+              ))}
 
               <Route element={<ProtectedRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/assets" element={<Assets />} />
-                <Route path="/chatbot" element={<Chatbot />} />
+                {protectedRoutes.map(([path, Component]) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={Component ? <Component /> : null}
+                  />
+                ))}
               </Route>
             </Routes>
           </BrowserRouter>

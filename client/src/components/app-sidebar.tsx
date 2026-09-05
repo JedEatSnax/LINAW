@@ -6,6 +6,7 @@ import { NavResources } from "@/components/nav-resources"
 import { NavProcurements } from "@/components/nav-procurements"
 import { NavMiscellaneous } from "@/components/nav-miscellaneous"
 import { NavUser } from "@/components/nav-user"
+import { SmartLink } from "@/components/smart-link"
 import {
   Sidebar,
   SidebarContent,
@@ -145,7 +146,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenuButton
           className="font-bold"
           tooltip={"Dashboard"}
-          render={<a href="/dashboard" />}
+          render={<SmartLink to="/dashboard" />}
         >
           <LayoutDashboard />
           Dashboard
