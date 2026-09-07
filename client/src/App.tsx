@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import ErrorBoundary from "@/components/error-boundary"
 import { ProtectedRoute } from "@/components/protected-route"
 import { lazyRoutes } from "@/routes.config"
+import { Skeleton } from "./components/ui/skeleton"
 
 const publicRoutes = [
   ["/", lazyRoutes["/"]],
@@ -21,6 +22,7 @@ const protectedRoutes = [
   ["/chatbot", lazyRoutes["/chatbot"]],
 ] as const
 
+/**
 function AppLoadingFallback() {
   return (
     <main
@@ -36,12 +38,14 @@ function AppLoadingFallback() {
     </main>
   )
 }
+ */
 
 export function App() {
   return (
     <ErrorBoundary>
       <TooltipProvider>
-        <Suspense fallback={<AppLoadingFallback />}>
+        {/**<Suspense fallback={<AppLoadingFallback />}></Suspense>*/}
+        <Suspense fallback={<Skeleton />}>
           <BrowserRouter>
             <Routes>
               {publicRoutes.map(([path, Component]) => (
