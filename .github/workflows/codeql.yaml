@@ -13,7 +13,17 @@ name: "CodeQL Advanced"
 
 on:
   push:
+    branches:
+      - main
+      - staging
   pull_request:
+    branches:
+      - main
+      - staging
+  merge_group:
+    branches:
+      - main
+      - staging
   schedule:
     - cron: "16 5 * * 6"
 

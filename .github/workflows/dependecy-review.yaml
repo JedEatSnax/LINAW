@@ -1,8 +1,17 @@
 name: "Dependency Review"
 on:
   push:
+    branches:
+      - main
+      - staging
   pull_request:
+    branches:
+      - main
+      - staging
   merge_group:
+    branches:
+      - main
+      - staging
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
