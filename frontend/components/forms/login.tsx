@@ -1,52 +1,120 @@
-"use client"
+"use client";
 
-import { cn } from "cn"
-
-import { Button } from "@/components/ui/button"
+import { cn } from "cn";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { GalleryVerticalEndIcon } from "lucide-react"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  email: z.email().min(1),
+  password: z.string().min(8),
+});
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  /*
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    const { success, message } = await signIn(
+      values.email,
+      values.password,
+    );
+
+    if (success) {
+      toast.success(
+        `${message as string} Related to login success.`,
+      );
+      router.push("/dashboard");
+    } else {
+      toast.error(message as string);
+    }
+
+    setIsLoading(false);
+  }
+  */
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form
+        id="login-form"
+        //onSubmit={form.handleSubmit(onSubmit)}
+      >
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEndIcon className="size-6" />
-              </div>
-              <span className="sr-only">Acme Inc.</span>
-            </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Welcome to LINAW</h1>
             <FieldDescription>
-              Don&apos;t have an account? <a href="#">Sign up</a>
+              Don&apos;t have an account? <a href="/signup">Sign up</a>
             </FieldDescription>
           </div>
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  required
+                  className="bg-background"
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex items-center">
+                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                  <a
+                    href="/forgot-password"
+                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                  >
+                    Forgot your password?
+                  </a>
+                </div>
+                <Input
+                  {...field}
+                  id="password"
+                  type="password"
+                  required
+                  className="bg-background"
+                />
+              </Field>
+            )}
+          />
           <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </Field>
-          <Field>
-            <Button type="submit">Login</Button>
+            <Button type="submit" disabled={isLoading} form="login-form">
+              Login
+            </Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
           <Field className="grid gap-4 sm:grid-cols-2">
@@ -72,9 +140,10 @@ export function LoginForm({
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By logging in, you agree to our{" "}
+        <a href="/terms-of-service">Terms of Service</a> and{" "}
+        <a href="/privacy-policy">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }

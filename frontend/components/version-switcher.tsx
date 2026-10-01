@@ -1,28 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { GalleryVerticalEndIcon, ChevronsUpDownIcon, CheckIcon } from "lucide-react"
+} from "@/components/ui/sidebar";
+import {
+  GalleryVerticalEndIcon,
+  ChevronsUpDownIcon,
+  CheckIcon,
+} from "lucide-react";
 
 export function VersionSwitcher({
   versions,
   defaultVersion,
 }: {
-  versions: string[]
-  defaultVersion: string
+  versions: string[];
+  defaultVersion?: string;
 }) {
-  const [selectedVersion, setSelectedVersion] = React.useState(defaultVersion)
+  const [selectedVersion, setSelectedVersion] = React.useState(
+    defaultVersion ?? versions[0],
+  );
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -60,5 +66,5 @@ export function VersionSwitcher({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

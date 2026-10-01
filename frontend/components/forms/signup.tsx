@@ -1,52 +1,160 @@
-"use client"
-
-import { cn } from "cn"
-
-import { Button } from "@/components/ui/button"
+"use client";
+import { cn } from "cn";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import * as z from "zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { GalleryVerticalEndIcon } from "lucide-react"
+  FieldError,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
+const formSchema = z
+  .object({
+    username: z.string().min(3),
+    email: z.email().min(1),
+    password: z.string().min(8),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  /*
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
+
+    const { success, message } = await signUp(
+      values.username,
+      values.email,
+      values.password,
+    );
+
+    if (success) {
+      toast.success(
+        `${message as string} Please check your email for verification.`,
+      );
+      router.push("/dashboard");
+    } else {
+      toast.error(message as string);
+    }
+
+    setIsLoading(false);
+  }
+  */
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form
+        id="signup-form"
+        //onSubmit={form.handleSubmit(onSubmit)}
+      >
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
-            <a
-              href="#"
-              className="flex flex-col items-center gap-2 font-medium"
-            >
-              <div className="flex size-8 items-center justify-center rounded-md">
-                <GalleryVerticalEndIcon className="size-6" />
-              </div>
-              <span className="sr-only">Acme Inc.</span>
-            </a>
-            <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
+            <h1 className="text-xl font-bold">Welcome to LINAW</h1>
             <FieldDescription>
-              Already have an account? <a href="#">Sign in</a>
+              Already have an account? <a href="/login">Login</a>
             </FieldDescription>
           </div>
+          <Controller
+            name="username"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="name">Username</FieldLabel>
+                <Input
+                  {...field}
+                  id="name"
+                  type="text"
+                  required
+                  className="bg-background"
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name="email"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  {...field}
+                  id="email"
+                  type="email"
+                  required
+                  className="bg-background"
+                />
+              </Field>
+            )}
+          />
+          <Controller
+            name="password"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="name">Password</FieldLabel>
+                <Input
+                  {...field}
+                  id="name"
+                  type="password"
+                  required
+                  className="bg-background"
+                />
+                <FieldDescription>
+                  Must be at least 8 characters long
+                </FieldDescription>
+              </Field>
+            )}
+          />
+          <Controller
+            name="confirmPassword"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="confirm-password">
+                  Confirm Password
+                </FieldLabel>
+                <Input
+                  {...field}
+                  id="confirm-password"
+                  type="password"
+                  required
+                  className="bg-background"
+                />
+                <FieldError>{fieldState.error?.message}</FieldError>
+              </Field>
+            )}
+          />
           <Field>
-            <FieldLabel htmlFor="email">Email</FieldLabel>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </Field>
-          <Field>
-            <Button type="submit">Create Account</Button>
+            <Button type="submit" disabled={isLoading} form="signup-form">
+              Create Account
+            </Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
           <Field className="grid gap-4 sm:grid-cols-2">
@@ -72,9 +180,10 @@ export function SignupForm({
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
+        By signing up, you agree to our{" "}
+        <a href="/terms-of-service">Terms of Service</a> and{" "}
+        <a href="/privacy-policy">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
