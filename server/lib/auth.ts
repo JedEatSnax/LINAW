@@ -40,7 +40,7 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60, // Cache duration in seconds
-      strategy: "jwt",
+      strategy: "jwe",
     },
   },
   useSecureCookies: authUrl.startsWith("https://"),
@@ -61,8 +61,8 @@ export const auth = betterAuth({
         issuer: authUrl,
         audience: authUrl,
         expirationTime: "15m",
-        definePayload: ({ user }) => ({
-          sub: user.id,
+        definePayload: ({ user }: { user: { id: string; email: string } }) => ({
+          id: user.id,
           email: user.email,
         }),
       },

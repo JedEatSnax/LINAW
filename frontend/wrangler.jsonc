@@ -17,7 +17,7 @@
     "binding": "IMAGES",
   },
   "secrets": {
-    "required": [],
+    "required": ["VITE_BETTER_AUTH_URL"],
   },
   "observability": {
     "logs": {

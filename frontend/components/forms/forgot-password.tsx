@@ -4,8 +4,8 @@ import { cn } from "cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+//import { useRouter } from "next/navigation";
+//import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -23,8 +23,8 @@ export function ForgotPasswordForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+  //const [isLoading, setIsLoading] = useState(false);
+  //const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,7 +86,7 @@ export function ForgotPasswordForm({
           <Field>
             <Button
               type="submit"
-              disabled={isLoading}
+              //disabled={isLoading}
               form="forgot-password-form"
             >
               Send Email
