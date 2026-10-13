@@ -101,10 +101,10 @@ export function SignupForm({
 
       toast.add({
         title: "Account created",
-        description: "You can now log in.",
+        description: "Signup success.",
         type: "success",
       });
-      router.replace("/login");
+      router.replace("/dashboard");
     } catch {
       const message =
         "The authentication service is unavailable. Please try again.";

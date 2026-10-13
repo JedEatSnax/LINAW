@@ -46,7 +46,7 @@ export const auth = betterAuth({
   useSecureCookies: authUrl.startsWith("https://"),
   emailAndPassword: {
     enabled: true,
-    autoSignIn: false,
+    autoSignIn: true,
   },
   plugins: [
     openAPI(),
