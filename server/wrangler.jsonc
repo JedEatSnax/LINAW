@@ -33,7 +33,7 @@
   },
   "routes": [
     {
-      "pattern": "linaw.tech/api/*",
+      "pattern": "api.linaw.tech/api/*",
       "zone_name": "linaw.tech",
     },
   ],
