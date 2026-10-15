@@ -16,8 +16,8 @@
   "images": {
     "binding": "IMAGES",
   },
-  "secrets": {
-    "required": ["VITE_BETTER_AUTH_URL"],
+  "vars": {
+    "VITE_BETTER_AUTH_URL": "https://api.linaw.tech/api/auth",
   },
   "observability": {
     "logs": {
@@ -38,6 +38,13 @@
     },
   ],
   "placement": { "mode": "smart" },
+  "env": {
+    "local": {
+      "vars": {
+        "VITE_BETTER_AUTH_URL": "https://localhost/8787",
+      },
+    },
+  },
   /**
    * Bindings
    * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including

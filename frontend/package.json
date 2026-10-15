@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": false,
   "license": "AGPL-3.0-only",
-  "packageManager": "pnpm@11.15.1",
   "dependencies": {
     "@base-ui/react": "^1.9.0",
     "@hookform/resolvers": "^5.9.1",
@@ -40,7 +39,7 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
+    "dev": "wrangler dev --env local --port 5173",
     "build": "vite build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "deploy": "vinext-cloudflare deploy --config dist/server/wrangler.json",
