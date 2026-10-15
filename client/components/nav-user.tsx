@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useRouter } from "next/navigation"
+import Link from "next/link"
+import { authClient } from "@/lib/auth-client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,32 +16,32 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuPortal,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 import {
   ChevronsUpDownIcon,
   MoonIcon,
   BadgeCheckIcon,
   LogOutIcon,
-} from "lucide-react";
-import { useTheme } from "next-themes";
+} from "lucide-react"
+import { useTheme } from "next-themes"
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
-  const { setTheme } = useTheme();
-  const router = useRouter();
+  const { isMobile } = useSidebar()
+  const { setTheme } = useTheme()
+  const router = useRouter()
 
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession()
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.push("/");
-  };
+    await authClient.signOut()
+    router.push("/")
+  }
 
   if (isPending) {
     return (
@@ -50,22 +50,22 @@ export function NavUser() {
           <SidebarMenuButton size="lg" className="animate-pulse bg-muted/50" />
         </SidebarMenuItem>
       </SidebarMenu>
-    );
+    )
   }
 
   if (!session?.user) {
-    return null;
+    return null
   }
 
-  const { name, email, image } = session.user;
+  const { name, email, image } = session.user
 
   const initials =
     name
       ?.split(" ")
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join("")
       .toUpperCase()
-      .slice(0, 2) || "U";
+      .slice(0, 2) || "U"
 
   return (
     <SidebarMenu>
@@ -136,7 +136,7 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link href="/account" className="flex items-center">
+                <Link href="/profile" className="flex items-center">
                   <BadgeCheckIcon className="mr-2 h-4 w-4" />
                   <span>Account</span>
                 </Link>
@@ -153,5 +153,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }
