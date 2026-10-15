@@ -5,10 +5,12 @@
   "compatibility_date": "2026-08-28",
   "workers_dev": false,
   "minify": true,
+  "vars": {
+    "ALLOWED_ORIGIN": "https://wwww.linaw.tech",
+  },
   "secrets": {
     // ONLY APPLIES TO PRODUCTION
     "required": [
-      "ALLOWED_ORIGIN",
       "RPC_API_KEY",
       "WALLET_ADDRESS",
       "DATABASE_URL",
@@ -46,9 +48,11 @@
           "zone_name": "http://localhost:8787/api",
         },
       ],
+      "vars": {
+        "ALLOWED_ORIGIN": "http://localhost:3000",
+      },
       "secrets": {
         "required": [
-          "ALLOWED_ORIGIN",
           "RPC_API_KEY",
           "WALLET_ADDRESS",
           "DATABASE_URL",
@@ -59,9 +63,11 @@
       },
     },
     "staging": {
+      "vars": {
+        "ALLOWED_ORIGIN": "http://localhost:3000",
+      },
       "secrets": {
         "required": [
-          "ALLOWED_ORIGIN",
           "RPC_API_KEY",
           "WALLET_ADDRESS",
           "DATABASE_URL",
