@@ -5,13 +5,13 @@ import { getPrisma } from "./prisma.js";
 import { openAPI, haveIBeenPwned, bearer, jwt } from "better-auth/plugins";
 
 const authUrl = env.BETTER_AUTH_URL;
-const allowedOrigin = env.ALLOWED_ORIGIN;
+const allowedOrigins = env.ALLOWED_ORIGIN.split(",").map((o) => o.trim());
 
 export const auth = betterAuth({
   appName: "LINAW",
   baseURL: authUrl,
   basePath: "/api/auth",
-  trustedOrigins: [allowedOrigin],
+  trustedOrigins: allowedOrigins,
   database: prismaAdapter(getPrisma(), {
     provider: "postgresql",
   }),
@@ -24,6 +24,9 @@ export const auth = betterAuth({
    */
   secret: env.BETTER_AUTH_SECRET,
   advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+    },
     database: {
       joins: true,
     },
