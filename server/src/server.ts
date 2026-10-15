@@ -17,7 +17,6 @@ const app = new Hono<{
 }>().basePath("/api");
 
 app.use("*", poweredBy());
-app.use(secureHeaders());
 app.use(prettyJSON());
 
 app.use(
@@ -25,9 +24,8 @@ app.use(
   cors({
     origin: (origin, c) => {
       if (!origin) return "";
-      const allowedOrigins = c.env.ALLOWED_ORIGIN.split(",").map((o: string) =>
-        o.trim(),
-      );
+      const envOrigins = (c.env.ALLOWED_ORIGIN as string) || "";
+      const allowedOrigins = envOrigins.split(",").map((o: string) => o.trim());
       return allowedOrigins.includes(origin) ? origin : "";
     },
     credentials: true,
@@ -35,6 +33,8 @@ app.use(
   secureHeaders({
     xFrameOptions: "SAMEORIGIN",
     xXssProtection: "1",
+    crossOriginResourcePolicy: "cross-origin",
+    crossOriginOpenerPolicy: "same-origin-allow-popups",
   }),
 );
 

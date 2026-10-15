@@ -5,9 +5,6 @@
   "compatibility_date": "2026-08-28",
   "workers_dev": false,
   "minify": true,
-  "vars": {
-    "ALLOWED_ORIGIN": "https://wwww.linaw.tech",
-  },
   "secrets": {
     // ONLY APPLIES TO PRODUCTION
     "required": [
@@ -17,6 +14,7 @@
       "DATABASE_URL_UNPOOLED",
       "BETTER_AUTH_SECRET",
       "BETTER_AUTH_URL",
+      "ALLOWED_ORIGIN",
     ],
   },
   "observability": {
@@ -48,9 +46,6 @@
           "zone_name": "http://localhost:8787/api",
         },
       ],
-      "vars": {
-        "ALLOWED_ORIGIN": "http://localhost:3000",
-      },
       "secrets": {
         "required": [
           "RPC_API_KEY",
@@ -59,13 +54,11 @@
           "DATABASE_URL_UNPOOLED",
           "BETTER_AUTH_SECRET",
           "BETTER_AUTH_URL",
+          "ALLOWED_ORIGIN",
         ],
       },
     },
     "staging": {
-      "vars": {
-        "ALLOWED_ORIGIN": "http://localhost:3000",
-      },
       "secrets": {
         "required": [
           "RPC_API_KEY",
@@ -74,6 +67,7 @@
           "DATABASE_URL_UNPOOLED",
           "BETTER_AUTH_SECRET",
           "BETTER_AUTH_URL",
+          "ALLOWED_ORIGIN",
         ],
       },
     },
