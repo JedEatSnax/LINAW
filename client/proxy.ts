@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import { headers } from "next/headers"
 import { authClient } from "./lib/auth-client"
 
 export async function proxy(request: NextRequest) {
@@ -21,7 +20,7 @@ export async function proxy(request: NextRequest) {
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     const { data: session } = await authClient.getSession({
       fetchOptions: {
-        headers: await headers(),
+        headers: { cookie: request.headers.get("cookie") || "" },
       },
     })
 
