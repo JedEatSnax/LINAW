@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { prettyJSON } from "hono/pretty-json";
 import { poweredBy } from "hono/powered-by";
 import { secureHeaders } from "hono/secure-headers";
+import { logger } from "hono/logger";
 
 import type { AuthType } from "../lib/auth.js";
 import { globalErrorHandler } from "./middlewares/errorHandler.js";
@@ -18,17 +19,16 @@ const app = new Hono<{
 
 app.use("*", poweredBy());
 app.use(prettyJSON());
+app.use("*", logger());
 
 app.use(
   "*",
   cors({
-    origin: (origin, c) => {
-      if (!origin) return "";
-      const envOrigins = (c.env.ALLOWED_ORIGIN as string) || "";
-      const allowedOrigins = envOrigins.split(",").map((o: string) => o.trim());
-      return allowedOrigins.includes(origin) ? origin : "";
-    },
+    origin: (origin, c) =>
+      origin === c.env.ALLOWED_ORIGIN ? c.env.ALLOWED_ORIGIN : "",
     credentials: true,
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
   }),
   secureHeaders({
     xFrameOptions: "SAMEORIGIN",
