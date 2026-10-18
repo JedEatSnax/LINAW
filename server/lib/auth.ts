@@ -5,32 +5,22 @@ import { getPrisma } from "./prisma.js";
 import { openAPI, haveIBeenPwned, bearer, jwt } from "better-auth/plugins";
 
 const authUrl = env.BETTER_AUTH_URL;
-const allowedOrigins = env.ALLOWED_ORIGIN.split(",").map((o) => o.trim());
-const authHostname = new URL(authUrl).hostname;
-const cookieDomain = authHostname.endsWith("linaw.tech")
-  ? "linaw.tech"
-  : undefined;
+const authDomain = env.BETTER_AUTH_DOMAIN;
+const allowedOrigin = env.ALLOWED_ORIGIN;
 
 export const auth = betterAuth({
   appName: "LINAW",
   baseURL: authUrl,
   basePath: "/api/auth",
-  trustedOrigins: allowedOrigins,
+  trustedOrigins: [allowedOrigin],
   database: prismaAdapter(getPrisma(), {
     provider: "postgresql",
   }),
-  /**
-  https://better-auth.com/docs/concepts/database#redis-storage
-  secondaryStorage: redisStorage({
-		client: redis,
-		keyPrefix: "better-auth:", // optional, defaults to "better-auth:"
-	}),
-   */
   secret: env.BETTER_AUTH_SECRET,
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
-      ...(cookieDomain ? { domain: cookieDomain } : {}),
+      domain: authDomain,
     },
     database: {
       joins: true,

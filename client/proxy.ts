@@ -1,31 +1,47 @@
 import { NextRequest, NextResponse } from "next/server"
+import { headers } from "next/headers"
+import { authClient } from "./lib/auth-client"
 
-const authURL = process.env["NEXT_PUBLIC_BETTER_AUTH_URL"]
+const protectedRoutes = [
+  "/approval-workflows",
+  "/dashboard",
+  "/deliveries",
+  "/invoices",
+  "/organizations",
+  "/purchase-orders",
+  "/purchase-requisitions",
+  "/settings",
+  "/suppliers",
+  "/users",
+]
+
+const authRoutes = ["/forgot-password", "/login", "/reset-password", "/signup"]
 
 export async function proxy(request: NextRequest) {
-  const cookie = request.headers.get("cookie")
-  const authorization = request.headers.get("authorization")
+  const { pathname } = request.nextUrl
 
-  if (!cookie && !authorization) {
-    return NextResponse.redirect(new URL("/", request.url))
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+    const { data: session } = await authClient.getSession({
+      fetchOptions: {
+        headers: request.headers,
+      },
+    })
+
+    if (!session) {
+      return NextResponse.redirect(new URL("/login", request.url))
+    }
   }
 
-  const sessionResponse = await fetch(`${authURL}/api/auth/get-session`, {
-    method: "GET",
-    headers: {
-      ...(cookie ? { cookie } : {}),
-      ...(authorization ? { authorization } : {}),
-    },
-    cache: "no-store",
-  })
+  if (authRoutes.some((route) => pathname.startsWith(route))) {
+    const { data: session } = await authClient.getSession({
+      fetchOptions: {
+        headers: await headers(),
+      },
+    })
 
-  if (!sessionResponse.ok) {
-    return NextResponse.redirect(new URL("/", request.url))
-  }
-
-  const session = await sessionResponse.json()
-  if (!session) {
-    return NextResponse.redirect(new URL("/", request.url))
+    if (session) {
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    }
   }
 
   return NextResponse.next()
@@ -33,12 +49,15 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/forgot-password/:path*",
+    "/login/:path*",
+    "/reset-password/:path*",
+    "/signup/:path*",
     "/approval-workflows/:path*",
     "/dashboard/:path*",
     "/deliveries/:path*",
     "/invoices/:path*",
     "/organizations/:path*",
-    "/profile/:path*",
     "/purchase-orders/:path*",
     "/purchase-requisitions/:path*",
     "/settings/:path*",
