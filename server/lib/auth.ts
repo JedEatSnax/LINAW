@@ -6,6 +6,10 @@ import { openAPI, haveIBeenPwned, bearer, jwt } from "better-auth/plugins";
 
 const authUrl = env.BETTER_AUTH_URL;
 const allowedOrigins = env.ALLOWED_ORIGIN.split(",").map((o) => o.trim());
+const authHostname = new URL(authUrl).hostname;
+const cookieDomain = authHostname.endsWith("linaw.tech")
+  ? "linaw.tech"
+  : undefined;
 
 export const auth = betterAuth({
   appName: "LINAW",
@@ -26,6 +30,7 @@ export const auth = betterAuth({
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
+      ...(cookieDomain ? { domain: cookieDomain } : {}),
     },
     database: {
       joins: true,
