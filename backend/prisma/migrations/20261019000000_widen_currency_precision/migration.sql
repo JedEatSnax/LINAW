@@ -1,0 +1,13 @@
+ALTER TABLE "PurchaseRequisition" ALTER COLUMN "total_amount" TYPE DECIMAL(18,4);
+ALTER TABLE "PurchaseRequisitionItem" ALTER COLUMN "estimated_unit_cost" TYPE DECIMAL(18,4);
+ALTER TABLE "PurchaseRequisitionItem" ALTER COLUMN "estimated_total_cost" TYPE DECIMAL(18,4);
+ALTER TABLE "PurchaseOrder" ALTER COLUMN "total_amount" TYPE DECIMAL(18,4);
+ALTER TABLE "PurchaseOrderItem" ALTER COLUMN "unit_price" TYPE DECIMAL(18,4);
+ALTER TABLE "PurchaseOrderItem" ALTER COLUMN "total_price" TYPE DECIMAL(18,4);
+ALTER TABLE "SupplierQuotation" ALTER COLUMN "total_amount" TYPE DECIMAL(18,4);
+ALTER TABLE "SupplierQuotationItem" ALTER COLUMN "unit_price" TYPE DECIMAL(18,4);
+ALTER TABLE "SupplierQuotationItem" ALTER COLUMN "total_price" TYPE DECIMAL(18,4);
+ALTER TABLE "InvoiceVerification" ALTER COLUMN "total_amount" TYPE DECIMAL(18,4);
+ALTER TABLE "InvoiceVerificationItem" ALTER COLUMN "invoiced_unit_price" TYPE DECIMAL(18,4);
+ALTER TABLE "InvoiceVerificationItem" ALTER COLUMN "invoiced_total" TYPE DECIMAL(18,4);
+ALTER TABLE "InvoiceVerificationItem" ALTER COLUMN "variance_amount" TYPE DECIMAL(18,4);

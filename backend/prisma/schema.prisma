@@ -1,0 +1,1038 @@
+generator client {
+  provider = "prisma-client"
+  runtime  = "workerd"
+  output   = "../src/generated/prisma"
+}
+
+generator seedClient {
+  provider = "prisma-client"
+  runtime  = "nodejs"
+  output   = "../src/generated/prisma-node"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id                               String                          @id @default(uuid()) @db.Uuid
+  status                           String
+  plan                             String?
+  created_at                       DateTime                        @default(now()) @db.Timestamptz(6)
+  updated_at                       DateTime                        @updatedAt @db.Timestamptz(6)
+  approval_actions                 ApprovalAction[]
+  approval_requests                ApprovalRequest[]
+  approval_workflow_levels         ApprovalWorkflowLevel[]
+  audit_trails                     AuditTrail[]
+  audit_trail_blockchain_refs      AuditTrailBlockchainRef[]
+  audit_trail_hashes               AuditTrailHash[]
+  companies                        Company[]
+  company_memberships              CompanyMembership[]
+  delivery_notifications           DeliveryNotification[]
+  goods_receipts                   GoodsReceipt[]
+  goods_receipt_items              GoodsReceiptItem[]
+  invoice_verifications            InvoiceVerification[]
+  invoice_verification_attachments InvoiceVerificationAttachment[]
+  invoice_verification_items       InvoiceVerificationItem[]
+  password_reset_tokens            PasswordResetToken[]
+  purchase_orders                  PurchaseOrder[]
+  purchase_order_items             PurchaseOrderItem[]
+  purchase_requisitions            PurchaseRequisition[]
+  purchase_requisition_items       PurchaseRequisitionItem[]
+  purchase_requisition_status_logs PurchaseRequisitionStatusLog[]
+  rfqs                             RFQ[]
+  rfq_items                        RFQItem[]
+  rfq_supplier_assignments         RFQSupplierAssignment[]
+  refresh_tokens                   RefreshToken[]
+  report_exports                   ReportExport[]
+  report_requests                  ReportRequest[]
+  roles                            Role[]
+  suppliers                        Supplier[]
+  supplier_company_relationships   SupplierCompanyRelationship[]
+  supplier_invitations             SupplierInvitation[]
+  supplier_quotations              SupplierQuotation[]
+  supplier_quotation_items         SupplierQuotationItem[]
+  users                            User[]
+  user_roles                       UserRole[]
+  user_sessions                    UserSession[]
+  ApprovalWorkflowDefinition       ApprovalWorkflowDefinition[]
+  companyInvitations               CompanyInvitation[]
+
+  @@index([status])
+}
+
+model User {
+  id                                        String                          @id @default(uuid()) @db.Uuid
+  tenant_id                                 String                          @db.Uuid
+  email                                     String
+  first_name                                String
+  last_name                                 String
+  status                                    String
+  created_at                                DateTime                        @default(now()) @db.Timestamptz(6)
+  updated_at                                DateTime                        @updatedAt @db.Timestamptz(6)
+  approval_actions                          ApprovalAction[]                @relation("UserApprovalActions")
+  approval_requests                         ApprovalRequest[]               @relation("UserRequestedApprovalRequests")
+  actor_audit_trails                        AuditTrail[]                    @relation("UserActorAuditTrails")
+  company_memberships                       CompanyMembership[]             @relation("UserCompanyMemberships")
+  delivery_notifications                    DeliveryNotification[]          @relation("UserDeliveryNotifications")
+  received_goods_receipts                   GoodsReceipt[]                  @relation("UserReceivedGoodsReceipts")
+  verified_invoice_verifications            InvoiceVerification[]           @relation("UserVerifiedInvoiceVerifications")
+  uploaded_invoice_verification_attachments InvoiceVerificationAttachment[] @relation("UserUploadedInvoiceVerificationAttachments")
+  password_reset_tokens                     PasswordResetToken[]
+  issued_purchase_orders                    PurchaseOrder[]                 @relation("UserIssuedPurchaseOrders")
+  requested_purchase_requisitions           PurchaseRequisition[]           @relation("UserRequestedPurchaseRequisitions")
+  purchase_requisition_status_logs          PurchaseRequisitionStatusLog[]  @relation("UserPurchaseRequisitionStatusLogs")
+  created_rfqs                              RFQ[]                           @relation("UserCreatedRFQs")
+  refresh_tokens                            RefreshToken[]                  @relation("UserRefreshTokens")
+  generated_report_exports                  ReportExport[]                  @relation("UserGeneratedReportExports")
+  requested_report_requests                 ReportRequest[]                 @relation("UserRequestedReportRequests")
+  supplier_invitations                      SupplierInvitation[]            @relation("UserSupplierInvitations")
+  tenant                                    Tenant                          @relation(fields: [tenant_id], references: [id])
+  credentials                               UserCredential?                 @relation("UserCredentials")
+  roles                                     UserRole[]                      @relation("UserRoles")
+  sessions                                  UserSession[]                   @relation("UserSessions")
+
+  @@unique([tenant_id, email])
+  @@index([tenant_id])
+  @@index([status])
+}
+
+model UserCredential {
+  id            String   @id @default(uuid()) @db.Uuid
+  user_id       String   @unique @db.Uuid
+  password_hash String
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+  user          User     @relation("UserCredentials", fields: [user_id], references: [id])
+}
+
+model Company {
+  id                             String                        @id @default(uuid()) @db.Uuid
+  tenant_id                      String                        @db.Uuid
+  legal_name                     String
+  display_name                   String
+  tax_id                         String?
+  address                        String?
+  contact_email                  String?
+  contact_phone                  String?
+  created_at                     DateTime                      @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                      @updatedAt @db.Timestamptz(6)
+  approval_requests              ApprovalRequest[]
+  approval_workflow_levels       ApprovalWorkflowLevel[]
+  tenant                         Tenant                        @relation(fields: [tenant_id], references: [id])
+  memberships                    CompanyMembership[]
+  goods_receipts                 GoodsReceipt[]
+  invoice_verifications          InvoiceVerification[]
+  purchase_orders                PurchaseOrder[]
+  purchase_requisitions          PurchaseRequisition[]
+  rfqs                           RFQ[]
+  supplier_company_relationships SupplierCompanyRelationship[]
+  user_roles                     UserRole[]
+  ApprovalWorkflowDefinition     ApprovalWorkflowDefinition[]
+  invitations                    CompanyInvitation[]
+  roles                          Role[]
+  rfqsupplierAssignments         RFQSupplierAssignment[]
+  supplierQuotations             SupplierQuotation[]
+  supplierQuotationItems         SupplierQuotationItem[]
+  suppliers                      Supplier[]
+  supplierInvitations            SupplierInvitation[]
+
+  @@index([tenant_id])
+}
+
+model CompanyMembership {
+  id                String   @id @default(uuid()) @db.Uuid
+  tenant_id         String   @db.Uuid
+  company_id        String   @db.Uuid
+  user_id           String   @db.Uuid
+  job_title         String?
+  role_id           String?  @db.Uuid
+  employment_status String?
+  department        String?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @updatedAt @db.Timestamptz(6)
+  company           Company  @relation(fields: [company_id], references: [id])
+  tenant            Tenant   @relation(fields: [tenant_id], references: [id])
+  user              User     @relation("UserCompanyMemberships", fields: [user_id], references: [id])
+  role              Role?    @relation("CompanyMembershipRole", fields: [role_id], references: [id])
+
+  @@unique([tenant_id, company_id, user_id])
+  @@index([tenant_id])
+  @@index([employment_status])
+}
+
+model CompanyInvitation {
+  id         String @id @default(uuid()) @db.Uuid
+  tenant_id  String @db.Uuid
+  company_id String @db.Uuid
+
+  email String
+
+  invite_token_hash String @unique
+  status            String  @default("PENDING")
+
+  invited_by String @db.Uuid
+
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at  DateTime  @db.Timestamptz(6)
+  accepted_at DateTime? @db.Timestamptz(6)
+
+  company Company @relation(fields: [company_id], references: [id])
+  tenant  Tenant  @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([email])
+  @@index([status, expires_at])
+}
+
+model UserSession {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenant_id          String    @db.Uuid
+  user_id            String    @db.Uuid
+  refresh_token_hash String    @unique
+  expires_at         DateTime  @db.Timestamptz(6)
+  revoked_at         DateTime? @db.Timestamptz(6)
+  last_used_at       DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime  @updatedAt @db.Timestamptz(6)
+  tenant             Tenant    @relation(fields: [tenant_id], references: [id])
+  user               User      @relation("UserSessions", fields: [user_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([user_id])
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid()) @db.Uuid
+  tenant_id  String    @db.Uuid
+  user_id    String    @db.Uuid
+  token_hash String    @unique
+  expires_at DateTime  @db.Timestamptz(6)
+  revoked_at DateTime? @db.Timestamptz(6)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  tenant     Tenant    @relation(fields: [tenant_id], references: [id])
+  user       User      @relation("UserRefreshTokens", fields: [user_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([user_id])
+}
+
+model PasswordResetToken {
+  id         String    @id @db.Uuid
+  tenant_id  String    @db.Uuid
+  user_id    String    @db.Uuid
+  token_hash String    @unique
+  expires_at DateTime  @db.Timestamptz(6)
+  used_at    DateTime? @db.Timestamptz(6)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @updatedAt @db.Timestamptz(6)
+  tenant     Tenant    @relation(fields: [tenant_id], references: [id])
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([expires_at])
+}
+
+// Access Controll
+
+model Role {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenant_id   String?  @db.Uuid
+  company_id  String?  @db.Uuid
+  code        String
+  name        String
+  description String?
+  is_system   Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt @db.Timestamptz(6)
+
+  approval_workflow_levels ApprovalWorkflowLevel[]
+  tenant                   Tenant?                 @relation(fields: [tenant_id], references: [id])
+  company                  Company?                @relation(fields: [company_id], references: [id])
+  role_permissions         RolePermission[]
+  user_roles               UserRole[]
+  company_memberships      CompanyMembership[]     @relation("CompanyMembershipRole")
+
+  @@unique([tenant_id, code])
+  @@index([tenant_id])
+}
+
+model Permission {
+  id               String           @id @default(uuid()) @db.Uuid
+  code             String           @unique
+  name             String
+  resource         String
+  action           String
+  description      String?
+  created_at       DateTime         @default(now()) @db.Timestamptz(6)
+  role_permissions RolePermission[]
+
+  @@index([resource])
+  @@index([action])
+}
+
+model RolePermission {
+  id            String     @id @default(uuid()) @db.Uuid
+  role_id       String     @db.Uuid
+  permission_id String     @db.Uuid
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  role          Role       @relation(fields: [role_id], references: [id])
+
+  @@unique([role_id, permission_id])
+  @@index([role_id])
+  @@index([permission_id])
+}
+
+model UserRole {
+  id         String   @id @default(uuid()) @db.Uuid
+  tenant_id  String   @db.Uuid
+  user_id    String   @db.Uuid
+  role_id    String   @db.Uuid
+  company_id String?  @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  company    Company? @relation(fields: [company_id], references: [id])
+  role       Role     @relation(fields: [role_id], references: [id])
+  tenant     Tenant   @relation(fields: [tenant_id], references: [id])
+  user       User     @relation("UserRoles", fields: [user_id], references: [id])
+
+  @@unique([tenant_id, user_id, role_id, company_id])
+  @@index([tenant_id])
+  @@index([user_id])
+  @@index([role_id])
+}
+
+// Requisition and approval
+
+model PurchaseRequisition {
+  id                   String                         @id @default(uuid()) @db.Uuid
+  root_id              String                         @db.Uuid
+  tenant_id            String                         @db.Uuid
+  company_id           String                         @db.Uuid
+  pr_number            String
+  generation           Int
+  requested_by_user_id String                         @db.Uuid
+  workflow_code       String?
+  purpose              String? // Purpose determines the applicable workflow and the entity type
+  justification        String?
+  status               PurchaseRequisitionStatus
+  priority             PurchaseRequisitionPriority?
+  currency_code        String
+  total_amount         Decimal                        @db.Decimal(18, 4)
+  needed_by_date       DateTime?                      @db.Date
+  submitted_at         DateTime?                      @db.Timestamptz(6)
+  approved_at          DateTime?                      @db.Timestamptz(6)
+  rejected_at          DateTime?                      @db.Timestamptz(6)
+  cancelled_at         DateTime?                      @db.Timestamptz(6)
+  created_at           DateTime                       @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                       @updatedAt @db.Timestamptz(6)
+  purchase_orders      PurchaseOrder[]
+  company              Company                        @relation(fields: [company_id], references: [id])
+  requested_by_user    User                           @relation("UserRequestedPurchaseRequisitions", fields: [requested_by_user_id], references: [id])
+  tenant               Tenant                         @relation(fields: [tenant_id], references: [id])
+  items                PurchaseRequisitionItem[]
+  status_logs          PurchaseRequisitionStatusLog[]
+  rfqs                 RFQ[]
+  approvalRequests     ApprovalRequest[]
+
+  @@unique([tenant_id, pr_number])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([status])
+  @@index([root_id])
+  @@index([workflow_code])
+}
+
+model PurchaseRequisitionItem {
+  id                      String              @id @default(uuid()) @db.Uuid
+  tenant_id               String              @db.Uuid
+  purchase_requisition_id String              @db.Uuid
+  line_no                 Int
+  item_type               String
+  description             String
+  specification           String
+  quantity                Decimal             @db.Decimal(18, 4)
+  unit_of_measure         String
+  estimated_unit_cost     Decimal             @db.Decimal(18, 4)
+  estimated_total_cost    Decimal             @db.Decimal(18, 4)
+  category_id             String?             @db.Uuid
+  needed_by_date          DateTime?           @db.Date
+  status                  String
+  created_at              DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime            @updatedAt @db.Timestamptz(6)
+  purchase_requisition    PurchaseRequisition @relation(fields: [purchase_requisition_id], references: [id])
+  tenant                  Tenant              @relation(fields: [tenant_id], references: [id])
+  rfq_items               RFQItem[]
+
+  @@unique([purchase_requisition_id, line_no])
+  @@index([tenant_id])
+  @@index([purchase_requisition_id])
+  @@index([item_type])
+  @@index([status])
+}
+
+model PurchaseRequisitionStatusLog {
+  id                      String              @id @default(uuid()) @db.Uuid
+  tenant_id               String              @db.Uuid
+  purchase_requisition_id String              @db.Uuid
+  from_status             String?
+  to_status               String
+  action                  String
+  acted_by_user_id        String              @db.Uuid
+  remarks                 String?
+  acted_at                DateTime            @db.Timestamptz(6)
+  metadata_json           Json?
+  acted_by_user           User                @relation("UserPurchaseRequisitionStatusLogs", fields: [acted_by_user_id], references: [id])
+  purchase_requisition    PurchaseRequisition @relation(fields: [purchase_requisition_id], references: [id])
+  tenant                  Tenant              @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([purchase_requisition_id])
+  @@index([action])
+}
+
+// Approval 
+
+model ApprovalRequest {
+  id                String    @id @default(uuid()) @db.Uuid
+  tenant_id         String    @db.Uuid
+  company_id        String    @db.Uuid
+  entity_type       String
+  entity_id         String    @db.Uuid
+  requester_user_id String    @db.Uuid
+  current_level     Int       @default(1)
+  status            String
+  submitted_at      DateTime? @db.Timestamptz(6)
+  resolved_at       DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(6)
+
+  actions              ApprovalAction[]
+  company              Company             @relation(fields: [company_id], references: [id])
+  requester_user       User                @relation("UserRequestedApprovalRequests", fields: [requester_user_id], references: [id])
+  tenant               Tenant              @relation(fields: [tenant_id], references: [id])
+  purchase_requisition PurchaseRequisition @relation(fields: [entity_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([entity_type])
+  @@index([entity_id])
+  @@index([status])
+}
+
+model ApprovalWorkflowLevel {
+  id          String  @id @default(uuid()) @db.Uuid
+  tenant_id   String  @db.Uuid
+  company_id  String? @db.Uuid
+  workflow_id String  @db.Uuid
+
+  level_no    Int
+  role_id     String   @db.Uuid
+  min_amount  Decimal? @db.Decimal(18, 2)
+  max_amount  Decimal? @db.Decimal(18, 2)
+  is_required Boolean  @default(true)
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+
+  workflow        ApprovalWorkflowDefinition @relation(fields: [workflow_id], references: [id])
+  company         Company?                   @relation(fields: [company_id], references: [id])
+  role            Role                       @relation(fields: [role_id], references: [id])
+  tenant          Tenant                     @relation(fields: [tenant_id], references: [id])
+  approvalActions ApprovalAction[]
+
+  @@unique([workflow_id, level_no])
+  @@index([tenant_id])
+  @@index([workflow_id])
+  @@index([role_id])
+}
+
+model ApprovalWorkflowDefinition {
+  id            String  @id @default(uuid()) @db.Uuid
+  tenant_id     String? @db.Uuid
+  company_id    String? @db.Uuid
+  workflow_code String
+  name          String
+  description   String?
+  entity_type   String
+  is_system     Boolean @default(false)
+  is_active     Boolean @default(true)
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @updatedAt @db.Timestamptz(6)
+
+  tenant  Tenant?  @relation(fields: [tenant_id], references: [id])
+  company Company? @relation(fields: [company_id], references: [id])
+
+  levels ApprovalWorkflowLevel[]
+
+  @@unique([tenant_id, workflow_code])
+  @@index([tenant_id])
+  @@index([workflow_code])
+}
+
+model ApprovalAction {
+  id                  String   @id @default(uuid()) @db.Uuid
+  tenant_id           String   @db.Uuid
+  approval_request_id String   @db.Uuid
+  level_id            String   @db.Uuid
+  acted_by_user_id    String   @db.Uuid
+  action              String
+  remarks             String?
+  acted_at            DateTime @db.Timestamptz(6)
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+
+  acted_by_user    User                  @relation("UserApprovalActions", fields: [acted_by_user_id], references: [id])
+  approval_request ApprovalRequest       @relation(fields: [approval_request_id], references: [id])
+  level            ApprovalWorkflowLevel @relation(fields: [level_id], references: [id])
+  tenant           Tenant                @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([approval_request_id])
+  @@index([level_id])
+  @@index([action])
+}
+
+// Supplier Sourcing
+
+model Supplier {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenant_id     String   @db.Uuid
+  company_id    String   @db.Uuid
+  supplier_code String
+  status        String
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @updatedAt @db.Timestamptz(6)
+
+  delivery_notifications DeliveryNotification[]
+  goods_receipts         GoodsReceipt[]
+  invoice_verifications  InvoiceVerification[]
+  purchase_orders        PurchaseOrder[]
+  rfq_assignments        RFQSupplierAssignment[]
+  tenant                 Tenant                        @relation(fields: [tenant_id], references: [id])
+  company                Company                       @relation(fields: [company_id], references: [id])
+  company_relationships  SupplierCompanyRelationship[]
+  quotations             SupplierQuotation[]
+
+  @@unique([tenant_id, supplier_code])
+  @@index([tenant_id])
+  @@index([status])
+}
+
+model SupplierInvitation {
+  id                 String    @id @default(uuid()) @db.Uuid
+  tenant_id          String    @db.Uuid
+  company_id         String    @db.Uuid
+  invited_by_user_id String    @db.Uuid
+  email              String
+  token_hash         String?   @unique
+  status             String
+  expires_at         DateTime? @db.Timestamptz(6)
+  accepted_at        DateTime? @db.Timestamptz(6)
+  created_at         DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime  @updatedAt @db.Timestamptz(6)
+
+  invited_by_user User    @relation("UserSupplierInvitations", fields: [invited_by_user_id], references: [id])
+  tenant          Tenant  @relation(fields: [tenant_id], references: [id])
+  company         Company @relation(fields: [company_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([status])
+}
+
+model SupplierCompanyRelationship {
+  id                  String   @id @default(uuid()) @db.Uuid
+  tenant_id           String   @db.Uuid
+  company_id          String   @db.Uuid
+  supplier_id         String   @db.Uuid
+  relationship_status String
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime @updatedAt @db.Timestamptz(6)
+  company             Company  @relation(fields: [company_id], references: [id])
+  supplier            Supplier @relation(fields: [supplier_id], references: [id])
+  tenant              Tenant   @relation(fields: [tenant_id], references: [id])
+
+  @@unique([tenant_id, company_id, supplier_id])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([supplier_id])
+  @@index([relationship_status])
+}
+
+model RFQ {
+  id                      String    @id @default(uuid()) @db.Uuid
+  tenant_id               String    @db.Uuid
+  company_id              String    @db.Uuid
+  rfq_number              String
+  purchase_requisition_id String?   @db.Uuid
+  created_by_user_id      String    @db.Uuid
+  title                   String
+  description             String?
+  status                  String
+  issue_date              DateTime? @db.Date
+  closing_date            DateTime? @db.Date
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime  @updatedAt @db.Timestamptz(6)
+
+  purchase_orders      PurchaseOrder[]
+  company              Company                 @relation(fields: [company_id], references: [id])
+  created_by_user      User                    @relation("UserCreatedRFQs", fields: [created_by_user_id], references: [id])
+  purchase_requisition PurchaseRequisition?    @relation(fields: [purchase_requisition_id], references: [id])
+  tenant               Tenant                  @relation(fields: [tenant_id], references: [id])
+  items                RFQItem[]
+  supplier_assignments RFQSupplierAssignment[]
+  quotations           SupplierQuotation[]
+
+  @@unique([id, tenant_id, rfq_number])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([status])
+}
+
+model RFQItem {
+  id                           String                   @id @default(uuid()) @db.Uuid
+  tenant_id                    String                   @db.Uuid
+  rfq_id                       String                   @db.Uuid
+  purchase_requisition_item_id String?                  @db.Uuid
+  line_no                      Int
+  description                  String
+  quantity                     Decimal                  @db.Decimal(18, 4)
+  unit_of_measure              String
+  specification                String?
+  created_at                   DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at                   DateTime                 @updatedAt @db.Timestamptz(6)
+  purchase_requisition_item    PurchaseRequisitionItem? @relation(fields: [purchase_requisition_item_id], references: [id])
+  rfq                          RFQ                      @relation(fields: [rfq_id], references: [id])
+  tenant                       Tenant                   @relation(fields: [tenant_id], references: [id])
+  quotation_items              SupplierQuotationItem[]
+
+  @@unique([rfq_id, line_no])
+  @@index([tenant_id])
+  @@index([rfq_id])
+}
+
+model RFQSupplierAssignment {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenant_id   String   @db.Uuid
+  company_id  String   @db.Uuid
+  rfq_id      String   @db.Uuid
+  supplier_id String   @db.Uuid
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @updatedAt @db.Timestamptz(6)
+
+  rfq      RFQ      @relation(fields: [rfq_id], references: [id])
+  supplier Supplier @relation(fields: [supplier_id], references: [id])
+  tenant   Tenant   @relation(fields: [tenant_id], references: [id])
+  company  Company  @relation(fields: [company_id], references: [id])
+
+  @@unique([rfq_id, supplier_id])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([rfq_id])
+  @@index([supplier_id])
+}
+
+model SupplierQuotation {
+  id               String    @id @default(uuid()) @db.Uuid
+  tenant_id        String    @db.Uuid
+  company_id       String    @db.Uuid
+  rfq_id           String    @db.Uuid
+  supplier_id      String    @db.Uuid
+  quotation_number String
+  currency_code    String
+  total_amount     Decimal   @db.Decimal(18, 4)
+  status           String
+  submitted_at     DateTime? @db.Timestamptz(6)
+  valid_until      DateTime? @db.Date
+  created_at       DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime  @updatedAt @db.Timestamptz(6)
+
+  purchase_orders PurchaseOrder[]
+  rfq             RFQ                     @relation(fields: [rfq_id], references: [id])
+  supplier        Supplier                @relation(fields: [supplier_id], references: [id])
+  tenant          Tenant                  @relation(fields: [tenant_id], references: [id])
+  company         Company                 @relation(fields: [company_id], references: [id])
+  items           SupplierQuotationItem[]
+
+  @@unique([tenant_id, quotation_number])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([rfq_id])
+  @@index([supplier_id])
+  @@index([status])
+}
+
+model SupplierQuotationItem {
+  id                    String   @id @default(uuid()) @db.Uuid
+  tenant_id             String   @db.Uuid
+  company_id            String   @db.Uuid
+  supplier_quotation_id String   @db.Uuid
+  rfq_item_id           String   @db.Uuid
+  line_no               Int
+  quoted_quantity       Decimal  @db.Decimal(18, 4)
+  unit_price            Decimal  @db.Decimal(18, 4)
+  total_price           Decimal  @db.Decimal(18, 4)
+  lead_time_days        Int?
+  remarks               String?
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime @updatedAt @db.Timestamptz(6)
+
+  rfq_item           RFQItem           @relation(fields: [rfq_item_id], references: [id])
+  supplier_quotation SupplierQuotation @relation(fields: [supplier_quotation_id], references: [id])
+  tenant             Tenant            @relation(fields: [tenant_id], references: [id])
+  company            Company           @relation(fields: [company_id], references: [id])
+
+  @@unique([supplier_quotation_id, line_no])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([supplier_quotation_id])
+  @@index([rfq_item_id])
+}
+
+// Ordering and receiving
+
+model PurchaseOrder {
+  id                      String                 @id @default(uuid()) @db.Uuid
+  tenant_id               String                 @db.Uuid
+  company_id              String                 @db.Uuid
+  supplier_id             String                 @db.Uuid
+  purchase_requisition_id String?                @db.Uuid
+  rfq_id                  String?                @db.Uuid
+  supplier_quotation_id   String?                @db.Uuid
+  po_number               String
+  issued_by_user_id       String                 @db.Uuid
+  status                  String
+  currency_code           String
+  total_amount            Decimal                @db.Decimal(18, 4)
+  order_date              DateTime               @db.Date
+  expected_delivery_date  DateTime?              @db.Date
+  approved_at             DateTime?              @db.Timestamptz(6)
+  created_at              DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime               @updatedAt @db.Timestamptz(6)
+  delivery_notifications  DeliveryNotification[]
+  goods_receipts          GoodsReceipt[]
+  invoice_verifications   InvoiceVerification[]
+  company                 Company                @relation(fields: [company_id], references: [id])
+  issued_by_user          User                   @relation("UserIssuedPurchaseOrders", fields: [issued_by_user_id], references: [id])
+  purchase_requisition    PurchaseRequisition?   @relation(fields: [purchase_requisition_id], references: [id])
+  rfq                     RFQ?                   @relation(fields: [rfq_id], references: [id])
+  supplier                Supplier               @relation(fields: [supplier_id], references: [id])
+  supplier_quotation      SupplierQuotation?     @relation(fields: [supplier_quotation_id], references: [id])
+  tenant                  Tenant                 @relation(fields: [tenant_id], references: [id])
+  items                   PurchaseOrderItem[]
+
+  @@unique([tenant_id, po_number])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([supplier_id])
+  @@index([status])
+}
+
+model PurchaseOrderItem {
+  id                String                    @id @default(uuid()) @db.Uuid
+  tenant_id         String                    @db.Uuid
+  purchase_order_id String                    @db.Uuid
+  source_item_type  String?
+  source_item_id    String?                   @db.Uuid
+  line_no           Int
+  description       String
+  quantity          Decimal                   @db.Decimal(18, 4)
+  unit_of_measure   String
+  unit_price        Decimal                   @db.Decimal(18, 4)
+  total_price       Decimal                   @db.Decimal(18, 4)
+  status            String
+  created_at        DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime                  @updatedAt @db.Timestamptz(6)
+  receipt_items     GoodsReceiptItem[]
+  invoice_items     InvoiceVerificationItem[]
+  purchase_order    PurchaseOrder             @relation(fields: [purchase_order_id], references: [id])
+  tenant            Tenant                    @relation(fields: [tenant_id], references: [id])
+
+  @@unique([purchase_order_id, line_no])
+  @@index([tenant_id])
+  @@index([purchase_order_id])
+  @@index([status])
+}
+
+model GoodsReceipt {
+  id                    String                @id @default(uuid()) @db.Uuid
+  tenant_id             String                @db.Uuid
+  company_id            String                @db.Uuid
+  purchase_order_id     String                @db.Uuid
+  supplier_id           String                @db.Uuid
+  receipt_number        String
+  received_by_user_id   String                @db.Uuid
+  status                String
+  receipt_date          DateTime              @db.Date
+  notes                 String?
+  created_at            DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime              @updatedAt @db.Timestamptz(6)
+  company               Company               @relation(fields: [company_id], references: [id])
+  purchase_order        PurchaseOrder         @relation(fields: [purchase_order_id], references: [id])
+  received_by_user      User                  @relation("UserReceivedGoodsReceipts", fields: [received_by_user_id], references: [id])
+  supplier              Supplier              @relation(fields: [supplier_id], references: [id])
+  tenant                Tenant                @relation(fields: [tenant_id], references: [id])
+  items                 GoodsReceiptItem[]
+  invoice_verifications InvoiceVerification[]
+
+  @@unique([tenant_id, receipt_number])
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([purchase_order_id])
+  @@index([supplier_id])
+  @@index([status])
+}
+
+model GoodsReceiptItem {
+  id                     String                    @id @default(uuid()) @db.Uuid
+  tenant_id              String                    @db.Uuid
+  goods_receipt_id       String                    @db.Uuid
+  purchase_order_item_id String                    @db.Uuid
+  line_no                Int
+  received_quantity      Decimal                   @db.Decimal(18, 4)
+  accepted_quantity      Decimal                   @db.Decimal(18, 4)
+  rejected_quantity      Decimal                   @default(0) @db.Decimal(18, 4)
+  remarks                String?
+  created_at             DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime                  @updatedAt @db.Timestamptz(6)
+  goods_receipt          GoodsReceipt              @relation(fields: [goods_receipt_id], references: [id])
+  purchase_order_item    PurchaseOrderItem         @relation(fields: [purchase_order_item_id], references: [id])
+  tenant                 Tenant                    @relation(fields: [tenant_id], references: [id])
+  invoice_items          InvoiceVerificationItem[]
+
+  @@unique([goods_receipt_id, line_no])
+  @@index([tenant_id])
+  @@index([goods_receipt_id])
+  @@index([purchase_order_item_id])
+}
+
+model DeliveryNotification {
+  id                  String        @id @default(uuid()) @db.Uuid
+  tenant_id           String        @db.Uuid
+  purchase_order_id   String        @db.Uuid
+  supplier_id         String        @db.Uuid
+  notified_by_user_id String        @db.Uuid
+  message             String?
+  status              String
+  notified_at         DateTime      @db.Timestamptz(6)
+  created_at          DateTime      @default(now()) @db.Timestamptz(6)
+  notified_by_user    User          @relation("UserDeliveryNotifications", fields: [notified_by_user_id], references: [id])
+  purchase_order      PurchaseOrder @relation(fields: [purchase_order_id], references: [id])
+  supplier            Supplier      @relation(fields: [supplier_id], references: [id])
+  tenant              Tenant        @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([purchase_order_id])
+  @@index([supplier_id])
+  @@index([status])
+}
+
+// Invoice verification
+
+model InvoiceVerification {
+  id                  String                          @id @default(uuid()) @db.Uuid
+  tenant_id           String                          @db.Uuid
+  company_id          String                          @db.Uuid
+  supplier_id         String                          @db.Uuid
+  purchase_order_id   String                          @db.Uuid
+  goods_receipt_id    String?                         @db.Uuid
+  invoice_number      String
+  invoice_date        DateTime                        @db.Date
+  currency_code       String
+  total_amount        Decimal                         @db.Decimal(18, 4)
+  match_status        String
+  verification_status String
+  verified_by_user_id String?                         @db.Uuid
+  verified_at         DateTime?                       @db.Timestamptz(6)
+  created_at          DateTime                        @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime                        @updatedAt @db.Timestamptz(6)
+  company             Company                         @relation(fields: [company_id], references: [id])
+  goods_receipt       GoodsReceipt?                   @relation(fields: [goods_receipt_id], references: [id])
+  purchase_order      PurchaseOrder                   @relation(fields: [purchase_order_id], references: [id])
+  supplier            Supplier                        @relation(fields: [supplier_id], references: [id])
+  tenant              Tenant                          @relation(fields: [tenant_id], references: [id])
+  verified_by_user    User?                           @relation("UserVerifiedInvoiceVerifications", fields: [verified_by_user_id], references: [id])
+  attachments         InvoiceVerificationAttachment[]
+  items               InvoiceVerificationItem[]
+
+  @@index([tenant_id])
+  @@index([company_id])
+  @@index([supplier_id])
+  @@index([purchase_order_id])
+  @@index([invoice_number])
+  @@index([match_status])
+  @@index([verification_status])
+}
+
+model InvoiceVerificationItem {
+  id                      String              @id @default(uuid()) @db.Uuid
+  tenant_id               String              @db.Uuid
+  invoice_verification_id String              @db.Uuid
+  purchase_order_item_id  String              @db.Uuid
+  goods_receipt_item_id   String?             @db.Uuid
+  line_no                 Int
+  invoiced_quantity       Decimal             @db.Decimal(18, 4)
+  invoiced_unit_price     Decimal             @db.Decimal(18, 4)
+  invoiced_total          Decimal             @db.Decimal(18, 4)
+  variance_amount         Decimal?            @db.Decimal(18, 4)
+  variance_reason         String?
+  created_at              DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime            @updatedAt @db.Timestamptz(6)
+  goods_receipt_item      GoodsReceiptItem?   @relation(fields: [goods_receipt_item_id], references: [id])
+  invoice_verification    InvoiceVerification @relation(fields: [invoice_verification_id], references: [id])
+  purchase_order_item     PurchaseOrderItem   @relation(fields: [purchase_order_item_id], references: [id])
+  tenant                  Tenant              @relation(fields: [tenant_id], references: [id])
+
+  @@unique([invoice_verification_id, line_no])
+  @@index([tenant_id])
+  @@index([invoice_verification_id])
+  @@index([purchase_order_item_id])
+}
+
+model InvoiceVerificationAttachment {
+  id                      String              @id @default(uuid()) @db.Uuid
+  tenant_id               String              @db.Uuid
+  invoice_verification_id String              @db.Uuid
+  file_name               String
+  object_key              String
+  file_hash               String?
+  uploaded_by_user_id     String              @db.Uuid
+  created_at              DateTime            @default(now()) @db.Timestamptz(6)
+  invoice_verification    InvoiceVerification @relation(fields: [invoice_verification_id], references: [id])
+  tenant                  Tenant              @relation(fields: [tenant_id], references: [id])
+  uploaded_by_user        User                @relation("UserUploadedInvoiceVerificationAttachments", fields: [uploaded_by_user_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([invoice_verification_id])
+}
+
+// Reporting and audit
+
+model ReportRequest {
+  id                   String         @id @default(uuid()) @db.Uuid
+  tenant_id            String         @db.Uuid
+  requested_by_user_id String         @db.Uuid
+  report_type          String
+  parameters_json      Json?
+  status               String
+  created_at           DateTime       @default(now()) @db.Timestamptz(6)
+  completed_at         DateTime?      @db.Timestamptz(6)
+  exports              ReportExport[]
+  requested_by_user    User           @relation("UserRequestedReportRequests", fields: [requested_by_user_id], references: [id])
+  tenant               Tenant         @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([report_type])
+  @@index([status])
+}
+
+model ReportExport {
+  id                   String        @id @default(uuid()) @db.Uuid
+  tenant_id            String        @db.Uuid
+  report_request_id    String        @db.Uuid
+  format               String
+  object_key           String
+  file_hash            String?
+  generated_by_user_id String        @db.Uuid
+  created_at           DateTime      @default(now()) @db.Timestamptz(6)
+  expires_at           DateTime?     @db.Timestamptz(6)
+  generated_by_user    User          @relation("UserGeneratedReportExports", fields: [generated_by_user_id], references: [id])
+  report_request       ReportRequest @relation(fields: [report_request_id], references: [id])
+  tenant               Tenant        @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([report_request_id])
+  @@index([format])
+}
+
+model AuditTrail {
+  id             String                   @id @default(uuid()) @db.Uuid
+  tenant_id      String                   @db.Uuid
+  actor_user_id  String?                  @db.Uuid
+  entity_type    String
+  entity_id      String                   @db.Uuid
+  action         String
+  result         String?
+  request_id     String?
+  snapshot_json  Json?
+  created_at     DateTime                 @default(now()) @db.Timestamptz(6)
+  actor_user     User?                    @relation("UserActorAuditTrails", fields: [actor_user_id], references: [id])
+  tenant         Tenant                   @relation(fields: [tenant_id], references: [id])
+  blockchain_ref AuditTrailBlockchainRef? @relation("AuditTrailBlockchainRefRelation")
+  hash           AuditTrailHash?          @relation("AuditTrailHashRelation")
+
+  @@index([tenant_id])
+  @@index([entity_type])
+  @@index([entity_id])
+  @@index([action])
+  @@index([result])
+  @@unique([tenant_id, entity_type, entity_id, action])
+}
+
+model AuditTrailHash {
+  id             String     @id @default(uuid()) @db.Uuid
+  tenant_id      String     @db.Uuid
+  audit_trail_id String     @unique @db.Uuid
+  hash_algorithm String
+  hash_value     String
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  audit_trail    AuditTrail @relation("AuditTrailHashRelation", fields: [audit_trail_id], references: [id])
+  tenant         Tenant     @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([audit_trail_id])
+}
+
+model AuditTrailBlockchainRef {
+  id                          String     @id @default(uuid()) @db.Uuid
+  tenant_id                   String     @db.Uuid
+  audit_trail_id              String     @unique @db.Uuid
+  network_ref                 String?
+  blockchain_transaction_hash String
+  block_number                BigInt?
+  anchored_at                 DateTime?  @db.Timestamptz(6)
+  audit_trail                 AuditTrail @relation("AuditTrailBlockchainRefRelation", fields: [audit_trail_id], references: [id])
+  tenant                      Tenant     @relation(fields: [tenant_id], references: [id])
+
+  @@index([tenant_id])
+  @@index([audit_trail_id])
+  @@index([blockchain_transaction_hash])
+}
+
+enum PurchaseRequisitionStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PurchaseRequisitionPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum ApprovalRequestStatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+enum ApprovalActionType {
+  approved
+  rejected
+  cancelled
+}
+
+enum CompanyMembershipStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}

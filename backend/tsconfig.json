@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "esnext",
+    "target": "es2023",
+    "strict": true,
+    "alwaysStrict": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "types": ["node"],
+    "moduleResolution": "bundler",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
+  },
+    "include": [
+    "src/**/*.ts",
+    "worker-configuration.d.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

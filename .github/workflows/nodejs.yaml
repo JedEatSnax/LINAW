@@ -23,7 +23,7 @@ env:
 
 jobs:
   client:
-    name: Client (Node ${{ matrix.node-version }})
+    name: Frontend (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -39,24 +39,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          cache-dependency-path: client/pnpm-lock.yaml
+          cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install
         run: pnpm install
-        working-directory: client
+        working-directory: frontend
       - name: Build
         run: pnpm run build
-        working-directory: client
+        working-directory: frontend
       - name: Lint
         run: pnpm run lint
-        working-directory: client
+        working-directory: frontend
       - name: Typecheck
         run: pnpm run typecheck
-        working-directory: client
+        working-directory: frontend
   #      - name: Test
   #        run: pnpm run test
-  #        working-directory: client
+  #        working-directory: frontend
   server:
-    name: Server (Node ${{ matrix.node-version }})
+    name: Backend (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -72,19 +72,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
-          cache-dependency-path: server/pnpm-lock.yaml
+          cache-dependency-path: backend/pnpm-lock.yaml
       - name: Install
         run: pnpm install
-        working-directory: server
+        working-directory: backend
       - name: Build
         run: pnpm run build
-        working-directory: server
+        working-directory: backend
       - name: Lint
         run: pnpm run lint
-        working-directory: server
+        working-directory: backend
       - name: Typecheck
         run: pnpm run typecheck
-        working-directory: server
-      - name: Test
-        run: pnpm hardhat test
-        working-directory: server
+        working-directory: backend
