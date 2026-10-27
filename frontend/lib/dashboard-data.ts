@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { authFetch } from "@/lib/auth-client";
 
 const numberLike = z.union([z.number(), z.string()]);
 
@@ -103,7 +104,7 @@ export type DashboardData = {
 };
 
 async function getJson(path: string, signal: AbortSignal): Promise<ApiResponse> {
-  const response = await fetch(`/api/backend/${path}`, {
+  const response = await authFetch(`/api/backend/${path}`, {
     signal,
     cache: "no-store",
   });

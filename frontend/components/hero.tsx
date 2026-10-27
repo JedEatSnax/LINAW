@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { DecorIcon } from "@/components/decor-icon";
 import { FullWidthDivider } from "@/components/full-width-divider";
+import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 
 export function HeroSection() {
@@ -49,8 +50,11 @@ export function HeroSection() {
           <Link href="/signup" passHref>
             <Button variant="outline">Signup</Button>
           </Link>
-          <Link href="/login" passHref>
-            <Button>Login</Button>
+          <Link href="/signup" passHref>
+            <Button>
+              Login
+              <ArrowRightIcon data-icon="inline-end" />
+            </Button>
           </Link>
         </div>
       </div>

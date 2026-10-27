@@ -6,7 +6,9 @@ function backendPath(path?: string[]): string {
 }
 
 function isPurchaseRequisitionPath(path: string): boolean {
-  return path === "PurchaseRequisition" || path.startsWith("PurchaseRequisition/");
+  return (
+    path === "PurchaseRequisition" || path.startsWith("PurchaseRequisition/")
+  );
 }
 
 export async function GET(
@@ -29,6 +31,18 @@ export async function POST(
     request,
     backendPath((await context.params).path),
     "POST",
+    isPurchaseRequisitionPath,
+  );
+}
+
+export async function PATCH(
+  request: Request,
+  context: { params: Promise<{ path?: string[] }> },
+): Promise<Response> {
+  return forwardBackendRequest(
+    request,
+    backendPath((await context.params).path),
+    "PATCH",
     isPurchaseRequisitionPath,
   );
 }

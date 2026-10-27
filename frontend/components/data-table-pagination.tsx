@@ -19,14 +19,22 @@ import { type DataTableFeatures } from "@/types/data-table-features";
 
 interface DataTablePaginationProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData>;
+  density?: "default" | "comfortable";
 }
 
 export function DataTablePagination<TData extends RowData>({
   table,
+  density = "default",
 }: Readonly<DataTablePaginationProps<TData>>) {
   return (
-    <div className="mt-4 flex items-center justify-between rounded-xl border bg-background px-2 py-4">
-      <div className="flex items-center space-x-2">
+    <div
+      className={`mt-4 flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-background px-4 sm:px-5 ${
+        density === "comfortable"
+          ? "mt-5 min-h-[4.25rem] pt-4 pb-5"
+          : "py-4"
+      }`}
+    >
+      <div className="flex items-center gap-2">
         <p className="text-sm font-medium">Rows per page</p>
         <Select
           value={`${table.state.pagination.pageSize}`}
@@ -48,11 +56,11 @@ export function DataTablePagination<TData extends RowData>({
       </div>
 
       {/* 2. Middle: Page indicator & Page switch buttons */}
-      <div className="flex items-center space-x-6 lg:space-x-8">
-        {/*<div className="flex w-[100px] items-center justify-center text-sm font-medium">
+      <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+        <div className="flex min-w-[100px] items-center justify-center text-sm font-medium">
           Page {table.state.pagination.pageIndex + 1} of {table.getPageCount()}
-        </div>*/}
-        <div className="flex items-center space-x-2">
+        </div>
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="icon"

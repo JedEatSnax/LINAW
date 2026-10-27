@@ -24,50 +24,41 @@ import {
   ChevronsUpDownIcon,
   MoonIcon,
   UserIcon,
+  CreditCardIcon,
+  BellIcon,
   LogOutIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useRouter } from "next/navigation";
 import * as React from "react";
+import { markAuthTransition, runAuthTransition } from "@/lib/auth-client";
 
 export function NavUser({
   user,
-}: Readonly<{
+}: {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
-}>) {
+}) {
   const { isMobile } = useSidebar();
   const { setTheme } = useTheme();
-  const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = React.useState(false);
-  const initials =
-    user.name
-      .split(" ")
-      .map((part) => part[0])
-      .filter(Boolean)
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "U";
+  const initials = user.name.split(" ").map((part) => part[0]).filter(Boolean).join("").toUpperCase().slice(0, 2) || "U";
 
   const handleLogout = async () => {
     if (isLoggingOut) return;
-
     setIsLoggingOut(true);
-
     try {
-      const response = await fetch("/api/auth/logout", {
-        method: "POST",
-        headers: { Accept: "application/json" },
+      const response = await runAuthTransition(async () => {
+        const response = await fetch("/api/auth/logout", { method: "POST", headers: { Accept: "application/json" } });
+        if (response.ok) markAuthTransition();
+        return response;
       });
-
       if (!response.ok) {
         setIsLoggingOut(false);
         return;
       }
-
       window.location.assign("/login");
     } catch {
       setIsLoggingOut(false);
@@ -139,18 +130,22 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/profile")}>
+              <DropdownMenuItem render={<a href="/profile" />}>
                 <UserIcon />
                 Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CreditCardIcon />
+                Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <BellIcon />
+                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                variant="destructive"
-                disabled={isLoggingOut}
-                onClick={() => void handleLogout()}
-              >
+              <DropdownMenuItem variant="destructive" disabled={isLoggingOut} onClick={() => void handleLogout()}>
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>

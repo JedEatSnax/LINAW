@@ -5,6 +5,8 @@ const allowedPrefixes = [
   "PurchaseRequisition",
   "approval-workflows",
   "purchase-orders",
+  "auditTrail",
+  "suppliers",
 ];
 
 function isAllowedPath(path: string): boolean {
@@ -27,4 +29,20 @@ export async function POST(
 ): Promise<Response> {
   const path = (await context.params).path?.join("/") ?? "";
   return forwardBackendRequest(request, path, "POST", isAllowedPath);
+}
+
+export async function PATCH(
+  request: Request,
+  context: { params: Promise<{ path?: string[] }> },
+): Promise<Response> {
+  const path = (await context.params).path?.join("/") ?? "";
+  return forwardBackendRequest(request, path, "PATCH", isAllowedPath);
+}
+
+export async function DELETE(
+  request: Request,
+  context: { params: Promise<{ path?: string[] }> },
+): Promise<Response> {
+  const path = (await context.params).path?.join("/") ?? "";
+  return forwardBackendRequest(request, path, "DELETE", isAllowedPath);
 }

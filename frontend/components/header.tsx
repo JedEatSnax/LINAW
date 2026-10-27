@@ -3,11 +3,14 @@ import { cn } from "@/lib/utils";
 import { useScroll } from "@/hooks/use-scroll";
 import { Button } from "@/components/ui/button";
 import { MobileNav } from "@/components/mobile-nav";
-import Link from "next/link";
 
 export const navLinks = [
   {
     label: "Features",
+    href: "#",
+  },
+  {
+    label: "Pricing",
     href: "#",
   },
   {
@@ -37,28 +40,28 @@ export function Header() {
           },
         )}
       >
+        <a
+          className="rounded-md p-2 hover:bg-muted dark:hover:bg-muted/50"
+          href=""
+        ></a>
         <div className="hidden items-center gap-2 md:flex">
-          {navLinks.map((link) => (
-            <Button
-              key={link.label}
-              size="sm"
-              variant="ghost"
-              render={<a href={link.href} />}
-              nativeButton={false}
-            >
-              {link.label}
-            </Button>
-          ))}
-        </div>
-        <div className="hidden items-center gap-2 md:flex">
-          <Link href="/signup" passHref>
-            <Button size="sm" variant="outline">
-              Signup
-            </Button>
-          </Link>
-          <Link href="/login" passHref>
-            <Button size="sm">Login</Button>
-          </Link>
+          <div>
+            {navLinks.map((link) => (
+              <Button
+                key={link.label}
+                size="sm"
+                variant="ghost"
+                render={<a href={link.href} />}
+                nativeButton={false}
+              >
+                {link.label}
+              </Button>
+            ))}
+          </div>
+          <Button size="sm" variant="outline">
+            Sign In
+          </Button>
+          <Button size="sm">Get Started</Button>
         </div>
         <MobileNav />
       </nav>

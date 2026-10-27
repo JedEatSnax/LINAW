@@ -38,9 +38,7 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const apiUrl = (
-    env as typeof env & { LINAW_API_URL?: string }
-  ).LINAW_API_URL;
+  const apiUrl = (env as typeof env & { LINAW_API_URL?: string }).LINAW_API_URL;
 
   if (!apiUrl) {
     return Response.json(
@@ -52,20 +50,20 @@ export async function POST(request: Request): Promise<Response> {
   let upstream: Response;
 
   try {
-    upstream = await fetch(
-      `${apiUrl.replace(/\/+$/, "")}/api/auth/logout`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          Cookie: `refreshToken=${refreshToken}`,
-        },
-        cache: "no-store",
+    upstream = await fetch(`${apiUrl.replace(/\/+$/, "")}/api/auth/logout`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Cookie: `refreshToken=${refreshToken}`,
       },
-    );
+      cache: "no-store",
+    });
   } catch {
     return Response.json(
-      { success: false, message: "Unable to reach the authentication service." },
+      {
+        success: false,
+        message: "Unable to reach the authentication service.",
+      },
       { status: 502, headers: { "Cache-Control": "no-store" } },
     );
   }
@@ -76,7 +74,10 @@ export async function POST(request: Request): Promise<Response> {
     data = (await upstream.json()) as { success?: boolean; message?: string };
   } catch {
     return Response.json(
-      { success: false, message: "Invalid response from authentication service." },
+      {
+        success: false,
+        message: "Invalid response from authentication service.",
+      },
       { status: 502, headers: { "Cache-Control": "no-store" } },
     );
   }

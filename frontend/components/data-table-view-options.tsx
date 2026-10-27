@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactTable, type RowData } from "@tanstack/react-table";
-import { Columns3 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,11 +27,10 @@ export function DataTableViewOptions<TData extends RowData>({
           <Button
             variant="outline"
             size="sm"
-            className="ml-auto hidden h-8 lg:flex gap-2"
+            className="ml-auto hidden h-8 lg:flex"
           />
         }
       >
-        <Columns3 className="h-4 w-4" />
         Columns
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">
