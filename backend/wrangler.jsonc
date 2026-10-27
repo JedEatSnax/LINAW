@@ -7,7 +7,7 @@
   "compatibility_date": "2026-08-28",
   "compatibility_flags": ["nodejs_compat"],
 
-  "workers_dev": true,
+  "workers_dev": false,
 
   "env": {
     "local": {

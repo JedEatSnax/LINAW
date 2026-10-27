@@ -64,7 +64,7 @@ function createCsrfToken(): string {
 }
 
 function buildCsp(nonce: string): string {
-  const isDev = process.env.NODE_ENV !== "production";
+  const isDev = env.NODE_ENV !== "production";
   const scriptSrc = isDev
     ? "'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com"
     : `'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval' https://www.googletagmanager.com`;
@@ -90,14 +90,30 @@ function applySecurityHeaders(
   response: NextResponse,
   csp: string,
 ): NextResponse {
+  const isProd = env.NODE_ENV === "production";
+
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+  if (isProd) {
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
+    );
+  }
+
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+  );
+
   response.headers.set(
     "Cache-Control",
     "private, no-cache, no-store, must-revalidate",
   );
+
   response.headers.set("Pragma", "no-cache");
   response.headers.set("Expires", "0");
   return response;

@@ -17,7 +17,7 @@
     "binding": "IMAGES",
   },
   "secrets": {
-    "required": ["LINAW_API_URL"],
+    "required": ["LINAW_API_URL", "NODE_ENV"],
   },
   "observability": {
     "logs": {
