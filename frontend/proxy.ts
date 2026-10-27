@@ -135,7 +135,7 @@ function nextWithSecurityHeaders(request: NextRequest) {
   });
 
   response.cookies.set("csrfToken", csrfToken, {
-    httpOnly: false,
+    httpOnly: true,
     sameSite: "lax",
     secure: request.nextUrl.protocol === "https:",
     path: "/",
@@ -179,7 +179,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: "/((?!api|_next/static|_next/image|favicon.ico).*)",
+      source:
+        "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },

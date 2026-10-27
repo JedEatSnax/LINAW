@@ -9,6 +9,10 @@
 
   "workers_dev": false,
 
+  "vars": {},
+
+  "secrets": {},
+
   "env": {
     "local": {
       "vars": {
@@ -25,7 +29,7 @@
         "BLOCKCHAIN_RPC_URL": "http://localhost:8545",
         "AUDIT_CONTRACT_ADDRESS": "0x4419328A7a7a23621A3EA3E82D9145641728Daa8",
         "MAILGUN_DOMAIN": "wii.qd.je",
-        "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>"
+        "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>",
       },
 
       "secrets": {
@@ -35,9 +39,9 @@
           "REDIS_TOKEN",
           "BLOCKCHAIN_PRIVATE_KEY",
           "DATABASE_URL",
-          "MAILGUN_API_KEY"
-        ]
-      }
+          "MAILGUN_API_KEY",
+        ],
+      },
     },
 
     "staging": {
@@ -45,7 +49,7 @@
         "NODE_ENV": "staging",
         "ALLOWED_ORIGIN": "https://your-frontend-domain.com",
         "MAILGUN_DOMAIN": "wii.qd.je",
-        "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>"
+        "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>",
       },
 
       "secrets": {
@@ -55,9 +59,9 @@
           "REDIS_TOKEN",
           "BLOCKCHAIN_PRIVATE_KEY",
           "DATABASE_URL",
-          "MAILGUN_API_KEY"
-        ]
-      }
-    }
-  }
+          "MAILGUN_API_KEY",
+        ],
+      },
+    },
+  },
 }
