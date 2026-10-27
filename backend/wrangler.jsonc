@@ -1,17 +1,64 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
 
-  "name": "linaw-server-worker",
+  "name": "linaw-server",
   "main": "src/app.ts",
 
   "compatibility_date": "2026-08-28",
-  "compatibility_flags": ["nodejs_compat"],
+
+  "minify": true,
 
   "workers_dev": false,
 
-  "vars": {},
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 0.1, // 10% of requests are logged
+      "invocation_logs": true,
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 0.1, // 10% of requests are logged
+    },
+  },
+  "placement": {
+    "mode": "smart",
+  },
+  "routes": [
+    {
+      "pattern": "api.linaw.tech/*",
+      "zone_name": "linaw.tech",
+    },
+  ],
 
-  "secrets": {},
+  "vars": {
+    "NODE_ENV": "production",
+
+    "JWT_ACCESS_EXPIRES": "60m",
+    "JWT_REFRESH_EXPIRES": "7d",
+
+    "APP_URL": "https://www.linaw.tech",
+    "ALLOWED_ORIGIN": "https://www.linaw.tech",
+
+    "REDIS_URL": "https://linaw-buff-inlet-rest.cloud.layerbase.dev",
+
+    "BLOCKCHAIN_RPC_URL": "https://eth-sepolia.g.alchemy.com/v2/alch_wCYtfR8NDJzeVKZbf84qr",
+    "AUDIT_CONTRACT_ADDRESS": "0x4419328A7a7a23621A3EA3E82D9145641728Daa8",
+
+    "MAILGUN_DOMAIN": "wii.qd.je",
+    "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>",
+  },
+
+  "secrets": {
+    "required": [
+      "JWT_ACCESS_SECRET",
+      "JWT_REFRESH_SECRET",
+      "REDIS_TOKEN",
+      "BLOCKCHAIN_PRIVATE_KEY",
+      "DATABASE_URL",
+      "MAILGUN_API_KEY",
+    ],
+  },
 
   "env": {
     "local": {
@@ -26,7 +73,7 @@
 
         "REDIS_URL": "https://linaw-buff-inlet-rest.cloud.layerbase.dev",
 
-        "BLOCKCHAIN_RPC_URL": "http://localhost:8545",
+        "BLOCKCHAIN_RPC_URL": "https://eth-sepolia.g.alchemy.com/v2/alch_wCYtfR8NDJzeVKZbf84qr",
         "AUDIT_CONTRACT_ADDRESS": "0x4419328A7a7a23621A3EA3E82D9145641728Daa8",
         "MAILGUN_DOMAIN": "wii.qd.je",
         "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>",
@@ -45,9 +92,24 @@
     },
 
     "staging": {
+      "name": "linaw-server-staging",
+
+      "workers_dev": true,
+
       "vars": {
         "NODE_ENV": "staging",
-        "ALLOWED_ORIGIN": "https://your-frontend-domain.com",
+
+        "JWT_ACCESS_EXPIRES": "60m",
+        "JWT_REFRESH_EXPIRES": "7d",
+
+        "APP_URL": "https://your-staging-frontend-url",
+        "ALLOWED_ORIGIN": "https://your-staging-frontend-url",
+
+        "REDIS_URL": "https://linaw-buff-inlet-rest.cloud.layerbase.dev",
+
+        "BLOCKCHAIN_RPC_URL": "https://eth-sepolia.g.alchemy.com/v2/alch_wCYtfR8NDJzeVKZbf84qr",
+        "AUDIT_CONTRACT_ADDRESS": "0x4419328A7a7a23621A3EA3E82D9145641728Daa8",
+
         "MAILGUN_DOMAIN": "wii.qd.je",
         "MAILGUN_FROM": "LINAW<noreply@wii.qd.je>",
       },
