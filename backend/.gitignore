@@ -1,9 +1,10 @@
-
-
 # =====================
 # Backend
 # =====================
 
+.agents
+.claude
+.windsurf
 .wrangler/
 node_modules/
 generated/
