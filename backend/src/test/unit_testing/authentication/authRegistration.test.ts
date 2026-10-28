@@ -7,12 +7,15 @@ vi.mock("../../../modules/authentication/authPassword.js", () => ({
 
 import { AuthService } from "../../../modules/authentication/authServices.js";
 import { AuthRepository } from "../../../modules/authentication/authRepository.js";
+import { verifyPassword } from "../../../modules/authentication/authPassword.js";
 import { ConflictError } from "../../../shared/errors/appError.js";
 import type { AppEnv } from "../../../config/env.js";
 
 const repositoryMock = {
   findUserWithCredentialsByEmail: vi.fn(),
   registerUser: vi.fn(),
+  findActiveCompanyMemberships: vi.fn().mockResolvedValue([]),
+  createSession: vi.fn().mockResolvedValue({}),
 };
 
 const signupInput = {
@@ -26,7 +29,12 @@ const signupInput = {
 function createService() {
   return new AuthService(
     repositoryMock as unknown as AuthRepository,
-    {} as AppEnv,
+    {
+      JWT_ACCESS_SECRET: "access-secret",
+      JWT_REFRESH_SECRET: "refresh-secret",
+      JWT_ACCESS_EXPIRES: "60m",
+      JWT_REFRESH_EXPIRES: "7d",
+    } as AppEnv,
   );
 }
 
@@ -42,7 +50,15 @@ describe("AuthService registration", () => {
       email: signupInput.email,
     };
 
-    repositoryMock.findUserWithCredentialsByEmail.mockResolvedValue(null);
+    repositoryMock.findUserWithCredentialsByEmail
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: user.id,
+        tenant_id: user.tenant_id,
+        status: "ACTIVE",
+        credentials: { password_hash: "hashed-password" },
+      });
+    vi.mocked(verifyPassword).mockResolvedValue(true);
     repositoryMock.registerUser.mockResolvedValue(user);
 
     const result = await createService().register(signupInput);
@@ -62,7 +78,11 @@ describe("AuthService registration", () => {
       }),
     );
 
-    expect(result).toEqual(user);
+    expect(result).toEqual({
+      accessToken: expect.any(String),
+      refreshToken: expect.any(String),
+    });
+    expect(repositoryMock.createSession).toHaveBeenCalledTimes(1);
   });
 
   it("rejects an already registered email without persisting", async () => {

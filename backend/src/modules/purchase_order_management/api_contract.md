@@ -90,6 +90,26 @@ The router registers the root child path as `/`; deployed behavior for omitting 
 
 ## 5. Detailed Endpoint Contracts
 
+### GET `/api/purchase-orders/reports/monthly-completed`
+
+**Purpose:** Returns the complete monthly report for purchase orders whose persisted status is `COMPLETED` and whose `PURCHASE_ORDER / COMPLETED` audit event falls within the requested calendar month.
+
+**Query Parameters:** `month` is required and must use `YYYY-MM` format. Calendar boundaries are interpreted in UTC as an inclusive start and exclusive first day of the following month.
+
+**Authorization:** Requires Bearer authentication, company context, and `purchase_order:read`. Tenant and company scope come only from the authenticated user.
+
+**Metric:** `summary.values_by_currency` sums stored `PurchaseOrder.total_amount` values by currency. These values represent completed purchase-order values, not verified payments or cash expenditure.
+
+**Category attribution:** PO lines are attributed through `PurchaseOrderItem.source_item_type = RFQ_ITEM`, `RFQItem.purchase_requisition_item`, and `PurchaseRequisitionItem.item_type`. Supported categories are `GOODS`, `SERVICE`, and `ASSET`. Lines without a valid relationship are returned under `UNCLASSIFIED` and are included in the limitations list.
+
+**Requester attribution:** The original requester is resolved through `PurchaseOrder.purchase_requisition.requested_by_user`. Missing requisitions or requesters are grouped as `Unattributed`; the PO issuer is not used as the requester.
+
+**Response:** Returns `period`, `metric_definition`, `summary`, `categories`, `requesters`, `records`, and `limitations`. Monetary values are serialized as decimal strings and remain separated by currency.
+
+**Errors:** `404` without company context, `403` without permission, and `422` for an invalid month.
+
+**Data limitation:** The current `PurchaseOrder` model has no completion timestamp. Completion month is therefore sourced from the completion audit event's `created_at`. Completed orders without a matching audit event cannot be assigned reliably to a month and are reported in `limitations` rather than silently assigned using `created_at` or `order_date`.
+
 ### POST `/api/purchase-orders/:poId`
 
 **Purpose:** Advances a purchase order through its order lifecycle.

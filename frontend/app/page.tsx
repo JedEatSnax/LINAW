@@ -1,12 +1,10 @@
 import { cn } from "@/lib/utils";
-import { Header } from "@/components/header";
 import { HeroSection } from "@/components/hero";
 import { LogosSection } from "@/components/logos-section";
 
 export default function page() {
   return (
     <div className="relative flex min-h-screen flex-col overflow-hidden px-4 supports-[overflow:clip]:overflow-clip">
-      <Header />
       <main
         className={cn(
           "relative mx-auto max-w-4xl grow",

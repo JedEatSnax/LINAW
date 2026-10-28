@@ -13,8 +13,10 @@ import {
   SendIcon,
   XCircleIcon,
 } from "lucide-react";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/data-table";
 import {
   Dialog,
   DialogContent,
@@ -25,14 +27,6 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldContent, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   cancelPurchaseRequisition,
   createPurchaseRequisition,
@@ -50,6 +44,7 @@ import {
   type WorkflowDefinition,
 } from "@/app/api/approval-workflow/client";
 import { formatCurrency, supportedCurrencies } from "@/lib/currencies";
+import { type DataTableFeatures } from "@/types/data-table-features";
 
 const statusStyles: Record<PurchaseRequisitionStatus, string> = {
   DRAFT:
@@ -218,6 +213,59 @@ export default function PurchaseRequisitionsPage() {
     "create" | "submit" | "cancel" | null
   >(null);
   const [cancelRemarks, setCancelRemarks] = useState("");
+
+  const columns = useMemo(() => {
+    const columnHelper = createColumnHelper<
+      DataTableFeatures,
+      PurchaseRequisitionSummary
+    >();
+
+    return columnHelper.columns([
+      columnHelper.accessor("requisition_number", {
+        header: "Requisition",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.requisition_number}</span>
+        ),
+      }),
+      columnHelper.accessor("workflow_code", {
+        header: "Workflow",
+        cell: ({ row }) => (
+          <span className="block max-w-72 truncate text-muted-foreground">
+            {row.original.workflow_code ?? "Purchase request"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("created_at", {
+        header: "Created",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {dateFormat(row.original.created_at)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("total_estimated_amount", {
+        header: "Amount",
+        cell: ({ row }) =>
+          formatCurrency(
+            row.original.total_estimated_amount,
+            row.original.currency_code,
+          ),
+      }),
+      columnHelper.accessor("requisition_status", {
+        header: "Status",
+        cell: ({ row }) => (
+          <StatusBadge status={row.original.requisition_status} />
+        ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: () => (
+          <ChevronRightIcon className="size-4 text-muted-foreground" />
+        ),
+      }),
+    ]);
+  }, []);
 
   async function loadList() {
     setListLoading(true);
@@ -456,49 +504,16 @@ export default function PurchaseRequisitionsPage() {
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-5">Requisition</TableHead>
-                  <TableHead>Workflow</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-10 pr-5" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {requisitions.map((item) => (
-                  <TableRow
-                    key={item.requisition_id}
-                    className="cursor-pointer"
-                    onClick={() => void openDetail(item.requisition_id)}
-                  >
-                    <TableCell className="pl-5 font-medium">
-                      {item.requisition_number}
-                    </TableCell>
-                    <TableCell className="max-w-72 truncate text-muted-foreground">
-                      {item.workflow_code ?? "Purchase request"}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {dateFormat(item.created_at)}
-                    </TableCell>
-                    <TableCell>
-                      {formatCurrency(
-                        item.total_estimated_amount,
-                        item.currency_code,
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={item.requisition_status} />
-                    </TableCell>
-                    <TableCell className="pr-5">
-                      <ChevronRightIcon className="size-4 text-muted-foreground" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <DataTable
+              columns={columns}
+              data={requisitions}
+              enableExport
+              searchKey="workflow_code"
+              searchPlaceholder="Search workflow code..."
+              exportFileName="purchase-requisitions"
+              onRowClick={(item) => void openDetail(item.requisition_id)}
+              density="comfortable"
+            />
           )}
         </section>
       </div>

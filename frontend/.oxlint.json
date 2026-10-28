@@ -1,12 +1,15 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc"],
+  "plugins": ["typescript", "unicorn", "oxc", "nextjs", "node"],
+  "jsPlugins": ["@shacn/lint"],
   "categories": {
     "correctness": "error"
   },
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "shadcn/no-arbitrary-values": "error",
+    "shadcn/no-restyle": ["error", { "allow": ["layout"] }]
   },
   "env": {
     "builtin": true

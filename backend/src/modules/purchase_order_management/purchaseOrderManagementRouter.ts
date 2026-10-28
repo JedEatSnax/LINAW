@@ -67,6 +67,11 @@ export function createPurchaseOrderManagement() {
     controller.getApprovedPurchaseRequisition,
   );
   router.get(
+    "/reports/monthly-completed",
+    Authorize(systemPermissions.purchaseOrderManagement.read),
+    controller.getMonthlyCompletedProcurementReport,
+  );
+  router.get(
     "/",
     Authorize(systemPermissions.purchaseOrderManagement.read),
     controller.getList,

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { CreateRFQSchema } from "../../../modules/purchase_order_management/purchaseOrderManagementValidator.js";
+import {
+  CreateRFQSchema,
+  MonthlyCompletedProcurementQuerySchema,
+} from "../../../modules/purchase_order_management/purchaseOrderManagementValidator.js";
 
 const purchaseRequisitionId = "00000000-0000-1000-8000-000000000001";
 
@@ -64,5 +67,18 @@ describe("CreateRFQSchema", () => {
         ]),
       );
     }
+  });
+});
+
+describe("MonthlyCompletedProcurementQuerySchema", () => {
+  it("accepts a calendar month", () => {
+    expect(MonthlyCompletedProcurementQuerySchema.parse({ month: "2026-10" })).toEqual({
+      month: "2026-10",
+    });
+  });
+
+  it("rejects malformed or impossible months", () => {
+    expect(() => MonthlyCompletedProcurementQuerySchema.parse({ month: "2026-13" })).toThrow();
+    expect(() => MonthlyCompletedProcurementQuerySchema.parse({ month: "October 2026" })).toThrow();
   });
 });

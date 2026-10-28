@@ -1,12 +1,12 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient as GeneratedPrismaClient } from "../generated/prisma/client.js";
 import type { AppEnv } from "./env.js";
 
 type PrismaClientInstance = InstanceType<typeof GeneratedPrismaClient>;
 
 export function createPrismaClient(databaseUrl: string): PrismaClientInstance {
-  const adapter = new PrismaPg({
+  const adapter = new PrismaNeon({
     connectionString: databaseUrl,
   });
 

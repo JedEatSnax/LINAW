@@ -12,9 +12,11 @@ import type {
   PurchaseOrderIdParams,
   UpdatePurchaseOrder,
   UpdateRFQ,
+  MonthlyCompletedProcurementQuery,
 } from "./purchaseOrderManagementValidator";
 
 import { ConflictError } from "../../shared/errors/appError.js";
+import Decimal from "decimal.js";
 import {
   PURCHASE_ORDER_AUDIT_EVENT,
   type PurchaseOrderAuditAction,
@@ -235,6 +237,141 @@ export class PurchaseOrderManagementService {
     });
 
     return completedPurchaseOrder;
+  }
+
+  async getMonthlyCompletedProcurementReport(input: {
+    tenant_id: string;
+    company_id: string;
+    query: MonthlyCompletedProcurementQuery;
+  }) {
+    const monthMatch = /^(\d{4})-(\d{2})$/.exec(input.query.month);
+    if (!monthMatch) {
+      throw new ConflictError("Month must use YYYY-MM format.");
+    }
+    const year = Number(monthMatch[1]);
+    const month = Number(monthMatch[2]);
+    const start = new Date(Date.UTC(year, month - 1, 1));
+    const end = new Date(Date.UTC(year, month, 1));
+    const result = await this.repository.getCompletedPurchaseOrdersForReport({
+      tenant_id: input.tenant_id,
+      company_id: input.company_id,
+      start,
+      end,
+    });
+
+    const valueByCurrency = new Map<string, Decimal>();
+    const categoryValues = new Map<string, Decimal>();
+    const categoryOrders = new Map<string, Set<string>>();
+    const requesterValues = new Map<string, Map<string, Decimal>>();
+    const requesterOrders = new Map<string, Set<string>>();
+    const records = result.purchaseOrders.map((purchaseOrder) => {
+      const currentValue = valueByCurrency.get(purchaseOrder.currency_code) ?? new Decimal(0);
+      valueByCurrency.set(
+        purchaseOrder.currency_code,
+        currentValue.add(purchaseOrder.total_amount),
+      );
+
+      const requester = purchaseOrder.purchase_requisition?.requested_by_user ?? null;
+      const requesterId = requester?.id ?? "UNATTRIBUTED";
+      const requesterCurrencyValues = requesterValues.get(requesterId) ?? new Map();
+      requesterCurrencyValues.set(
+        purchaseOrder.currency_code,
+        (requesterCurrencyValues.get(purchaseOrder.currency_code) ?? new Decimal(0)).add(
+          purchaseOrder.total_amount,
+        ),
+      );
+      requesterValues.set(requesterId, requesterCurrencyValues);
+      const requesterOrderSet = requesterOrders.get(requesterId) ?? new Set<string>();
+      requesterOrderSet.add(purchaseOrder.id);
+      requesterOrders.set(requesterId, requesterOrderSet);
+
+      for (const item of purchaseOrder.items) {
+        const category = ["GOODS", "SERVICE", "ASSET"].includes(item.item_type ?? "")
+          ? item.item_type!
+          : "UNCLASSIFIED";
+        categoryValues.set(
+          `${category}:${purchaseOrder.currency_code}`,
+          (categoryValues.get(`${category}:${purchaseOrder.currency_code}`) ?? new Decimal(0)).add(
+            item.total_price,
+          ),
+        );
+        const categoryOrderSet = categoryOrders.get(category) ?? new Set<string>();
+        categoryOrderSet.add(purchaseOrder.id);
+        categoryOrders.set(category, categoryOrderSet);
+      }
+
+      return {
+        id: purchaseOrder.id,
+        po_number: purchaseOrder.po_number,
+        completion_date: purchaseOrder.completion_date,
+        supplier: purchaseOrder.supplier.company.display_name ?? purchaseOrder.supplier.company.legal_name,
+        requester: requester
+          ? `${requester.first_name} ${requester.last_name}`.trim()
+          : "Unattributed",
+        currency_code: purchaseOrder.currency_code,
+        total_amount: purchaseOrder.total_amount.toFixed(2),
+        status: purchaseOrder.status,
+      };
+    });
+
+    const values = (map: Map<string, Decimal>) =>
+      [...map.entries()].map(([currency_code, value]) => ({
+        currency_code,
+        value: value.toFixed(2),
+      }));
+
+    const categories = ["GOODS", "SERVICE", "ASSET", "UNCLASSIFIED"].flatMap((category) =>
+      [...new Set(result.purchaseOrders.map((purchaseOrder) => purchaseOrder.currency_code))].map(
+        (currency_code) => ({
+          category,
+          currency_code,
+          value: (categoryValues.get(`${category}:${currency_code}`) ?? new Decimal(0)).toFixed(2),
+          purchase_order_count: categoryOrders.get(category)?.size ?? 0,
+        }),
+      ),
+    );
+
+    const requesters = [...requesterValues.entries()].flatMap(([requesterId, currencyValues]) =>
+      values(currencyValues).map((value) => {
+        const requester = result.purchaseOrders.find(
+          (purchaseOrder) =>
+            (purchaseOrder.purchase_requisition?.requested_by_user?.id ?? "UNATTRIBUTED") === requesterId,
+        )?.purchase_requisition?.requested_by_user;
+        return {
+          requester_id: requesterId === "UNATTRIBUTED" ? null : requesterId,
+          requester_name: requester
+            ? `${requester.first_name} ${requester.last_name}`.trim()
+            : "Unattributed",
+          currency_code: value.currency_code,
+          value: value.value,
+          purchase_order_count: requesterOrders.get(requesterId)?.size ?? 0,
+        };
+      }),
+    );
+
+    return {
+      period: {
+        month: input.query.month,
+        start: start.toISOString(),
+        end_exclusive: end.toISOString(),
+        date_basis: "audit_trail.created_at for PURCHASE_ORDER COMPLETED events",
+      },
+      metric_definition:
+        "Completed Procurement Value is the stored total_amount of completed purchase orders, grouped by currency. It is not a payment or cash-expenditure measure.",
+      summary: {
+        completed_purchase_order_count: result.purchaseOrders.length,
+        values_by_currency: values(valueByCurrency),
+      },
+      categories,
+      requesters,
+      records,
+      limitations: [
+        ...(result.missingCompletionEvents > 0
+          ? [`${result.missingCompletionEvents} completed purchase order audit event(s) could not be matched to an in-scope purchase order.`]
+          : []),
+        "Purchase-order lines without a valid RFQ-to-requisition-item relationship are reported as UNCLASSIFIED.",
+      ],
+    };
   }
 
   async createRFQS(input: CreateRFQInput) {

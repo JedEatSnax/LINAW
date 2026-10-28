@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createColumnHelper } from "@tanstack/react-table";
 import {
   Building2,
   CheckCircle2,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/data-table";
 import {
   Card,
   CardContent,
@@ -56,6 +58,7 @@ import {
   type Rfq,
   type Supplier,
 } from "@/app/api/suppliers/client";
+import { type DataTableFeatures } from "@/types/data-table-features";
 
 const dateFormat = (value?: string | null) =>
   value
@@ -548,6 +551,67 @@ export function Portal() {
   );
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
+  const rfqColumns = useMemo(() => {
+    const columnHelper = createColumnHelper<DataTableFeatures, Rfq>();
+    return columnHelper.columns([
+      columnHelper.accessor("rfq_number", {
+        header: "RFQ",
+        cell: ({ row }) => (
+          <div>
+            <div className="font-medium">{display(row.original.rfq_number || row.original.id)}</div>
+            <div className="text-xs text-muted-foreground">{display(row.original.title)}</div>
+          </div>
+        ),
+      }),
+      columnHelper.display({
+        id: "purchasing_company",
+        header: "Purchasing company",
+        cell: ({ row }) => companyName(row.original.purchasing_company || row.original.company),
+      }),
+      columnHelper.accessor("closing_date", {
+        header: "Deadline",
+        cell: ({ row }) => dateFormat(row.original.closing_date),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: () => <ChevronRight className="size-4 text-muted-foreground" />,
+      }),
+    ]);
+  }, []);
+  const quotationColumns = useMemo(() => {
+    const columnHelper = createColumnHelper<DataTableFeatures, Quotation>();
+    return columnHelper.columns([
+      columnHelper.accessor("quotation_number", {
+        header: "Quotation",
+        cell: ({ row }) => (
+          <span className="font-medium">{display(row.original.quotation_number || row.original.id)}</span>
+        ),
+      }),
+      columnHelper.display({
+        id: "rfq",
+        header: "RFQ",
+        cell: ({ row }) => display(row.original.rfq?.rfq_number || row.original.rfq_id),
+      }),
+      columnHelper.accessor("total_amount", {
+        header: "Total",
+        cell: ({ row }) => money(row.original.total_amount, row.original.currency_code || "USD"),
+      }),
+      columnHelper.display({
+        id: "submitted",
+        header: "Submitted",
+        cell: ({ row }) => dateFormat(row.original.submitted_at || row.original.created_at),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      }),
+    ]);
+  }, []);
   async function loadRfqs() {
     setLoading(true);
     setError("");
@@ -694,49 +758,14 @@ export function Portal() {
                   detail="New eligible quotation requests will appear here."
                 />
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>RFQ</TableHead>
-                      <TableHead>Purchasing company</TableHead>
-                      <TableHead>Deadline</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {loading ? (
-                      <LoadingRows columns={5} />
-                    ) : (
-                      rfqs.map((rfq) => (
-                        <TableRow
-                          key={rfq.id}
-                          className="cursor-pointer"
-                          onClick={() => void openRfq(rfq.id)}
-                        >
-                          <TableCell>
-                            <div className="font-medium">
-                              {display(rfq.rfq_number || rfq.id)}
-                            </div>
-                            <div className="text-xs text-muted-foreground">
-                              {display(rfq.title)}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {companyName(rfq.purchasing_company || rfq.company)}
-                          </TableCell>
-                          <TableCell>{dateFormat(rfq.closing_date)}</TableCell>
-                          <TableCell>
-                            <StatusBadge status={rfq.status} />
-                          </TableCell>
-                          <TableCell>
-                            <ChevronRight className="size-4 text-muted-foreground" />
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                <DataTable
+                  columns={rfqColumns}
+                  data={rfqs}
+                  enableExport
+                  exportFileName="available-rfqs"
+                  onRowClick={(rfq) => void openRfq(rfq.id)}
+                  density="comfortable"
+                />
               )}
             </CardContent>
           </Card>
@@ -768,55 +797,14 @@ export function Portal() {
                   detail="Open an available RFQ to prepare your first quotation."
                 />
               ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Quotation</TableHead>
-                      <TableHead>RFQ</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>Submitted</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {loading ? (
-                      <LoadingRows columns={5} />
-                    ) : (
-                      quotations.map((quotation) => (
-                        <TableRow
-                          key={quotation.id}
-                          className="cursor-pointer"
-                          onClick={() => void openQuotation(quotation.id)}
-                        >
-                          <TableCell className="font-medium">
-                            {display(
-                              quotation.quotation_number || quotation.id,
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {display(
-                              quotation.rfq?.rfq_number || quotation.rfq_id,
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {money(
-                              quotation.total_amount,
-                              quotation.currency_code || "USD",
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {dateFormat(
-                              quotation.submitted_at || quotation.created_at,
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <StatusBadge status={quotation.status} />
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
+                <DataTable
+                  columns={quotationColumns}
+                  data={quotations}
+                  enableExport
+                  exportFileName="supplier-quotations"
+                  onRowClick={(quotation) => void openQuotation(quotation.id)}
+                  density="comfortable"
+                />
               )}
             </CardContent>
           </Card>

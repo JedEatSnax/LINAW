@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
@@ -10,8 +10,10 @@ import {
   RefreshCwIcon,
 } from "lucide-react";
 import { z } from "zod";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/data-table";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   getPurchaseRequisition,
   type PurchaseRequisitionDetail,
@@ -45,6 +39,7 @@ import {
   type Quotation,
   type Rfq,
 } from "@/app/api/purchase-orders/rfq-client";
+import { type DataTableFeatures } from "@/types/data-table-features";
 
 const formSchema = z.object({
   title: z.string().trim().min(1, "A title is required.").max(255),
@@ -148,6 +143,65 @@ export function RfqWorkspace() {
     description: "",
     closingDate: "",
   });
+  const queueColumns = useMemo(() => {
+    const columnHelper = createColumnHelper<DataTableFeatures, ProcurementQueueItem>();
+    return columnHelper.columns([
+      columnHelper.accessor("pr_number", { header: "PR reference" }),
+      columnHelper.display({
+        id: "requester",
+        header: "Requester",
+        cell: ({ row }) =>
+          display(
+            [row.original.requested_by_user?.first_name, row.original.requested_by_user?.last_name]
+              .filter(Boolean)
+              .join(" "),
+          ),
+      }),
+      columnHelper.display({
+        id: "items",
+        header: "Items",
+        cell: ({ row }) => row.original.items?.length ?? 0,
+      }),
+      columnHelper.accessor("approved_at", {
+        header: "Approved",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{dateFormat(row.original.approved_at)}</span>
+        ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: () => <ChevronRightIcon className="size-4 text-muted-foreground" />,
+      }),
+    ]);
+  }, []);
+  const rfqColumns = useMemo(() => {
+    const columnHelper = createColumnHelper<DataTableFeatures, Rfq>();
+    return columnHelper.columns([
+      columnHelper.accessor("rfq_number", { header: "RFQ reference" }),
+      columnHelper.accessor("purchase_requisition_id", {
+        header: "Source PR",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{display(row.original.purchase_requisition_id)}</span>
+        ),
+      }),
+      columnHelper.accessor("closing_date", {
+        header: "Deadline",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">{dateFormat(row.original.closing_date)}</span>
+        ),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: () => <ChevronRightIcon className="size-4 text-muted-foreground" />,
+      }),
+    ]);
+  }, []);
   const [formError, setFormError] = useState<string | null>(null);
   const [mutation, setMutation] = useState<"post" | "select" | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -306,49 +360,14 @@ export function RfqWorkspace() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-5">PR reference</TableHead>
-                  <TableHead>Requester</TableHead>
-                  <TableHead>Items</TableHead>
-                  <TableHead>Approved</TableHead>
-                  <TableHead className="pr-5" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {queue.map((pr) => (
-                  <TableRow
-                    key={pr.id}
-                    className="cursor-pointer"
-                    onClick={() => void openCreate(pr)}
-                  >
-                    <TableCell className="pl-5 font-medium">
-                      {pr.pr_number}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {display(
-                        [
-                          pr.requested_by_user?.first_name,
-                          pr.requested_by_user?.last_name,
-                        ]
-                          .filter(Boolean)
-                          .join(" "),
-                      )}
-                    </TableCell>
-                    <TableCell>{pr.items?.length ?? 0}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {dateFormat(pr.approved_at)}
-                    </TableCell>
-                    <TableCell className="pr-5 text-right">
-                      <ChevronRightIcon className="ml-auto size-4 text-muted-foreground" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            columns={queueColumns}
+            data={queue}
+            enableExport
+            exportFileName="approved-requisitions"
+            onRowClick={(pr) => void openCreate(pr)}
+            density="comfortable"
+          />
         )}
       </section>
       <section className="overflow-hidden rounded-xl border border-border/70 bg-background/80 shadow-sm">
@@ -365,44 +384,14 @@ export function RfqWorkspace() {
             No RFQs have been created yet.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="pl-5">RFQ reference</TableHead>
-                  <TableHead>Source PR</TableHead>
-                  <TableHead>Deadline</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="pr-5" />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rfqs.map((rfq) => (
-                  <TableRow
-                    key={rfq.id}
-                    className="cursor-pointer"
-                    onClick={() => void openRfq(rfq)}
-                  >
-                    <TableCell className="pl-5 font-medium">
-                      {rfq.rfq_number}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {display(rfq.purchase_requisition_id)}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {dateFormat(rfq.closing_date)}
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={rfq.status} />
-                    </TableCell>
-                    <TableCell className="pr-5 text-right">
-                      <ChevronRightIcon className="ml-auto size-4 text-muted-foreground" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <DataTable
+            columns={rfqColumns}
+            data={rfqs}
+            enableExport
+            exportFileName="rfqs-and-quotations"
+            onRowClick={(rfq) => void openRfq(rfq)}
+            density="comfortable"
+          />
         )}
       </section>
       <Dialog open={rfqOpen} onOpenChange={setRfqOpen}>

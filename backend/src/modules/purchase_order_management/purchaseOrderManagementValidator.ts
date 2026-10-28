@@ -39,6 +39,10 @@ export const ProcurementQueueQuerySchema = z.object({
   referenceNo: z.string().trim().min(1).max(100).optional(),
 });
 
+export const MonthlyCompletedProcurementQuerySchema = z.object({
+  month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, "Month must use YYYY-MM format."),
+});
+
 // ====================
 // Params Schema
 // ====================
@@ -184,6 +188,10 @@ export type ListPurchaseOrdersQuery = z.infer<
 >;
 
 export type ProcurementQueueQuery = z.infer<typeof ProcurementQueueQuerySchema>;
+
+export type MonthlyCompletedProcurementQuery = z.infer<
+  typeof MonthlyCompletedProcurementQuerySchema
+>;
 
 export type RFQIdParams = z.infer<typeof RFQIdParamsSchema>;
 

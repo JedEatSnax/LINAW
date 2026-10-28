@@ -6,14 +6,15 @@ import {
   ArchiveIcon,
   CheckCircle2Icon,
   ChevronRightIcon,
-  FileDownIcon,
   Loader2Icon,
   RefreshCwIcon,
   SearchIcon,
   SlidersHorizontalIcon,
 } from "lucide-react";
+import { createColumnHelper } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/data-table";
 import {
   Dialog,
   DialogContent,
@@ -23,14 +24,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   cancelPurchaseOrder,
@@ -43,6 +36,7 @@ import {
   type PurchaseOrderStatus,
 } from "@/app/api/purchase-orders/client";
 import { RfqWorkspace } from "./rfq-workspace";
+import { type DataTableFeatures } from "@/types/data-table-features";
 
 const statuses: Array<PurchaseOrderStatus | "ALL"> = [
   "ALL",
@@ -120,8 +114,65 @@ export default function PurchaseOrdersPage() {
   const [selected, setSelected] = useState<PurchaseOrder | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
-  const [mutation, setMutation] = useState<"cancel" | "order" | "complete" | null>(null);
+  const [mutation, setMutation] = useState<
+    "cancel" | "order" | "complete" | null
+  >(null);
   const [cancelOpen, setCancelOpen] = useState(false);
+
+  const columns = useMemo(() => {
+    const columnHelper = createColumnHelper<DataTableFeatures, PurchaseOrder>();
+
+    return columnHelper.columns([
+      columnHelper.accessor("po_number", {
+        header: "PO number",
+        cell: ({ row }) => (
+          <span className="font-medium">{row.original.po_number}</span>
+        ),
+      }),
+      columnHelper.accessor("supplier", {
+        header: "Supplier",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {row.original.supplier?.company?.display_name ??
+              row.original.supplier?.company?.legal_name ??
+              row.original.supplier?.legal_name ??
+              row.original.supplier?.name ??
+              "Supplier not provided"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("expected_delivery_date", {
+        header: "Delivery date",
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {formatDate(row.original.expected_delivery_date)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("total_amount", {
+        header: "Total amount",
+        cell: ({ row }) => (
+          <span className="font-medium tabular-nums">
+            {formatMoney(row.original.total_amount, row.original.currency_code)}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "",
+        cell: ({ row }) => (
+          <ChevronRightIcon
+            className="size-4 text-muted-foreground"
+            aria-label={`View ${row.original.po_number}`}
+          />
+        ),
+      }),
+    ]);
+  }, []);
 
   async function loadOrders() {
     setLoading(true);
@@ -220,42 +271,32 @@ export default function PurchaseOrdersPage() {
       className="min-h-[calc(100svh-var(--header-height))] bg-background"
     >
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-6 px-4 py-7 sm:px-6 lg:px-10 lg:py-9">
-        <TabsList
-          variant="line"
-          className="w-full justify-start border-b border-border/70"
-        >
+        <header className="flex flex-col gap-5 border-b border-border/70 pb-7 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
+              Purchase Orders
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              Issue, track, and manage legally binding orders with your
+              suppliers
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => void loadOrders()}
+            >
+              <RefreshCwIcon />
+              Refresh
+            </Button>
+          </div>
+        </header>
+        <TabsList className="grid h-auto w-full grid-cols-1 gap-1 border bg-muted/40 p-1 sm:grid-cols-2">
           <TabsTrigger value="purchase-orders">Purchase orders</TabsTrigger>
           <TabsTrigger value="rfqs">RFQs &amp; quotations</TabsTrigger>
         </TabsList>
         <TabsContent value="purchase-orders">
-          <header className="flex flex-col gap-5 border-b border-border/70 pb-7 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary/70">
-                Procurement / Operations
-              </p>
-              <h1 className="font-heading text-3xl font-semibold tracking-tight sm:text-4xl">
-                Purchase orders
-              </h1>
-              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-                Issue, track, and manage legally binding orders with your
-                suppliers.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled>
-                <FileDownIcon />
-                Export
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => void loadOrders()}
-              >
-                <RefreshCwIcon />
-                Refresh
-              </Button>
-            </div>
-          </header>
           {notice && (
             <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
               <span className="flex items-center gap-2">
@@ -341,65 +382,14 @@ export default function PurchaseOrdersPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="pl-5">PO number</TableHead>
-                      <TableHead>Supplier</TableHead>
-                      <TableHead>Delivery date</TableHead>
-                      <TableHead>Total amount</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="w-12 pr-5" />
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {orders.map((orderItem) => (
-                      <TableRow
-                        key={orderItem.id}
-                        className="group cursor-pointer"
-                        onClick={() => void openDetail(orderItem.id)}
-                      >
-                        <TableCell className="pl-5 font-medium">
-                          {orderItem.po_number}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {orderItem.supplier?.company?.display_name ??
-                            orderItem.supplier?.company?.legal_name ??
-                            orderItem.supplier?.legal_name ??
-                            orderItem.supplier?.name ??
-                            "Supplier not provided"}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(orderItem.expected_delivery_date)}
-                        </TableCell>
-                        <TableCell className="font-medium tabular-nums">
-                          {formatMoney(
-                            orderItem.total_amount,
-                            orderItem.currency_code,
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <StatusBadge status={orderItem.status} />
-                        </TableCell>
-                        <TableCell className="pr-5">
-                          <Button
-                            variant="ghost"
-                            size="icon-sm"
-                            aria-label={`View ${orderItem.po_number}`}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              void openDetail(orderItem.id);
-                            }}
-                          >
-                            <ChevronRightIcon />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <DataTable
+                columns={columns}
+                data={orders}
+                enableExport
+                exportFileName="purchase-orders"
+                onRowClick={(orderItem) => void openDetail(orderItem.id)}
+                density="comfortable"
+              />
             )}
           </section>
           <p className="text-right text-xs text-muted-foreground">
@@ -505,12 +495,15 @@ export default function PurchaseOrdersPage() {
                                 className="flex flex-wrap items-baseline justify-between gap-3 px-4 py-3 text-sm"
                               >
                                 <div>
-                                  <p className="font-medium">{item.description}</p>
+                                  <p className="font-medium">
+                                    {item.description}
+                                  </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {item.quantity} {item.unit_of_measure} at {" "}
+                                    {item.quantity} {item.unit_of_measure} at{" "}
                                     {formatMoney(
                                       item.estimated_unit_cost,
-                                      selected.purchase_requisition?.currency_code ??
+                                      selected.purchase_requisition
+                                        ?.currency_code ??
                                         selected.currency_code,
                                     )}
                                   </p>
@@ -523,8 +516,8 @@ export default function PurchaseOrdersPage() {
                                 <p className="font-medium tabular-nums">
                                   {formatMoney(
                                     item.estimated_total_cost,
-                                    selected.purchase_requisition?.currency_code ??
-                                      selected.currency_code,
+                                    selected.purchase_requisition
+                                      ?.currency_code ?? selected.currency_code,
                                   )}
                                 </p>
                               </div>
@@ -551,10 +544,12 @@ export default function PurchaseOrdersPage() {
                                       `Line ${item.line_no}`}
                                   </p>
                                   <p className="text-xs text-muted-foreground">
-                                    {item.quoted_quantity} {item.rfq_item?.unit_of_measure ?? ""} at {" "}
+                                    {item.quoted_quantity}{" "}
+                                    {item.rfq_item?.unit_of_measure ?? ""} at{" "}
                                     {formatMoney(
                                       item.unit_price,
-                                      selected.supplier_quotation?.currency_code ??
+                                      selected.supplier_quotation
+                                        ?.currency_code ??
                                         selected.currency_code,
                                     )}
                                   </p>
@@ -567,8 +562,8 @@ export default function PurchaseOrdersPage() {
                                 <p className="font-medium tabular-nums">
                                   {formatMoney(
                                     item.total_price,
-                                    selected.supplier_quotation?.currency_code ??
-                                      selected.currency_code,
+                                    selected.supplier_quotation
+                                      ?.currency_code ?? selected.currency_code,
                                   )}
                                 </p>
                               </div>
@@ -620,17 +615,18 @@ export default function PurchaseOrdersPage() {
                         Cancel order
                       </Button>
                     )}
-                    {selected && ["DRAFT", "ISSUED"].includes(selected.status) && (
-                      <Button
-                        onClick={() => void advanceOrder()}
-                        disabled={mutation !== null}
-                      >
-                        {mutation === "order" && (
-                          <Loader2Icon className="animate-spin" />
-                        )}
-                        Order
-                      </Button>
-                    )}
+                    {selected &&
+                      ["DRAFT", "ISSUED"].includes(selected.status) && (
+                        <Button
+                          onClick={() => void advanceOrder()}
+                          disabled={mutation !== null}
+                        >
+                          {mutation === "order" && (
+                            <Loader2Icon className="animate-spin" />
+                          )}
+                          Order
+                        </Button>
+                      )}
                     {selected?.status === "ORDERED" && (
                       <Button
                         onClick={() => void complete()}

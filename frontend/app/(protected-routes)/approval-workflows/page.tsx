@@ -351,6 +351,7 @@ export default function ApprovalWorkflowsPage() {
             <DataTable
               columns={columns}
               data={data}
+              enableExport
               searchKey="request"
               searchPlaceholder="Search requests..."
               density="comfortable"

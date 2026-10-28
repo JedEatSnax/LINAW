@@ -501,6 +501,103 @@ export class PurchaseOrderManagementRepository {
     });
   }
 
+  async getCompletedPurchaseOrdersForReport(data: {
+    tenant_id: string;
+    company_id: string;
+    start: Date;
+    end: Date;
+  }) {
+    const completionEvents = await prisma.auditTrail.findMany({
+      where: {
+        tenant_id: data.tenant_id,
+        entity_type: "PURCHASE_ORDER",
+        action: "COMPLETED",
+        created_at: { gte: data.start, lt: data.end },
+      },
+      select: { entity_id: true, created_at: true },
+      orderBy: { created_at: "asc" },
+    });
+
+    if (completionEvents.length === 0) {
+      return { purchaseOrders: [], missingCompletionEvents: 0 };
+    }
+
+    const purchaseOrders = await prisma.purchaseOrder.findMany({
+      where: {
+        id: { in: completionEvents.map((event) => event.entity_id) },
+        tenant_id: data.tenant_id,
+        company_id: data.company_id,
+        status: "COMPLETED",
+      },
+      select: {
+        id: true,
+        po_number: true,
+        status: true,
+        currency_code: true,
+        total_amount: true,
+        supplier: {
+          select: {
+            supplier_code: true,
+            company: { select: { display_name: true, legal_name: true } },
+          },
+        },
+        purchase_requisition: {
+          select: {
+            pr_number: true,
+            requested_by_user: {
+              select: { id: true, first_name: true, last_name: true },
+            },
+          },
+        },
+        items: {
+          select: {
+            id: true,
+            total_price: true,
+            source_item_type: true,
+            source_item_id: true,
+          },
+        },
+      },
+    });
+
+    const sourceItemIds = purchaseOrders.flatMap((purchaseOrder) =>
+      purchaseOrder.items
+        .filter((item) => item.source_item_type === "RFQ_ITEM" && item.source_item_id)
+        .map((item) => item.source_item_id as string),
+    );
+    const rfqItems = sourceItemIds.length
+      ? await prisma.rFQItem.findMany({
+          where: { id: { in: sourceItemIds }, tenant_id: data.tenant_id },
+          select: {
+            id: true,
+            purchase_requisition_item: { select: { item_type: true } },
+          },
+        })
+      : [];
+
+    const itemTypes = new Map(
+      rfqItems.map((item) => [item.id, item.purchase_requisition_item?.item_type ?? null]),
+    );
+    const completionDates = new Map(
+      completionEvents.map((event) => [event.entity_id, event.created_at]),
+    );
+
+    return {
+      purchaseOrders: purchaseOrders.map((purchaseOrder) => ({
+        ...purchaseOrder,
+        completion_date: completionDates.get(purchaseOrder.id) ?? null,
+        items: purchaseOrder.items.map((item) => ({
+          ...item,
+          item_type:
+            item.source_item_type === "RFQ_ITEM" && item.source_item_id
+              ? itemTypes.get(item.source_item_id) ?? null
+              : null,
+        })),
+      })),
+      missingCompletionEvents: completionEvents.length - purchaseOrders.length,
+    };
+  }
+
   async countList(data: PoQueryContext) {
     return prisma.purchaseOrder.count({
       where: {

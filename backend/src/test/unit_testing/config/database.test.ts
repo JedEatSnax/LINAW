@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  PrismaPg: vi.fn(),
+  PrismaNeon: vi.fn(),
   GeneratedPrismaClient: vi.fn(),
 }));
 
-vi.mock("@prisma/adapter-pg", () => ({
-  PrismaPg: mocks.PrismaPg,
+vi.mock("@prisma/adapter-neon", () => ({
+  PrismaNeon: mocks.PrismaNeon,
 }));
 
 vi.mock("../../../generated/prisma/client.js", () => ({
@@ -49,7 +49,7 @@ describe("Prisma client lifecycle", () => {
     const second = initializePrisma(environment);
 
     expect(second).not.toBe(first);
-    expect(mocks.PrismaPg).toHaveBeenCalledTimes(2);
+    expect(mocks.PrismaNeon).toHaveBeenCalledTimes(2);
     expect(mocks.GeneratedPrismaClient).toHaveBeenCalledTimes(2);
     expect(disconnect).not.toHaveBeenCalled();
 

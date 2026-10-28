@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const protectedRoutes = [
-  "/administration",
   "/approval-workflows",
   "/audit-trail",
   "/dashboard",
@@ -11,6 +10,7 @@ const protectedRoutes = [
   "/profile",
   "/purchase-orders",
   "/purchase-requisitions",
+  "/suppliers",
   "/supplier-management",
   "/supplier-portal",
   "/user-management",
@@ -18,7 +18,7 @@ const protectedRoutes = [
 
 const authRoutes = ["/forgot-password", "/login", "/reset-password", "/signup"];
 
-const postLoginPath = "/administration";
+const postLoginPath = "/dashboard";
 
 function matchesRoute(pathname: string, route: string): boolean {
   return pathname === route || pathname.startsWith(`${route}/`);
@@ -31,18 +31,20 @@ async function hasValidSession(accessToken: string): Promise<boolean> {
     return false;
   }
 
+  let cleanApiUrl = apiUrl;
+  while (cleanApiUrl.endsWith("/")) {
+    cleanApiUrl = cleanApiUrl.slice(0, -1);
+  }
+
   try {
-    const response = await fetch(
-      `${apiUrl.replace(/\/+$/, "")}/api/auth/validate_token`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: "application/json",
-        },
-        cache: "no-store",
+    const response = await fetch(`${cleanApiUrl}/api/auth/validate_token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: "application/json",
       },
-    );
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       return false;
@@ -66,14 +68,15 @@ function createCsrfToken(): string {
 function buildCsp(nonce: string): string {
   const isDev = env.NODE_ENV !== "production";
   const scriptSrc = isDev
-    ? "'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com"
-    : `'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval' https://www.googletagmanager.com`;
+    ? "'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://static.cloudflareinsights.com"
+    : `'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval' https://www.googletagmanager.com https://static.cloudflareinsights.com`;
   const cspHeader = `
     default-src 'self';
     script-src ${scriptSrc};
+    script-src-elem 'self' 'nonce-${nonce}' https://www.googletagmanager.com https://static.cloudflareinsights.com;
     style-src 'self' ${isDev ? "'unsafe-inline'" : `'nonce-${nonce}'`};
-    img-src 'self' blob: data: https://storage.efferd.com https://www.googletagmanager.com;
-    connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com;
+    img-src 'self' blob: data: https://storage.efferd.com https://www.googletagmanager.com https://static.cloudflareinsights.com;
+    connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://cloudflareinsights.com https://*.cloudflareinsights.com;
     frame-src 'self' https://www.googletagmanager.com;
     font-src 'self';
     object-src 'none';
@@ -90,14 +93,14 @@ function applySecurityHeaders(
   response: NextResponse,
   csp: string,
 ): NextResponse {
-  const isProd = env.NODE_ENV === "production";
+  const isDev = env.NODE_ENV === "production";
 
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
-  if (isProd) {
+  if (isDev) {
     response.headers.set(
       "Strict-Transport-Security",
       "max-age=31536000; includeSubDomains; preload",
