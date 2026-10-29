@@ -6,10 +6,10 @@ export default function SupplierManagementPage() {
       <div className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
         <div>
           <h1 className="font-heading text-3xl font-semibold tracking-tight">
-            Supplier management
+            Supplier Management
           </h1>
           <p className="text-sm text-muted-foreground">
-            Govern supplier relationships and invitations for your organization.
+            Govern supplier relationships and invitations for your organization
           </p>
         </div>
         <Governance />

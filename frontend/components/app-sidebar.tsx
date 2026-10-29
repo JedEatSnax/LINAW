@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   UsersRoundIcon,
+  UsersCollaboration,
   Receipt,
   ClipboardList,
   Workflow,
@@ -59,6 +60,11 @@ const data = {
       title: "Supplier Management",
       url: "/supplier-management",
       icon: <UsersRoundIcon />,
+    },
+    {
+      title: "Supplier Portal",
+      url: "/supplier-portal",
+      icon: <UsersCollaboration />,
     },
     {
       title: "Audit Trail",

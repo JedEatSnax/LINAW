@@ -70,7 +70,7 @@ const itemKey = (
   index: number,
 ) => item.id ?? String(itemLine(item, index));
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }: Readonly<{ status: string }>) {
   const styles =
     status === "PUBLISHED"
       ? "border-emerald-200 bg-emerald-50 text-emerald-800"
@@ -78,9 +78,9 @@ function StatusBadge({ status }: { status: string }) {
         ? "border-sky-200 bg-sky-50 text-sky-800"
         : status === "SELECTED"
           ? "border-blue-200 bg-blue-50 text-blue-800"
-      : status === "DRAFT"
-        ? "border-amber-200 bg-amber-50 text-amber-800"
-        : "border-slate-200 bg-slate-50 text-slate-700";
+          : status === "DRAFT"
+            ? "border-amber-200 bg-amber-50 text-amber-800"
+            : "border-slate-200 bg-slate-50 text-slate-700";
   return (
     <Badge variant="outline" className={styles}>
       <span className="mr-1.5 size-1.5 rounded-full bg-current" />
@@ -115,7 +115,7 @@ function Notice({
   );
 }
 
-function Info({ label, value }: { label: string; value: string }) {
+function Info({ label, value }: Readonly<{ label: string; value: string }>) {
   return (
     <div>
       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -144,7 +144,10 @@ export function RfqWorkspace() {
     closingDate: "",
   });
   const queueColumns = useMemo(() => {
-    const columnHelper = createColumnHelper<DataTableFeatures, ProcurementQueueItem>();
+    const columnHelper = createColumnHelper<
+      DataTableFeatures,
+      ProcurementQueueItem
+    >();
     return columnHelper.columns([
       columnHelper.accessor("pr_number", { header: "PR reference" }),
       columnHelper.display({
@@ -152,7 +155,10 @@ export function RfqWorkspace() {
         header: "Requester",
         cell: ({ row }) =>
           display(
-            [row.original.requested_by_user?.first_name, row.original.requested_by_user?.last_name]
+            [
+              row.original.requested_by_user?.first_name,
+              row.original.requested_by_user?.last_name,
+            ]
               .filter(Boolean)
               .join(" "),
           ),
@@ -165,13 +171,17 @@ export function RfqWorkspace() {
       columnHelper.accessor("approved_at", {
         header: "Approved",
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{dateFormat(row.original.approved_at)}</span>
+          <span className="text-muted-foreground">
+            {dateFormat(row.original.approved_at)}
+          </span>
         ),
       }),
       columnHelper.display({
         id: "actions",
         header: "",
-        cell: () => <ChevronRightIcon className="size-4 text-muted-foreground" />,
+        cell: () => (
+          <ChevronRightIcon className="size-4 text-muted-foreground" />
+        ),
       }),
     ]);
   }, []);
@@ -182,13 +192,17 @@ export function RfqWorkspace() {
       columnHelper.accessor("purchase_requisition_id", {
         header: "Source PR",
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{display(row.original.purchase_requisition_id)}</span>
+          <span className="text-muted-foreground">
+            {display(row.original.purchase_requisition_id)}
+          </span>
         ),
       }),
       columnHelper.accessor("closing_date", {
         header: "Deadline",
         cell: ({ row }) => (
-          <span className="text-muted-foreground">{dateFormat(row.original.closing_date)}</span>
+          <span className="text-muted-foreground">
+            {dateFormat(row.original.closing_date)}
+          </span>
         ),
       }),
       columnHelper.accessor("status", {
@@ -198,7 +212,9 @@ export function RfqWorkspace() {
       columnHelper.display({
         id: "actions",
         header: "",
-        cell: () => <ChevronRightIcon className="size-4 text-muted-foreground" />,
+        cell: () => (
+          <ChevronRightIcon className="size-4 text-muted-foreground" />
+        ),
       }),
     ]);
   }, []);
@@ -338,7 +354,7 @@ export function RfqWorkspace() {
       <section className="overflow-hidden rounded-xl border border-border/70 bg-background/80 shadow-sm">
         <div className="border-b border-border/70 px-5 py-4">
           <h2 className="font-heading text-base font-semibold">
-            Approved requisitions
+            Approved Requisitions
           </h2>
           <p className="text-sm text-muted-foreground">
             Select an eligible PR to prepare its quotation request.
@@ -365,6 +381,8 @@ export function RfqWorkspace() {
             data={queue}
             enableExport
             exportFileName="approved-requisitions"
+            searchKey="pr_number"
+            searchPlaceholder="Search PR number..."
             onRowClick={(pr) => void openCreate(pr)}
             density="comfortable"
           />
@@ -373,7 +391,7 @@ export function RfqWorkspace() {
       <section className="overflow-hidden rounded-xl border border-border/70 bg-background/80 shadow-sm">
         <div className="border-b border-border/70 px-5 py-4">
           <h2 className="font-heading text-base font-semibold">
-            RFQs and quotations
+            RFQs and Quotations
           </h2>
           <p className="text-sm text-muted-foreground">
             Track published requests and inspect supplier responses.
@@ -389,6 +407,8 @@ export function RfqWorkspace() {
             data={rfqs}
             enableExport
             exportFileName="rfqs-and-quotations"
+            searchKey="purchase_requisition_id"
+            searchPlaceholder="Search PR ID..."
             onRowClick={(rfq) => void openRfq(rfq)}
             density="comfortable"
           />
@@ -552,63 +572,65 @@ export function RfqWorkspace() {
                 <Info label="Status" value={rfqDetail.status} />
               </div>
               <div>
-                  <div className="mb-3 flex items-end justify-between gap-3">
-                    <div>
-                      <h3 className="font-heading text-base font-semibold">
-                        Supplier quotations
-                      </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        Review submitted offers and select one to issue the purchase order.
-                      </p>
-                    </div>
-                    <span className="shrink-0 text-xs font-medium text-muted-foreground">
-                      {quotations.length} {quotations.length === 1 ? "offer" : "offers"}
-                    </span>
+                <div className="mb-3 flex items-end justify-between gap-3">
+                  <div>
+                    <h3 className="font-heading text-base font-semibold">
+                      Supplier quotations
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      Review submitted offers and select one to issue the
+                      purchase order.
+                    </p>
                   </div>
+                  <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                    {quotations.length}{" "}
+                    {quotations.length === 1 ? "offer" : "offers"}
+                  </span>
+                </div>
                 {quotations.length === 0 ? (
                   <p className="rounded-lg border border-dashed border-border/70 px-4 py-8 text-center text-sm text-muted-foreground">
                     No quotations have been submitted for this RFQ.
                   </p>
                 ) : (
-                    <div className="space-y-3">
+                  <div className="space-y-3">
                     {quotations.map((quotation) => (
                       <div
                         key={quotation.id}
-                          className="grid gap-4 rounded-xl border border-border/70 bg-background p-4 text-sm shadow-sm transition-colors hover:border-border hover:bg-muted/20 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center"
+                        className="grid gap-4 rounded-xl border border-border/70 bg-background p-4 text-sm shadow-sm transition-colors hover:border-border hover:bg-muted/20 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-center"
                       >
-                          <div className="min-w-0">
-                            <p className="truncate font-medium">
+                        <div className="min-w-0">
+                          <p className="truncate font-medium">
                             {quotation.quotation_number}
                           </p>
-                            <p className="mt-1 truncate text-xs text-muted-foreground">
+                          <p className="mt-1 truncate text-xs text-muted-foreground">
                             {quotation.supplier?.legal_name ??
                               quotation.supplier?.name ??
                               quotation.supplier?.supplier_code ??
                               quotation.supplier_id}
                           </p>
                         </div>
-                          <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-center">
-                            <p className="font-heading text-base font-semibold tabular-nums">
-                              {quotation.total_amount} {quotation.currency_code}
-                            </p>
-                            <StatusBadge status={quotation.status} />
-                          </div>
-                          <Button
-                            size="sm"
-                            onClick={() => void selectQuotation(quotation)}
-                            disabled={
-                              quotation.status !== "POSTED" ||
-                              mutation === "select"
-                            }
-                            className="w-full sm:w-auto"
-                          >
-                            {mutation === "select" ? (
-                              <Loader2Icon className="animate-spin" />
-                            ) : null}
-                            {quotation.status === "POSTED"
-                              ? "Select supplier"
-                              : "Unavailable"}
-                          </Button>
+                        <div className="flex items-center justify-between gap-4 sm:flex-col sm:items-end sm:justify-center">
+                          <p className="font-heading text-base font-semibold tabular-nums">
+                            {quotation.total_amount} {quotation.currency_code}
+                          </p>
+                          <StatusBadge status={quotation.status} />
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => void selectQuotation(quotation)}
+                          disabled={
+                            quotation.status !== "POSTED" ||
+                            mutation === "select"
+                          }
+                          className="w-full sm:w-auto"
+                        >
+                          {mutation === "select" ? (
+                            <Loader2Icon className="animate-spin" />
+                          ) : null}
+                          {quotation.status === "POSTED"
+                            ? "Select supplier"
+                            : "Unavailable"}
+                        </Button>
                       </div>
                     ))}
                   </div>

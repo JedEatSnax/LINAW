@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Columns3 } from "lucide-react";
 
 import { type DataTableFeatures } from "@/types/data-table-features";
 
@@ -31,6 +32,7 @@ export function DataTableViewOptions<TData extends RowData>({
           />
         }
       >
+        <Columns3 />
         Columns
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">

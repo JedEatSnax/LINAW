@@ -7,7 +7,6 @@ import {
   MailPlusIcon,
   PlusIcon,
   SaveIcon,
-  ShieldCheckIcon,
   Trash2Icon,
 } from "lucide-react";
 import { z } from "zod";
@@ -102,13 +101,13 @@ function TextField({
   onChange,
   required,
   type = "text",
-}: {
+}: Readonly<{
   label: string;
   value: string;
   onChange: (value: string) => void;
   required?: boolean;
   type?: string;
-}) {
+}>) {
   return (
     <Field>
       <FieldLabel>
@@ -200,7 +199,10 @@ function LoadingState() {
     </main>
   );
 }
-function PageMessage({ title, message }: { title: string; message: string }) {
+function PageMessage({
+  title,
+  message,
+}: Readonly<{ title: string; message: string }>) {
   return (
     <main className="mx-auto flex w-full max-w-[1100px] flex-col gap-3 px-4 py-8 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
@@ -213,9 +215,9 @@ function PageMessage({ title, message }: { title: string; message: string }) {
 
 function RegistrationView({
   onRegistered,
-}: {
+}: Readonly<{
   onRegistered: (name: string) => void;
-}) {
+}>) {
   const [form, setForm] = useState(emptyRegistration);
   const [busy, setBusy] = useState(false);
   const [refreshBusy, setRefreshBusy] = useState(false);
@@ -240,7 +242,7 @@ function RegistrationView({
       setRefreshBusy(false);
     }
   }
-  async function submit(event: React.FormEvent) {
+  async function submit(event: React.SyntheticEvent) {
     event.preventDefault();
     setError(null);
     setSuccess(null);
@@ -255,7 +257,7 @@ function RegistrationView({
           .refine((value) => [9, 12].includes(value.replace(/-/g, "").length))
           .optional(),
         address: z.string().trim().min(10).max(300),
-        contact_email: z.string().trim().email(),
+        contact_email: z.email().trim(),
         contact_phone: z
           .string()
           .regex(/^\+?[0-9-]+$/)
@@ -331,7 +333,6 @@ function RegistrationView({
                   busy={refreshBusy}
                   onClick={() => void refreshRegisteredCompany()}
                 >
-                  <ShieldCheckIcon className="size-4" />
                   Retry Session Refresh
                 </BusyButton>
               </div>
@@ -406,7 +407,6 @@ function RegistrationView({
                     </p>
                   )}
                   <BusyButton type="submit" busy={busy}>
-                    <ShieldCheckIcon className="size-4" />
                     Register company
                   </BusyButton>
                 </FieldGroup>
@@ -422,10 +422,10 @@ function RegistrationView({
 function AdministrationView({
   companyName,
   currentUserId,
-}: {
+}: Readonly<{
   companyName: string;
   currentUserId: string;
-}) {
+}>) {
   const [settings, setSettings] = useState<CompanySettings | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [roles, setRoles] = useState<OrganizationRole[]>([]);
@@ -493,7 +493,6 @@ function AdministrationView({
             </p>
           </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <ShieldCheckIcon className="size-4" />
             Access is enforced by your organization permissions
           </div>
         </header>
@@ -569,10 +568,10 @@ function AdministrationView({
 function SettingsSection({
   settings,
   onSaved,
-}: {
+}: Readonly<{
   settings: CompanySettings | null;
   onSaved: (settings: CompanySettings) => void;
-}) {
+}>) {
   const [form, setForm] = useState({
     displayName: "",
     legalName: "",
@@ -592,7 +591,7 @@ function SettingsSection({
         address: settings.address ?? "",
       });
   }, [settings]);
-  async function submit(event: React.FormEvent) {
+  async function submit(event: React.SyntheticEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
@@ -666,16 +665,16 @@ function MembersSection({
   roles,
   currentUserId,
   onChanged,
-}: {
+}: Readonly<{
   members: OrganizationMember[];
   roles: OrganizationRole[];
   currentUserId: string;
   onChanged: () => void;
-}) {
+}>) {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  async function invite(event: React.FormEvent) {
+  async function invite(event: React.SyntheticEvent) {
     event.preventDefault();
     setBusy(true);
     setError(null);
@@ -846,19 +845,19 @@ function RolesSection({
   rolePermissions,
   onSelectRole,
   onChanged,
-}: {
+}: Readonly<{
   roles: OrganizationRole[];
   permissions: Permission[];
   selectedRole: string | null;
   rolePermissions: Permission[];
   onSelectRole: (id: string) => void;
   onChanged: () => void;
-}) {
+}>) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [permissionId, setPermissionId] = useState("");
   const [error, setError] = useState<string | null>(null);
-  async function create(event: React.FormEvent) {
+  async function create(event: React.SyntheticEvent) {
     event.preventDefault();
     setError(null);
     try {
@@ -870,7 +869,7 @@ function RolesSection({
       setError(errorText(error));
     }
   }
-  async function addPermission(event: React.FormEvent) {
+  async function addPermission(event: React.SyntheticEvent) {
     event.preventDefault();
     if (!selectedRole || !permissionId) return;
     try {

@@ -70,7 +70,7 @@ const errorMessage = (error: unknown) =>
     ? error.message
     : "Purchase orders could not be loaded. Please try again.";
 
-function StatusBadge({ status }: { status: PurchaseOrderStatus }) {
+function StatusBadge({ status }: Readonly<{ status: PurchaseOrderStatus }>) {
   return (
     <Badge variant="outline" className={statusStyles[status]}>
       <span className="size-1.5 rounded-full bg-current" />
@@ -81,10 +81,10 @@ function StatusBadge({ status }: { status: PurchaseOrderStatus }) {
 function Notice({
   message,
   onRetry,
-}: {
+}: Readonly<{
   message: string;
   onRetry?: () => void;
-}) {
+}>) {
   return (
     <div
       className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"
@@ -293,8 +293,8 @@ export default function PurchaseOrdersPage() {
           </div>
         </header>
         <TabsList className="grid h-auto w-full grid-cols-1 gap-1 border bg-muted/40 p-1 sm:grid-cols-2">
-          <TabsTrigger value="purchase-orders">Purchase orders</TabsTrigger>
-          <TabsTrigger value="rfqs">RFQs &amp; quotations</TabsTrigger>
+          <TabsTrigger value="purchase-orders">Purchase Orders</TabsTrigger>
+          <TabsTrigger value="rfqs">RFQs &amp; Quotations</TabsTrigger>
         </TabsList>
         <TabsContent value="purchase-orders">
           {notice && (

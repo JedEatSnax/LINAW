@@ -77,7 +77,7 @@ const money = (value?: string | number | null, currency = "USD") =>
     ? "-"
     : `${currency} ${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-function StatusBadge({ status }: { status?: string | null }) {
+function StatusBadge({ status }: Readonly<{ status?: string | null }>) {
   const normalized = status?.toUpperCase();
   return (
     <Badge
@@ -558,15 +558,20 @@ export function Portal() {
         header: "RFQ",
         cell: ({ row }) => (
           <div>
-            <div className="font-medium">{display(row.original.rfq_number || row.original.id)}</div>
-            <div className="text-xs text-muted-foreground">{display(row.original.title)}</div>
+            <div className="font-medium">
+              {display(row.original.rfq_number || row.original.id)}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {display(row.original.title)}
+            </div>
           </div>
         ),
       }),
       columnHelper.display({
         id: "purchasing_company",
         header: "Purchasing company",
-        cell: ({ row }) => companyName(row.original.purchasing_company || row.original.company),
+        cell: ({ row }) =>
+          companyName(row.original.purchasing_company || row.original.company),
       }),
       columnHelper.accessor("closing_date", {
         header: "Deadline",
@@ -589,22 +594,27 @@ export function Portal() {
       columnHelper.accessor("quotation_number", {
         header: "Quotation",
         cell: ({ row }) => (
-          <span className="font-medium">{display(row.original.quotation_number || row.original.id)}</span>
+          <span className="font-medium">
+            {display(row.original.quotation_number || row.original.id)}
+          </span>
         ),
       }),
       columnHelper.display({
         id: "rfq",
         header: "RFQ",
-        cell: ({ row }) => display(row.original.rfq?.rfq_number || row.original.rfq_id),
+        cell: ({ row }) =>
+          display(row.original.rfq?.rfq_number || row.original.rfq_id),
       }),
       columnHelper.accessor("total_amount", {
         header: "Total",
-        cell: ({ row }) => money(row.original.total_amount, row.original.currency_code || "USD"),
+        cell: ({ row }) =>
+          money(row.original.total_amount, row.original.currency_code || "USD"),
       }),
       columnHelper.display({
         id: "submitted",
         header: "Submitted",
-        cell: ({ row }) => dateFormat(row.original.submitted_at || row.original.created_at),
+        cell: ({ row }) =>
+          dateFormat(row.original.submitted_at || row.original.created_at),
       }),
       columnHelper.accessor("status", {
         header: "Status",
@@ -688,18 +698,6 @@ export function Portal() {
   }
   return (
     <section className="space-y-6">
-      <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.16em] text-primary">
-          Supplier portal
-        </p>
-        <h2 className="font-heading text-2xl font-semibold tracking-tight">
-          Quotation opportunities
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Review RFQs assigned to your supplier company and keep submitted
-          quotations together.
-        </p>
-      </div>
       {message && (
         <div className="flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm">
           <CheckCircle2 className="size-4 text-primary" />
@@ -715,17 +713,15 @@ export function Portal() {
         />
       )}
       <Tabs value={activeView} onValueChange={setActiveView}>
-        <TabsList>
+        <TabsList className="grid h-auto w-full grid-cols-1 gap-1 border bg-muted/40 p-1 sm:grid-cols-2">
           <TabsTrigger value="rfqs">
-            <Sparkles />
             Available RFQs{" "}
             <span className="ml-1 text-xs text-muted-foreground">
               {rfqs.length}
             </span>
           </TabsTrigger>
           <TabsTrigger value="quotations">
-            <Send />
-            My quotations{" "}
+            My Quotations{" "}
             <span className="ml-1 text-xs text-muted-foreground">
               {quotations.length}
             </span>

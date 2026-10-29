@@ -23,13 +23,7 @@ import {
 } from "@/app/api/audit-trail/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -95,21 +89,23 @@ function errorMessage(error: unknown) {
 function DetailValue({
   label,
   value,
-}: {
+}: Readonly<{
   label: string;
   value: string | null | undefined;
-}) {
+}>) {
   return (
     <div className="min-w-0">
       <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </dt>
-      <dd className="mt-1 break-words text-sm">{value || "Not available"}</dd>
+      <dd className="mt-1 wrap-break-word text-sm">
+        {value || "Not available"}
+      </dd>
     </div>
   );
 }
 
-function AuditDetail({ detail }: { detail: AuditTrailDetail }) {
+function AuditDetail({ detail }: Readonly<{ detail: AuditTrailDetail }>) {
   const { audit, blockchain } = detail;
   return (
     <div className="space-y-6">
@@ -172,10 +168,10 @@ function LoadingRows() {
 function AuditTable({
   records,
   onInspect,
-}: {
+}: Readonly<{
   records: AuditTrailRecord[];
   onInspect: (record: AuditTrailRecord) => void;
-}) {
+}>) {
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -304,15 +300,12 @@ export default function AuditTrailPage() {
       <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-7 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
         <header className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              Governance & compliance
-            </p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
               Audit Trail
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Review completed procurement activity recorded for your company,
-              with immutable snapshot and blockchain references.
+              Review procurement records with immutable snapshot and blockchain
+              references
             </p>
           </div>
           <Button
@@ -327,13 +320,6 @@ export default function AuditTrailPage() {
           </Button>
         </header>
         <Card className="overflow-visible">
-          <CardHeader className="border-b">
-            <CardTitle>Recorded activity</CardTitle>
-            <CardDescription>
-              Search by the attributes supported by the audit service. Select an
-              event to inspect its stored record.
-            </CardDescription>
-          </CardHeader>
           <CardContent className="p-0">
             <div className="flex flex-col gap-3 border-b p-4 lg:flex-row lg:items-center">
               <div className="relative flex-1">
